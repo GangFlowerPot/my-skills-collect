@@ -7,7 +7,8 @@ Personal Claude Code skills collection — each subdirectory is a complete, self
 | Skill | Description |
 |-------|-------------|
 | [`moduleskill2global`](./moduleskill2global/) | Move skills between project-level and global-level installation |
-| [`rehydration-mode`](./rehydration-mode/) | 项目上下文再水化记忆系统 — 会话间状态持久化与无缝恢复 |
+| [`rehydration-mode-v1`](./rehydration-mode-v1/) | [V1] 再水化记忆系统 — 基础版（手动创建） |
+| [`rehydration-mode-v2`](./rehydration-mode-v2/) | [V2] 再水化记忆系统 — 增强版（skill-creator 标准流程，含辅助脚本） |
 
 ---
 
@@ -15,7 +16,19 @@ Personal Claude Code skills collection — each subdirectory is a complete, self
 
 项目上下文再水化（Rehydration）系统，通过结构化 Markdown 文件实现会话间状态持久化。每次新会话启动时自动恢复上一次工作的上下文，确保无缝继续。
 
-### 功能概览
+### 版本对比
+
+| 特性 | V1（基础版） | V2（推荐） |
+|------|:-----------:|:---------:|
+| 创建方式 | 手动编写 | skill-creator 标准流程 |
+| 自动触发 | 中文触发词 | 中英双语触发（含口语化表达） |
+| 辅助脚本 | ❌ | ✅ detect_project.py + check_structure.py |
+| 指令优化 | 基础指令 | 含原理说明 + 精确步骤 |
+| 评测验证 | ❌ 未测试 | ✅ 3 组测试，100% 通过率 |
+
+**推荐使用 V2**，V1 保留作为参考对比。
+
+### 功能概览（V1/V2 通用）
 
 | 能力 | 命令 | 说明 |
 |------|------|------|
@@ -59,19 +72,25 @@ project-root/
 ### 安装
 
 ```bash
-# 全局安装（所有项目可用）
-npx skills add https://github.com/<your-username>/my-skills-collect --skill rehydration-mode -g -y
+# V2（推荐全局安装）
+npx skills add https://github.com/<your-username>/my-skills-collect --skill rehydration-mode-v2 -g -y
 
-# 本地安装
-cp -r "D:/claudeCode/skills/my-skills-collect/rehydration-mode" "$HOME/.agents/skills/"
-ln -s "$HOME/.agents/skills/rehydration-mode" "$HOME/.claude/skills/rehydration-mode"
+# V1（基础版）
+npx skills add https://github.com/<your-username>/my-skills-collect --skill rehydration-mode-v1 -g -y
+
+# 本地安装 V2
+cp -r "D:/claudeCode/skills/my-skills-collect/rehydration-mode-v2" "$HOME/.agents/skills/"
+ln -s "$HOME/.agents/skills/rehydration-mode-v2" "$HOME/.claude/skills/rehydration-mode-v2"
 ```
 
-### Skill 文件结构
+### V2 Skill 文件结构
 
 ```
-rehydration-mode/
-├── SKILL.md                  # 主指令（四大能力 + 完整工作流）
+rehydration-mode-v2/
+├── SKILL.md                  # 主指令（含原理说明 + 四大能力 + 完整工作流）
+├── scripts/
+│   ├── detect_project.py     # 自动检测项目类型和技术栈
+│   └── check_structure.py    # 检查再水化文件结构状态
 └── assets/
     ├── CLAUDE.md.tmpl             # 启动指令模板
     ├── PROJECT_MEMORY.md.tmpl     # 项目记忆模板
@@ -79,6 +98,17 @@ rehydration-mode/
     ├── SESSION_LOG.md.tmpl        # 会话日志模板
     └── DECISIONS.md.tmpl          # 架构决策模板
 ```
+
+### 评测结果（V2, Iteration 1）
+
+| 评测 | with_skill | without_skill | 差异 |
+|------|:----------:|:-------------:|:----:|
+| init（初始化） | 7/7 (100%) | 3/7 (42.9%) | **+57.1%** |
+| rehydrate（恢复） | 6/6 (100%) | 6/6 (100%) | 持平 |
+| dehydrate（脱水） | 4/4 (100%) | 4/4 (100%) | 持平 |
+| **总计** | **17/17 (100%)** | **13/17 (76.5%)** | **+23.5%** |
+
+> 核心价值在初始化阶段：有 skill 能创建完整的 5 文件结构，无 skill 只创建了 CLAUDE.md，漏掉 docs/ 目录。
 
 ### 交互规范
 
@@ -110,6 +140,7 @@ npx skills add https://github.com/<your-username>/my-skills-collect --skill '*' 
 ```bash
 # Global (all projects)
 npx skills add https://github.com/<your-username>/my-skills-collect --skill moduleskill2global -g -y
+npx skills add https://github.com/<your-username>/my-skills-collect --skill rehydration-mode-v2 -g -y
 
 # Project only
 cd <project-dir>

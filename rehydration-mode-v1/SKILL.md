@@ -1,6 +1,6 @@
 ---
-name: rehydration-mode
-description: 项目上下文再水化记忆系统 —— 通过结构化 Markdown 文件实现会话间状态持久化，确保每次启动新会话时能无缝恢复工作上下文。触发方式：进入项目目录时自动检测，或用户主动调用 /rehydration 命令。当用户提到"再水化"、"rehydration"、"记忆恢复"、"会话恢复"、"上下文恢复"、"项目记忆"、"初始化记忆系统"时使用此 Skill。
+name: rehydration-mode-v1
+description: [V1] 项目上下文再水化记忆系统 —— 通过结构化 Markdown 文件实现会话间状态持久化，确保每次启动新会话时能无缝恢复工作上下文。触发方式：进入项目目录时自动检测，或用户主动调用 /rehydration 命令。
 ---
 
 # Rehydration Mode — 项目上下文再水化记忆系统
