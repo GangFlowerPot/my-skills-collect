@@ -8,6 +8,7 @@ Personal Claude Code skills collection — each subdirectory is a complete, self
 |-------|-------------|
 | [`moduleskill2global`](./moduleskill2global/) | Move skills between project-level and global-level installation |
 | [`rehydration-mode-v3`](./rehydration-mode-v3/) | 再水化记忆系统 V3 — 三层记忆模型 + 周文件封存 + claude-mem 集成 + Java 全栈检测 |
+| [`git-rule`](./git-rule/) | Git 工作流准则 — 会话同步 + 推送确认（"1"）+ 重试策略（3次/5秒），跨平台通用 |
 | [`rehydration-mode-v2`](./rehydration-mode-v2/) | 再水化记忆系统 V2 — 会话间状态持久化与无缝恢复（中英双语触发） |
 
 > ~~V1 已废弃，仅保留目录作为历史参考，安装时请跳过。~~
