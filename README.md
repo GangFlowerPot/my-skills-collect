@@ -135,7 +135,37 @@ rehydration-mode-v3/
 
 ## Quick Install (All Skills, Global)
 
-Push this repo to GitHub, then on any machine run:
+### 方式一：一键安装脚本（推荐，跨平台）
+
+仓库根目录提供了一键安装脚本，支持 Windows / Linux / macOS：
+
+```bash
+# Windows（双击或在命令行执行）
+install.bat
+
+# Linux / macOS（先赋予执行权限）
+chmod +x install.sh
+./install.sh
+
+# 直接通过 Python 执行（所有平台通用）
+python install.py
+```
+
+安装脚本会自动：
+1. 复制 `moduleskill2global` 和 `rehydration-mode-v3` 到 `~/.agents/skills/`
+2. 创建符号链接 / 目录联接到 `~/.claude/skills/`
+3. 输出 `claude-mem` 插件的安装引导命令
+
+安装脚本参数：
+```bash
+python install.py                    # 安装全部 + 引导 claude-mem
+python install.py --skills-only      # 只装 skill，不提示 claude-mem
+python install.py --list             # 列出可安装的 skill
+python install.py --uninstall        # 卸载（删除已安装的文件）
+python install.py rehydration-mode-v3  # 只安装指定 skill
+```
+
+### 方式二：从 Git 远程安装
 
 ```bash
 # Install all active skills (skip deprecated v1)
@@ -152,9 +182,12 @@ npx skills add https://github.com/<your-username>/my-skills-collect \
 ## Install a Single Skill
 
 ```bash
-# Global (all projects)
+# Global (all projects) — via npx
 npx skills add https://github.com/<your-username>/my-skills-collect --skill moduleskill2global -g -y
 npx skills add https://github.com/<your-username>/my-skills-collect --skill rehydration-mode-v3 -g -y
+
+# Global — via install script
+python install.py moduleskill2global
 
 # Project only
 cd <project-dir>
