@@ -37,7 +37,19 @@ my-skills-collect/
 
 ## 行为规则
 
-### 1. 仓库认知
+### 1. 会话启动时同步远程
+
+每次新会话开始处理本仓库的事务前，**必须先执行 `git pull`** 拉取远程最新变更，确保本地与远程同步。
+
+```bash
+cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
+```
+
+- 如果有远程新变更，先告知用户拉取的内容
+- 如果本地有未提交的变更，先 stash 再 pull，然后 pop
+- 如果 pull 导致冲突，通知用户手动解决
+
+### 2. 仓库认知
 
 这是一个 **skill 集合仓库**，不是普通代码仓库。每次操作时需记住：
 - 每个子目录是一个完整的 Claude Code skill
@@ -45,7 +57,7 @@ my-skills-collect/
 - 所有变更通过 Git 推送到远程仓库实现多机同步
 - `README.md` 是面向其他用户的安装说明，应保持简洁清晰
 
-### 2. Skill 添加/更新后的 Git 推送
+### 3. Skill 添加/更新后的 Git 推送
 
 每次添加新 skill、更新现有 skill、或修改安装脚本后，**必须主动询问**是否需要推送到远程仓库。流程如下：
 
@@ -74,7 +86,7 @@ git commit -m "<message>"
 git push origin main
 ```
 
-### 3. Skill 创建规范
+### 4. Skill 创建规范
 
 创建或改进 skill 时，**严格遵循 `/skill-creator` skill 的规范**：
 
