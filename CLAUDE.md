@@ -59,54 +59,30 @@ cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
 
 ### 3. Skill 添加/更新后的 Git 推送
 
-每次添加新 skill、更新现有 skill、或修改安装脚本后，**必须主动询问**是否需要推送到远程仓库。流程如下：
+每次添加新 skill、更新现有 skill、或修改安装脚本后，自动提交并推送到远程仓库。
 
+**流程**：
 ```
-1. 列出当前工作区所有变更（git status）
-2. 展示给用户确认
-3. 用户确认后，执行 git add + commit + push
+1. git add -A
+2. git commit -m "<message>"
+3. git show --stat HEAD → 展示即将推送的文件列表
+4. 用户回复 "1" 确认后 → git push origin main
 ```
+
+> **确认方式**：用户回复 `1` 即表示确认推送。
 
 **示例交互**：
 ```
-✅ 新 skill xxx 已创建并安装。
+📋 即将推送到 origin/main：
 
-当前工作区变更：
-  ——  D:/claudeCode/skills/my-skills-collect/xxx/           (新增目录)
-  ——  D:/claudeCode/skills/my-skills-collect/README.md       (已修改)
-  ——  D:/claudeCode/skills/my-skills-collect/install.py      (已修改)
+  docs: update CLAUDE.md with new behavior rules
 
-是否提交并推送到远程仓库？(commit message: "feat: add xxx skill")
+  ——  CLAUDE.md    (+22 行)
+
+回复 "1" 确认推送。
 ```
 
-确认后执行：
-```bash
-git add -A
-git commit -m "<message>"
-git push origin main
-```
-
-**⚠️ 推送前必须再次确认**：commit 执行后、push 执行前，必须展示即将推送的文件列表给用户最终确认：
-
-```bash
-git show --stat HEAD
-```
-
-**示例交互**：
-```
-📋 即将推送的 commit：
-
-  feat: add xxx skill
-
-  ——  rehydration-mode-v3/SKILL.md          (+450 行)
-  ——  rehydration-mode-v3/scripts/          (+4 文件)
-  ——  rehydration-mode-v3/references/      (+3 文件)
-  ——  rehydration-mode-v3/assets/          (+5 文件)
-
-确认推送？
-```
-
-用户确认后才执行 `git push origin main`。
+用户回复 `1` 后执行 `git push origin main`。
 
 ### 4. Skill 创建规范
 
