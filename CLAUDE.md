@@ -86,6 +86,28 @@ git commit -m "<message>"
 git push origin main
 ```
 
+**⚠️ 推送前必须再次确认**：commit 执行后、push 执行前，必须展示即将推送的文件列表给用户最终确认：
+
+```bash
+git show --stat HEAD
+```
+
+**示例交互**：
+```
+📋 即将推送的 commit：
+
+  feat: add xxx skill
+
+  ——  rehydration-mode-v3/SKILL.md          (+450 行)
+  ——  rehydration-mode-v3/scripts/          (+4 文件)
+  ——  rehydration-mode-v3/references/      (+3 文件)
+  ——  rehydration-mode-v3/assets/          (+5 文件)
+
+确认推送？
+```
+
+用户确认后才执行 `git push origin main`。
+
 ### 4. Skill 创建规范
 
 创建或改进 skill 时，**严格遵循 `/skill-creator` skill 的规范**：
