@@ -84,6 +84,27 @@ cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
 
 用户回复 `1` 后执行 `git push origin main`。
 
+**🔄 推送重试策略**：
+
+| 次数 | 动作 |
+|------|------|
+| 第 1 次失败 | 等待 5 秒后重试 |
+| 第 2 次失败 | 等待 5 秒后重试 |
+| 第 3 次失败 | 停止重试，告知用户手动决策 |
+
+**示例交互**：
+```
+❌ 推送失败 (attempt 1/3): Failed to connect to github.com
+⏳ 5 秒后重试...
+
+❌ 推送失败 (attempt 2/3): Failed to connect to github.com
+⏳ 5 秒后重试...
+
+❌ 推送失败 (attempt 3/3): Failed to connect to github.com
+⚠️ 3 次推送均失败。请手动执行：
+  cd "D:/claudeCode/skills/my-skills-collect" && git push origin main
+```
+
 ### 4. Skill 创建规范
 
 创建或改进 skill 时，**严格遵循 `/skill-creator` skill 的规范**：
