@@ -1,0 +1,17 @@
+<!-- ZSH:START -->
+## ZSH shared memory
+
+This project uses a shared, agent-independent memory system.
+
+Before resuming previous work:
+
+1. Read `AGENT_MEMORY.md`.
+2. Follow its context reconstruction protocol.
+3. Treat `skill-docs/CURRENT_TASK.md` as the authoritative persisted work state.
+4. Do not infer historical progress before reading the memory files.
+5. At the end of a work session, follow the write-back protocol in `AGENT_MEMORY.md`.
+
+If a referenced memory file is missing or inconsistent, report the problem instead of inventing context.
+
+ZSH project memory is authoritative over agent-native memory. Before ending the session, incrementally write back verified project facts; skip duplicates and ask before resolving conflicts.
+<!-- ZSH:END -->

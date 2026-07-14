@@ -21,6 +21,7 @@ python install.py
 |-------|------|
 | `moduleskill2global` | 在项目级和全局级之间移动 skill |
 | `rehydration-mode-v3` | 再水化记忆系统 V3 — 三层记忆 + 周封存 |
+| `zsh` | 跨 Agent 项目记忆：统一导航、薄适配、任务恢复与历史归档 |
 
 ## 新增 Skill
 

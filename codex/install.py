@@ -5,6 +5,7 @@
 Installs:
   - moduleskill2global    : skill - move skills between project/global scope
   - rehydration-mode-v3   : skill - rehydration memory system V3
+  - zsh                   : skill - cross-agent project memory navigation
 
 Install targets (global):
   - Windows: %USERPROFILE%\.agents\skills\  +  %USERPROFILE%\.codex\skills\
@@ -34,7 +35,7 @@ AGENTS_DIR = os.path.join(HOME, ".agents", "skills")
 CODEX_DIR = os.path.join(HOME, ".codex", "skills")
 COLLECTION_DIR = os.path.dirname(os.path.abspath(__file__))
 
-AVAILABLE_SKILLS = ["moduleskill2global", "rehydration-mode-v3"]
+AVAILABLE_SKILLS = ["moduleskill2global", "rehydration-mode-v3", "zsh"]
 
 
 def _mkdir_p(path):

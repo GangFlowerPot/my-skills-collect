@@ -1,0 +1,35 @@
+{
+  "skill_name": "zsh",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "在一个已有自定义 AGENTS.md 的项目中初始化跨 Agent 记忆，先预览再执行，不能破坏原规则。",
+      "expected_output": "生成完整记忆结构，只向 AGENTS.md 增加一个完整 ZSH 管理区块，并通过导航验证。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我换了一个 Agent，帮我从项目记忆中恢复上次工作，但不要把所有历史日志都读进来。",
+      "expected_output": "按最小或标准恢复顺序读取，汇报任务、位置、阻塞和下一步，仅在必要时定向读取归档。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "检查这个项目的记忆导航是否完整，其中一个目标文件已经被移动。",
+      "expected_output": "只读检测并准确报告失效路径，不编造缺失内容，也不自动覆盖文件。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "当前 Agent 的原生记忆和项目记忆里都有数据库信息，其中原生记忆说 PostgreSQL，ZSH 记忆说 MySQL。保存进度前检查应该写什么。",
+      "expected_output": "声明 ZSH 项目记忆为当前持久化基线，把差异归类为冲突并等待用户确认，不静默覆盖。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "在 Git 项目初始化 ZSH，记忆应随项目版本化；另一个个人 Git 项目明确要求记忆只保留本地。",
+      "expected_output": "前者使用 shared 策略，仅排除备份；后者使用 local 策略，在 .git/info/exclude 排除导航和 skill-docs。",
+      "files": []
+    }
+  ]
+}
