@@ -42,6 +42,14 @@ status: active
 
 报告发现的冲突，不要无声覆盖，也不要把推断写成事实。
 
+## 单真相源规则（Single Source of Truth）
+
+为避免 v3 中「同一决策三重表征 / 任务状态双重维护」的冗余，本 skill 明确：
+
+- **决策内容**（背景 / 原因 / 影响 / 替代方案 / 代码位置）唯一真相源 = `skill-docs/DECISIONS.md`。`PROJECT_MEMORY.md` 热记忆只放简短快照 + 指向 `DECISIONS.md#adr-xxx` 的指针，**不重复**决策内容。
+- **任务状态**（进度 / 阻塞 / 续接位置）唯一真相源 = `skill-docs/CURRENT_TASK.md`。`SESSION_LOG.md` 为追加型叙事，**不重复**遗留工作 / 进度（那些归 CURRENT_TASK）。
+- 回写时若与上述文件冲突，以对应真相源为准；PROJECT_MEMORY 热记忆与 DECISIONS 冲突时以 DECISIONS 为准。
+
 ## Agent 原生记忆兼容
 
 ZSH 项目记忆是跨 Agent 持久工作状态的权威来源。Agent 可以使用当前环境已经提供的原生记忆辅助工作，但不得主动扫描其他 Agent 的用户级记忆目录，也不得让原生记忆静默覆盖本项目记忆。

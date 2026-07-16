@@ -5,13 +5,17 @@
 
 ---
 
+<!-- 本文件为追加型叙事，记录「发生什么」。
+     任务状态（进度/阻塞/续接位置）唯一真相源 = CURRENT_TASK.md，不在此重复遗留工作/进度。
+     周归档由 session_log_manager.py archive 执行（按 **当前周** 字段切分），归档后重置本文件。
+     历史归档索引见 skill-docs/memory-archive/INDEX.md 。 -->
+
 ## {{TODAY}} 日汇总
 
+<!-- 每日首次/末次会话由 Agent 汇总填写（zsh 无 ensure_daily 脚本，由 Agent 维护）。 -->
 **今日完成**: 初始化项目记忆系统。
 
 **关键决策**: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
-
-**遗留问题**: 待补充。
 
 **下一步**: 与用户确认当前工作目标。
 
@@ -21,14 +25,24 @@
 
 **完成的工作**:
 
-- 创建导航、任务、项目记忆、日志、决策和归档索引文件。
-- 创建或更新 `AGENTS.md` 的 ZSH 薄适配区块。
+1. 创建导航、任务、项目记忆、日志、决策和归档索引文件。
+   - 文件: `codex/zsh/assets/`（+7 个模板/参考文件）
+   - 包含: AGENT_MEMORY / PROJECT_MEMORY / CURRENT_TASK / DECISIONS / SESSION_LOG / ARCHIVE_INDEX
+
+2. 创建或更新 `AGENTS.md` 的 `ZSH:START` / `ZSH:END` 薄适配区块。
+   - 文件: `AGENTS.md`
+   - 包含: 薄适配托管区块（ZSH:START/END），指向 AGENT_MEMORY.md
 
 **关键决策**:
-
-- `AGENT_MEMORY.md` 是唯一记忆导航入口。
+- 决定: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
+- 原因: 避免在多个平台文件中复制记忆并产生冲突。
+- 记录: 见 `skill-docs/DECISIONS.md#adr-001`
 
 **遇到的问题**: 无。
 
-**遗留工作**: 补充真实项目状态。
+**代码变更**:
 
+```bash
+git diff --stat
+ codex/zsh/  | +N 行（新增 skill 目录）
+```

@@ -1,0 +1,761 @@
+# zsh skill diff: current working tree vs yesterday push (7fb84da)
+# generated:
+2026-07-16
+18:06
+# scope: claude/zsh/ and codex/zsh/
+# summary:
+#   Design A: 4 seed templates - selectively absorb v3 strengths, avoid redundancy
+#   Design B: v3 -> zsh memory migration (migrate_from_v3.py + detect_project v3探测 + SKILL.md step 0)
+#   Single Source of Truth rules added to AGENT_MEMORY.md.tmpl
+#
+# usage:  code --diff <(git show HEAD:claude/zsh/SKILL.md) claude/zsh/SKILL.md
+#
+diff --git a/claude/zsh/SKILL.md b/claude/zsh/SKILL.md
+index 715d365..52ee094 100644
+--- a/claude/zsh/SKILL.md
++++ b/claude/zsh/SKILL.md
+@@ -27,7 +27,35 @@ CLAUDE.md 中的 ZSH:MEMORY 托管区块（Claude Code 专属）   ← 让 Claud
+ 
+ ## 触发后的路由
+ 
+-1. 如果项目没有 `AGENT_MEMORY.md`，走"初始化"。
++先调用只读探测，再按结果分支：
++
++```powershell
++python <skill_dir>/scripts/detect_project.py <project_root>
++```
++
++### 第 0 步：检测 v3 记忆（一次性迁移机会）
++
++仅当 `has_v3_memory: true` 且 `has_agent_memory: false`（项目已通过 rehydration-mode-v3 初始化、但尚无 zsh 记忆）时进入本分支；否则跳到第 1 步。
++
++向用户提示：
++
++> 检测到本项目已通过 rehydration-mode-v3 初始化（`docs/` 下有项目记忆/当前任务/决策/会话日志）。是否把这些记忆迁移到 zsh 的 `skill-docs/` 命名空间？
++>
++> A. 迁移，`docs/` 保留为历史快照（推荐）
++> B. 迁移后清空 `docs/` 中的 v3 记忆文件
++> C. 暂不迁移，直接初始化一套新的 zsh 记忆
++
++- 用户选 A 或 B 后：
++  1. `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --dry-run` — 展示迁移计划。
++  2. 用户二次确认后 `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --apply`。
++  3. 迁移完成后 `docs/` 不会被改动；若选 B，仅在迁移成功后删除 `docs/{PROJECT_MEMORY,CURRENT_TASK,SESSION_LOG,DECISIONS}.md` 与 `docs/session-log-*.md`（仅删文件，保留 `docs/` 目录）。
++- 用户选 C：跳到第 1 步走 fresh 初始化。
++
++`migrate_from_v3.py` 只迁移、不改写源、不动 `docs/`；已存在的 `skill-docs/` 文件按 `skip_existing` 保留。
++
++### 第 1-5 步
++
++1. 如果项目没有 `AGENT_MEMORY.md`（且未命中第 0 步），走"初始化"。
+ 2. 如果用户要继续历史工作，走"恢复上下文"。
+ 3. 如果用户要保存进度，走"脱水保存"。
+ 4. 如果用户要更新任务、日志、决策或整理记忆，走对应的"会话中管理"。
+diff --git a/claude/zsh/assets/AGENT_MEMORY.md.tmpl b/claude/zsh/assets/AGENT_MEMORY.md.tmpl
+index 2016c67..bbefe09 100644
+--- a/claude/zsh/assets/AGENT_MEMORY.md.tmpl
++++ b/claude/zsh/assets/AGENT_MEMORY.md.tmpl
+@@ -42,6 +42,14 @@ status: active
+ 
+ 报告发现的冲突，不要无声覆盖，也不要把推断写成事实。
+ 
++## 单真相源规则（Single Source of Truth）
++
++为避免 v3 中「同一决策三重表征 / 任务状态双重维护」的冗余，本 skill 明确：
++
++- **决策内容**（背景 / 原因 / 影响 / 替代方案 / 代码位置）唯一真相源 = `skill-docs/DECISIONS.md`。`PROJECT_MEMORY.md` 热记忆只放简短快照 + 指向 `DECISIONS.md#adr-xxx` 的指针，**不重复**决策内容。
++- **任务状态**（进度 / 阻塞 / 续接位置）唯一真相源 = `skill-docs/CURRENT_TASK.md`。`SESSION_LOG.md` 为追加型叙事，**不重复**遗留工作 / 进度（那些归 CURRENT_TASK）。
++- 回写时若与上述文件冲突，以对应真相源为准；PROJECT_MEMORY 热记忆与 DECISIONS 冲突时以 DECISIONS 为准。
++
+ ## Agent 原生记忆兼容
+ 
+ ZSH 项目记忆是跨 Agent 持久工作状态的权威来源。Agent 可以使用当前环境已经提供的原生记忆辅助工作，但不得主动扫描其他 Agent 的用户级记忆目录，也不得让原生记忆静默覆盖本项目记忆。
+diff --git a/claude/zsh/assets/CURRENT_TASK.md.tmpl b/claude/zsh/assets/CURRENT_TASK.md.tmpl
+index edec7af..aa446db 100644
+--- a/claude/zsh/assets/CURRENT_TASK.md.tmpl
++++ b/claude/zsh/assets/CURRENT_TASK.md.tmpl
+@@ -1,38 +1,67 @@
+ # Current Task — {{PROJECT_NAME}}
+ 
+-**最后更新**: {{UPDATED_AT}}
++**最后更新**: {{UPDATED_AT}} by 待确认 (会话ID: 待补充)
++
++<!-- 本文件是任务状态（进度/阻塞/续接位置）的唯一真相源。
++     SESSION_LOG 为追加型叙事，不重复本文件的「遗留工作/进度」。 -->
+ 
+ ## 当前阶段
+ 
+-初始化完成，尚未记录具体工作。
++🔄 阶段: 初始化完成，尚未记录具体工作。
++
++## 已完成
+ 
+-## 🔄 进行中
++- [x] 初始化 ZSH 项目记忆结构
+ 
+-- 无
++## 进行中
+ 
+-## ⏳ 待开始
++<!-- 每个任务块：进度 / 当前问题 / 下一步 / 关键代码位置。事实变更前检查是否应沉淀为 DECISIONS.md ADR。 -->
++- [ ] 待补充（文件: `{path}:{line_range}`）
++  - 当前进度: 待补充
++  - 当前问题: 待补充
++  - 下一步: 待补充
++  - 关键代码位置: `{path}:{start_line}-{end_line}`（待补充）
++
++## 待开始
+ 
+ - 根据用户目标补充
+ 
+-## ✅ 已完成
++## 关键文件状态
++
++| 文件 | 状态 | 说明 |
++|---|---|---|
++| 待补充 | ✅/🔄/⏳ | — |
++
++图例：✅ 已完成 | 🔄 编辑中 | ⏳ 待开始
++
++## 上下文依赖
++
++- 需要理解: 待补充
++- 需要确认: 待补充
++- 参考实现: 待补充
+ 
+-- 初始化 ZSH 项目记忆结构
++## 阻塞项
+ 
+-## ❌ 阻塞项
++<!-- 每项：状态 / 预计解决 / 方案 B。阻塞解除后迁移到「进行中」或「已完成」。 -->
++- **待补充**
++  - 状态: 等待中 / 进行中 / 已解决
++  - 预计解决: {YYYY-MM-DD}
++  - 方案 B: 待补充
+ 
+-- 无
++## 最近修改的代码片段
++
++<!-- 当前编辑位置附近的代码快照，便于下次会话快速恢复上下文。 -->
++```待补充
++// {file_path}:{line_range}（当前编辑位置）
++```
+ 
+ ## 精确续接位置
+ 
++<!-- zsh 特色：精确到文件/行/状态，供跨 Agent 接力时直接续接。 -->
+ - 文件: 待补充
+ - 位置: 待补充
+ - 当前状态: 待补充
+ 
+-## 下一步
+-
+-1. 与用户确认当前目标。
+-
+ ## 下次会话建议
+ 
+-先读取本文件，再读取项目热记忆和最近会话日志。
+-
++1. 与用户确认当前目标。
+diff --git a/claude/zsh/assets/DECISIONS.md.tmpl b/claude/zsh/assets/DECISIONS.md.tmpl
+index 915d2bf..e7fa07d 100644
+--- a/claude/zsh/assets/DECISIONS.md.tmpl
++++ b/claude/zsh/assets/DECISIONS.md.tmpl
+@@ -1,13 +1,44 @@
+ # Decisions — {{PROJECT_NAME}}
+ 
+-本文件记录影响架构、接口、数据、安全、部署或长期维护的重要决策。
++本文件是**决策内容的唯一真相源**（背景/原因/影响/替代方案/代码位置仅记录于此）。
++PROJECT_MEMORY.md 热记忆只放简短快照 + 指向本文件的指针，不重复决策内容。
++
++图例：✅ 已决定 | 💬 讨论中 | ❌ 已废弃
++
++ADR 编号：ADR-{自增，从 001 开始}；新增 ADR 追加到文件顶部。
+ 
+ ## ADR-001：采用跨 Agent 统一记忆导航
+ 
+-- **日期**: {{TODAY}}
+-- **状态**: 已接受
+-- **背景**: 项目可能由不同 Agent 在不同会话中接力处理。
+-- **决策**: 使用根目录 `AGENT_MEMORY.md` 作为统一导航；平台入口文件只负责引导。
+-- **原因**: 避免在多个平台文件中复制记忆并产生冲突。
+-- **影响**: Agent 恢复历史任务前需要先读取导航文件。
++**日期**: {{TODAY}}
++**状态**: 已决定 ✅
++**提出者**: 待确认
++
++### 背景
++
++项目可能由不同 Agent（Claude Code、Codex、cursor 等）在不同会话中接力处理。
++
++### 决策
++
++使用根目录 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口；平台入口文件（CLAUDE.md、AGENTS.md）只负责引导，不复制记忆。
++
++### 原因
++
++1. **避免多个平台文件中复制记忆并产生冲突**：集中存放保证单一权威来源。
++2. **跨 Agent 接力时决策内容不丢失**：新 Agent 通过导航文件即可定位到完整决策上下文。
++
++### 影响
++
++- Agent 恢复历史任务前需要先读取导航文件。
++- 决策变更只修改本文件，热记忆通过指针自动指向最新版本。
++
++### 替代方案
++
++- **在各平台入口文件分别复制决策摘要**：未选择 —— 多处维护易产生不一致。
++- **仅在会话日志中记录决策**：未选择 —— 缺乏结构性，难以后续检索。
++
++### 代码位置
++
++- `claude/zsh/assets/AGENT_MEMORY.md.tmpl`（导航模板）
++- `codex/zsh/assets/AGENT_MEMORY.md.tmpl`（导航模板）
+ 
++<!-- 以下为新增 ADR 占位（新 ADR 追加到此行上方） -->
+diff --git a/claude/zsh/assets/PROJECT_MEMORY.md.tmpl b/claude/zsh/assets/PROJECT_MEMORY.md.tmpl
+index 48b9ce8..a2b38a5 100644
+--- a/claude/zsh/assets/PROJECT_MEMORY.md.tmpl
++++ b/claude/zsh/assets/PROJECT_MEMORY.md.tmpl
+@@ -2,6 +2,12 @@
+ 
+ **最后更新**: {{UPDATED_AT}}
+ 
++<!-- 分层降级规则（明确，避免 v3 的模糊）：
++     热 -> 温：连续 14 天未被引用
++     温 -> 冷：对应功能已废弃或服务已下线
++     热 < 200 行 / 温 < 100 行 / 冷 < 50 行（与 memory_compressor 阈值一致）
++     决策内容唯一真相源 = DECISIONS.md，热记忆只放指针，不重复决策内容。 -->
++
+ ## 🔥 热记忆
+ 
+ ### 项目概述
+@@ -14,33 +20,60 @@
+ 
+ ### 当前活跃模块
+ 
+-- 待补充
++| 模块 | 路径 | 职责 | 状态 |
++|---|---|---|---|
++| 待补充 | — | — | — |
++
++### 架构图（可选）
++
++<!-- 可选：删除下方注释占位，改用 mermaid 描述当前模块交互；无架构图也可。 -->
++<!-- ```mermaid
++graph TD
++    A[模块A] --> B[模块B]
++``` -->
+ 
+ ### 关键约定
+ 
+-- 待补充
++<!-- 仅放简短快照，决策背景/原因统一引用 DECISIONS.md#adr-xxx，不在此重复。 -->
++- 待补充（例：参见 `DECISIONS.md#adr-001`）
+ 
+ ## 🌡️ 温记忆
+ 
+ ### 数据模型与模块细节
+ 
++<!-- 数据模型、核心实体关系（1:N / N:M）、关键表/集合结构。事实变更前检查是否应沉淀为 DECISIONS.md ADR。 -->
+ - 待补充
+ 
+ ### 已知问题与技术债务
+ 
+ - 待补充
+ 
+-### 环境与中间件
++### 环境信息
++
++<!-- 环境、部署方式、依赖服务。 -->
++- 待补充
++
++### 中间件配置
+ 
++<!-- 不记录密钥、Token、密码；只记录配置项与用途。 -->
+ - 不记录密钥、Token 或密码。
+ 
+ ## ❄️ 冷记忆
+ 
+ ### 已完成里程碑
+ 
+-- 待补充
++- 初始化 ZSH 项目记忆结构（{{TODAY}}）
++- [ ] 待补充（勾选即完成）
+ 
+ ### 已废弃内容
+ 
++<!-- 使用指针指向 DECISIONS.md ADR 或周日志条目，不在此重复历史细节。 -->
+ - 详细历史应使用指针指向 ADR 或周日志。
+ 
++### 历史 API（已废弃）
++
++- 待补充
++
++### 历史环境（归档）
++
++- 待补充
+diff --git a/claude/zsh/assets/SESSION_LOG.md.tmpl b/claude/zsh/assets/SESSION_LOG.md.tmpl
+index 5677861..4c43adf 100644
+--- a/claude/zsh/assets/SESSION_LOG.md.tmpl
++++ b/claude/zsh/assets/SESSION_LOG.md.tmpl
+@@ -5,14 +5,18 @@
+ 
+ ---
+ 
++<!-- 本文件为追加型叙事，记录「发生什么」。
++     任务状态（进度/阻塞/续接位置）唯一真相源 = CURRENT_TASK.md，不在此重复遗留工作/进度。
++     周归档由 session_log_manager.py archive 执行（按 **当前周** 字段切分），归档后重置本文件。
++     历史归档索引见 skill-docs/memory-archive/INDEX.md 。 -->
++
+ ## {{TODAY}} 日汇总
+ 
++<!-- 每日首次/末次会话由 Agent 汇总填写（zsh 无 ensure_daily 脚本，由 Agent 维护）。 -->
+ **今日完成**: 初始化项目记忆系统。
+ 
+ **关键决策**: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
+ 
+-**遗留问题**: 待补充。
+-
+ **下一步**: 与用户确认当前工作目标。
+ 
+ ### {{CURRENT_TIME}} 初始化项目记忆
+@@ -21,14 +25,24 @@
+ 
+ **完成的工作**:
+ 
+-- 创建导航、任务、项目记忆、日志、决策和归档索引文件。
+-- 创建或更新 `CLAUDE.md` 的 `ZSH:MEMORY` 托管区块。
++1. 创建导航、任务、项目记忆、日志、决策和归档索引文件。
++   - 文件: `claude/zsh/assets/`（+7 个模板/参考文件）
++   - 包含: AGENT_MEMORY / PROJECT_MEMORY / CURRENT_TASK / DECISIONS / SESSION_LOG / ARCHIVE_INDEX / zsh_memory.block
+ 
+-**关键决策**:
++2. 创建或更新 `CLAUDE.md` 的 `ZSH:MEMORY` 托管区块。
++   - 文件: `CLAUDE.md`
++   - 包含: 薄适配托管区块（ZSH:MEMORY:START/END），指向 AGENT_MEMORY.md
+ 
+-- `AGENT_MEMORY.md` 是唯一记忆导航入口。
++**关键决策**:
++- 决定: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
++- 原因: 避免在多个平台文件中复制记忆并产生冲突。
++- 记录: 见 `skill-docs/DECISIONS.md#adr-001`
+ 
+ **遇到的问题**: 无。
+ 
+-**遗留工作**: 补充真实项目状态。
++**代码变更**:
+ 
++```bash
++git diff --stat
++ claude/zsh/  | +N 行（新增 skill 目录）
++```
+diff --git a/claude/zsh/scripts/detect_project.py b/claude/zsh/scripts/detect_project.py
+index 5f0f476..b188471 100644
+--- a/claude/zsh/scripts/detect_project.py
++++ b/claude/zsh/scripts/detect_project.py
+@@ -30,6 +30,23 @@ def detect(root):
+         "has_claude_md": (root / "CLAUDE.md").is_file(),
+         "has_agents_md": (root / "AGENTS.md").is_file(),
+         "has_agent_memory": (root / "AGENT_MEMORY.md").is_file(),
++        **_v3(root),
++    }
++
++
++def _v3(root):
++    """Detect rehydration-mode-v3 memory files under docs/. Read-only; writes nothing."""
++    docs = root / "docs"
++    archives = sorted(p.name for p in docs.glob("session-log-*.md")) if docs.is_dir() else []
++    present = {
++        "project_memory": (docs / "PROJECT_MEMORY.md").is_file(),
++        "current_task": (docs / "CURRENT_TASK.md").is_file(),
++        "session_log": (docs / "SESSION_LOG.md").is_file(),
++        "decisions": (docs / "DECISIONS.md").is_file(),
++    }
++    return {
++        "has_v3_memory": any(present.values()),
++        "v3_files": {**present, "archives": archives},
+     }
+ 
+ 
+diff --git a/codex/zsh/SKILL.md b/codex/zsh/SKILL.md
+index 763eb5c..2a15c85 100644
+--- a/codex/zsh/SKILL.md
++++ b/codex/zsh/SKILL.md
+@@ -24,7 +24,35 @@ AGENTS.md                 平台薄适配层，只负责指路
+ 
+ ## 触发后的路由
+ 
+-1. 如果项目没有 `AGENT_MEMORY.md`，走“初始化”。
++先调用只读探测，再按结果分支：
++
++```powershell
++python <skill_dir>/scripts/detect_project.py <project_root>
++```
++
++### 第 0 步：检测 v3 记忆（一次性迁移机会）
++
++仅当 `has_v3_memory: true` 且 `has_agent_memory: false`（项目已通过 rehydration-mode-v3 初始化、但尚无 zsh 记忆）时进入本分支；否则跳到第 1 步。
++
++向用户提示：
++
++> 检测到本项目已通过 rehydration-mode-v3 初始化（`docs/` 下有项目记忆/当前任务/决策/会话日志）。是否把这些记忆迁移到 zsh 的 `skill-docs/` 命名空间？
++>
++> A. 迁移，`docs/` 保留为历史快照（推荐）
++> B. 迁移后清空 `docs/` 中的 v3 记忆文件
++> C. 暂不迁移，直接初始化一套新的 zsh 记忆
++
++- 用户选 A 或 B 后：
++  1. `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --dry-run` — 展示迁移计划。
++  2. 用户二次确认后 `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --apply`。
++  3. 迁移完成后 `docs/` 不会被改动；若选 B，仅在迁移成功后删除 `docs/{PROJECT_MEMORY,CURRENT_TASK,SESSION_LOG,DECISIONS}.md` 与 `docs/session-log-*.md`（仅删文件，保留 `docs/` 目录）。
++- 用户选 C：跳到第 1 步走 fresh 初始化。
++
++`migrate_from_v3.py` 只迁移、不改写源、不动 `docs/`；已存在的 `skill-docs/` 文件按 `skip_existing` 保留。
++
++### 第 1-5 步
++
++1. 如果项目没有 `AGENT_MEMORY.md`（且未命中第 0 步），走“初始化”。
+ 2. 如果用户要继续历史工作，走“恢复上下文”。
+ 3. 如果用户要保存进度，走“脱水保存”。
+ 4. 如果用户要更新任务、日志、决策或整理记忆，走对应的“会话中管理”。
+diff --git a/codex/zsh/assets/AGENT_MEMORY.md.tmpl b/codex/zsh/assets/AGENT_MEMORY.md.tmpl
+index 2016c67..bbefe09 100644
+--- a/codex/zsh/assets/AGENT_MEMORY.md.tmpl
++++ b/codex/zsh/assets/AGENT_MEMORY.md.tmpl
+@@ -42,6 +42,14 @@ status: active
+ 
+ 报告发现的冲突，不要无声覆盖，也不要把推断写成事实。
+ 
++## 单真相源规则（Single Source of Truth）
++
++为避免 v3 中「同一决策三重表征 / 任务状态双重维护」的冗余，本 skill 明确：
++
++- **决策内容**（背景 / 原因 / 影响 / 替代方案 / 代码位置）唯一真相源 = `skill-docs/DECISIONS.md`。`PROJECT_MEMORY.md` 热记忆只放简短快照 + 指向 `DECISIONS.md#adr-xxx` 的指针，**不重复**决策内容。
++- **任务状态**（进度 / 阻塞 / 续接位置）唯一真相源 = `skill-docs/CURRENT_TASK.md`。`SESSION_LOG.md` 为追加型叙事，**不重复**遗留工作 / 进度（那些归 CURRENT_TASK）。
++- 回写时若与上述文件冲突，以对应真相源为准；PROJECT_MEMORY 热记忆与 DECISIONS 冲突时以 DECISIONS 为准。
++
+ ## Agent 原生记忆兼容
+ 
+ ZSH 项目记忆是跨 Agent 持久工作状态的权威来源。Agent 可以使用当前环境已经提供的原生记忆辅助工作，但不得主动扫描其他 Agent 的用户级记忆目录，也不得让原生记忆静默覆盖本项目记忆。
+diff --git a/codex/zsh/assets/CURRENT_TASK.md.tmpl b/codex/zsh/assets/CURRENT_TASK.md.tmpl
+index edec7af..aa446db 100644
+--- a/codex/zsh/assets/CURRENT_TASK.md.tmpl
++++ b/codex/zsh/assets/CURRENT_TASK.md.tmpl
+@@ -1,38 +1,67 @@
+ # Current Task — {{PROJECT_NAME}}
+ 
+-**最后更新**: {{UPDATED_AT}}
++**最后更新**: {{UPDATED_AT}} by 待确认 (会话ID: 待补充)
++
++<!-- 本文件是任务状态（进度/阻塞/续接位置）的唯一真相源。
++     SESSION_LOG 为追加型叙事，不重复本文件的「遗留工作/进度」。 -->
+ 
+ ## 当前阶段
+ 
+-初始化完成，尚未记录具体工作。
++🔄 阶段: 初始化完成，尚未记录具体工作。
++
++## 已完成
+ 
+-## 🔄 进行中
++- [x] 初始化 ZSH 项目记忆结构
+ 
+-- 无
++## 进行中
+ 
+-## ⏳ 待开始
++<!-- 每个任务块：进度 / 当前问题 / 下一步 / 关键代码位置。事实变更前检查是否应沉淀为 DECISIONS.md ADR。 -->
++- [ ] 待补充（文件: `{path}:{line_range}`）
++  - 当前进度: 待补充
++  - 当前问题: 待补充
++  - 下一步: 待补充
++  - 关键代码位置: `{path}:{start_line}-{end_line}`（待补充）
++
++## 待开始
+ 
+ - 根据用户目标补充
+ 
+-## ✅ 已完成
++## 关键文件状态
++
++| 文件 | 状态 | 说明 |
++|---|---|---|
++| 待补充 | ✅/🔄/⏳ | — |
++
++图例：✅ 已完成 | 🔄 编辑中 | ⏳ 待开始
++
++## 上下文依赖
++
++- 需要理解: 待补充
++- 需要确认: 待补充
++- 参考实现: 待补充
+ 
+-- 初始化 ZSH 项目记忆结构
++## 阻塞项
+ 
+-## ❌ 阻塞项
++<!-- 每项：状态 / 预计解决 / 方案 B。阻塞解除后迁移到「进行中」或「已完成」。 -->
++- **待补充**
++  - 状态: 等待中 / 进行中 / 已解决
++  - 预计解决: {YYYY-MM-DD}
++  - 方案 B: 待补充
+ 
+-- 无
++## 最近修改的代码片段
++
++<!-- 当前编辑位置附近的代码快照，便于下次会话快速恢复上下文。 -->
++```待补充
++// {file_path}:{line_range}（当前编辑位置）
++```
+ 
+ ## 精确续接位置
+ 
++<!-- zsh 特色：精确到文件/行/状态，供跨 Agent 接力时直接续接。 -->
+ - 文件: 待补充
+ - 位置: 待补充
+ - 当前状态: 待补充
+ 
+-## 下一步
+-
+-1. 与用户确认当前目标。
+-
+ ## 下次会话建议
+ 
+-先读取本文件，再读取项目热记忆和最近会话日志。
+-
++1. 与用户确认当前目标。
+diff --git a/codex/zsh/assets/DECISIONS.md.tmpl b/codex/zsh/assets/DECISIONS.md.tmpl
+index 915d2bf..e7fa07d 100644
+--- a/codex/zsh/assets/DECISIONS.md.tmpl
++++ b/codex/zsh/assets/DECISIONS.md.tmpl
+@@ -1,13 +1,44 @@
+ # Decisions — {{PROJECT_NAME}}
+ 
+-本文件记录影响架构、接口、数据、安全、部署或长期维护的重要决策。
++本文件是**决策内容的唯一真相源**（背景/原因/影响/替代方案/代码位置仅记录于此）。
++PROJECT_MEMORY.md 热记忆只放简短快照 + 指向本文件的指针，不重复决策内容。
++
++图例：✅ 已决定 | 💬 讨论中 | ❌ 已废弃
++
++ADR 编号：ADR-{自增，从 001 开始}；新增 ADR 追加到文件顶部。
+ 
+ ## ADR-001：采用跨 Agent 统一记忆导航
+ 
+-- **日期**: {{TODAY}}
+-- **状态**: 已接受
+-- **背景**: 项目可能由不同 Agent 在不同会话中接力处理。
+-- **决策**: 使用根目录 `AGENT_MEMORY.md` 作为统一导航；平台入口文件只负责引导。
+-- **原因**: 避免在多个平台文件中复制记忆并产生冲突。
+-- **影响**: Agent 恢复历史任务前需要先读取导航文件。
++**日期**: {{TODAY}}
++**状态**: 已决定 ✅
++**提出者**: 待确认
++
++### 背景
++
++项目可能由不同 Agent（Claude Code、Codex、cursor 等）在不同会话中接力处理。
++
++### 决策
++
++使用根目录 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口；平台入口文件（CLAUDE.md、AGENTS.md）只负责引导，不复制记忆。
++
++### 原因
++
++1. **避免多个平台文件中复制记忆并产生冲突**：集中存放保证单一权威来源。
++2. **跨 Agent 接力时决策内容不丢失**：新 Agent 通过导航文件即可定位到完整决策上下文。
++
++### 影响
++
++- Agent 恢复历史任务前需要先读取导航文件。
++- 决策变更只修改本文件，热记忆通过指针自动指向最新版本。
++
++### 替代方案
++
++- **在各平台入口文件分别复制决策摘要**：未选择 —— 多处维护易产生不一致。
++- **仅在会话日志中记录决策**：未选择 —— 缺乏结构性，难以后续检索。
++
++### 代码位置
++
++- `claude/zsh/assets/AGENT_MEMORY.md.tmpl`（导航模板）
++- `codex/zsh/assets/AGENT_MEMORY.md.tmpl`（导航模板）
+ 
++<!-- 以下为新增 ADR 占位（新 ADR 追加到此行上方） -->
+diff --git a/codex/zsh/assets/PROJECT_MEMORY.md.tmpl b/codex/zsh/assets/PROJECT_MEMORY.md.tmpl
+index 48b9ce8..a2b38a5 100644
+--- a/codex/zsh/assets/PROJECT_MEMORY.md.tmpl
++++ b/codex/zsh/assets/PROJECT_MEMORY.md.tmpl
+@@ -2,6 +2,12 @@
+ 
+ **最后更新**: {{UPDATED_AT}}
+ 
++<!-- 分层降级规则（明确，避免 v3 的模糊）：
++     热 -> 温：连续 14 天未被引用
++     温 -> 冷：对应功能已废弃或服务已下线
++     热 < 200 行 / 温 < 100 行 / 冷 < 50 行（与 memory_compressor 阈值一致）
++     决策内容唯一真相源 = DECISIONS.md，热记忆只放指针，不重复决策内容。 -->
++
+ ## 🔥 热记忆
+ 
+ ### 项目概述
+@@ -14,33 +20,60 @@
+ 
+ ### 当前活跃模块
+ 
+-- 待补充
++| 模块 | 路径 | 职责 | 状态 |
++|---|---|---|---|
++| 待补充 | — | — | — |
++
++### 架构图（可选）
++
++<!-- 可选：删除下方注释占位，改用 mermaid 描述当前模块交互；无架构图也可。 -->
++<!-- ```mermaid
++graph TD
++    A[模块A] --> B[模块B]
++``` -->
+ 
+ ### 关键约定
+ 
+-- 待补充
++<!-- 仅放简短快照，决策背景/原因统一引用 DECISIONS.md#adr-xxx，不在此重复。 -->
++- 待补充（例：参见 `DECISIONS.md#adr-001`）
+ 
+ ## 🌡️ 温记忆
+ 
+ ### 数据模型与模块细节
+ 
++<!-- 数据模型、核心实体关系（1:N / N:M）、关键表/集合结构。事实变更前检查是否应沉淀为 DECISIONS.md ADR。 -->
+ - 待补充
+ 
+ ### 已知问题与技术债务
+ 
+ - 待补充
+ 
+-### 环境与中间件
++### 环境信息
++
++<!-- 环境、部署方式、依赖服务。 -->
++- 待补充
++
++### 中间件配置
+ 
++<!-- 不记录密钥、Token、密码；只记录配置项与用途。 -->
+ - 不记录密钥、Token 或密码。
+ 
+ ## ❄️ 冷记忆
+ 
+ ### 已完成里程碑
+ 
+-- 待补充
++- 初始化 ZSH 项目记忆结构（{{TODAY}}）
++- [ ] 待补充（勾选即完成）
+ 
+ ### 已废弃内容
+ 
++<!-- 使用指针指向 DECISIONS.md ADR 或周日志条目，不在此重复历史细节。 -->
+ - 详细历史应使用指针指向 ADR 或周日志。
+ 
++### 历史 API（已废弃）
++
++- 待补充
++
++### 历史环境（归档）
++
++- 待补充
+diff --git a/codex/zsh/assets/SESSION_LOG.md.tmpl b/codex/zsh/assets/SESSION_LOG.md.tmpl
+index 260697d..76a7aa1 100644
+--- a/codex/zsh/assets/SESSION_LOG.md.tmpl
++++ b/codex/zsh/assets/SESSION_LOG.md.tmpl
+@@ -5,14 +5,18 @@
+ 
+ ---
+ 
++<!-- 本文件为追加型叙事，记录「发生什么」。
++     任务状态（进度/阻塞/续接位置）唯一真相源 = CURRENT_TASK.md，不在此重复遗留工作/进度。
++     周归档由 session_log_manager.py archive 执行（按 **当前周** 字段切分），归档后重置本文件。
++     历史归档索引见 skill-docs/memory-archive/INDEX.md 。 -->
++
+ ## {{TODAY}} 日汇总
+ 
++<!-- 每日首次/末次会话由 Agent 汇总填写（zsh 无 ensure_daily 脚本，由 Agent 维护）。 -->
+ **今日完成**: 初始化项目记忆系统。
+ 
+ **关键决策**: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
+ 
+-**遗留问题**: 待补充。
+-
+ **下一步**: 与用户确认当前工作目标。
+ 
+ ### {{CURRENT_TIME}} 初始化项目记忆
+@@ -21,14 +25,24 @@
+ 
+ **完成的工作**:
+ 
+-- 创建导航、任务、项目记忆、日志、决策和归档索引文件。
+-- 创建或更新 `AGENTS.md` 的 ZSH 薄适配区块。
++1. 创建导航、任务、项目记忆、日志、决策和归档索引文件。
++   - 文件: `codex/zsh/assets/`（+7 个模板/参考文件）
++   - 包含: AGENT_MEMORY / PROJECT_MEMORY / CURRENT_TASK / DECISIONS / SESSION_LOG / ARCHIVE_INDEX
+ 
+-**关键决策**:
++2. 创建或更新 `AGENTS.md` 的 `ZSH:START` / `ZSH:END` 薄适配区块。
++   - 文件: `AGENTS.md`
++   - 包含: 薄适配托管区块（ZSH:START/END），指向 AGENT_MEMORY.md
+ 
+-- `AGENT_MEMORY.md` 是唯一记忆导航入口。
++**关键决策**:
++- 决定: 使用 `AGENT_MEMORY.md` 作为跨 Agent 统一导航入口。
++- 原因: 避免在多个平台文件中复制记忆并产生冲突。
++- 记录: 见 `skill-docs/DECISIONS.md#adr-001`
+ 
+ **遇到的问题**: 无。
+ 
+-**遗留工作**: 补充真实项目状态。
++**代码变更**:
+ 
++```bash
++git diff --stat
++ codex/zsh/  | +N 行（新增 skill 目录）
++```
+diff --git a/codex/zsh/scripts/detect_project.py b/codex/zsh/scripts/detect_project.py
+index 5ed288b..b188471 100644
+--- a/codex/zsh/scripts/detect_project.py
++++ b/codex/zsh/scripts/detect_project.py
+@@ -27,8 +27,26 @@ def detect(root):
+         "project_name": root.name,
+         "is_git_repo": (root / ".git").exists(),
+         "languages": languages,
++        "has_claude_md": (root / "CLAUDE.md").is_file(),
+         "has_agents_md": (root / "AGENTS.md").is_file(),
+         "has_agent_memory": (root / "AGENT_MEMORY.md").is_file(),
++        **_v3(root),
++    }
++
++
++def _v3(root):
++    """Detect rehydration-mode-v3 memory files under docs/. Read-only; writes nothing."""
++    docs = root / "docs"
++    archives = sorted(p.name for p in docs.glob("session-log-*.md")) if docs.is_dir() else []
++    present = {
++        "project_memory": (docs / "PROJECT_MEMORY.md").is_file(),
++        "current_task": (docs / "CURRENT_TASK.md").is_file(),
++        "session_log": (docs / "SESSION_LOG.md").is_file(),
++        "decisions": (docs / "DECISIONS.md").is_file(),
++    }
++    return {
++        "has_v3_memory": any(present.values()),
++        "v3_files": {**present, "archives": archives},
+     }
+ 
+ 
+@@ -37,8 +55,8 @@ def main():
+     parser.add_argument("project_root", nargs="?", default=".")
+     args = parser.parse_args()
+     emit(detect(project_root(args.project_root)))
++    raise SystemExit(0)
+ 
+ 
+ if __name__ == "__main__":
+     main()
+-

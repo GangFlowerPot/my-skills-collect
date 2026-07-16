@@ -24,7 +24,35 @@ AGENTS.md                 平台薄适配层，只负责指路
 
 ## 触发后的路由
 
-1. 如果项目没有 `AGENT_MEMORY.md`，走“初始化”。
+先调用只读探测，再按结果分支：
+
+```powershell
+python <skill_dir>/scripts/detect_project.py <project_root>
+```
+
+### 第 0 步：检测 v3 记忆（一次性迁移机会）
+
+仅当 `has_v3_memory: true` 且 `has_agent_memory: false`（项目已通过 rehydration-mode-v3 初始化、但尚无 zsh 记忆）时进入本分支；否则跳到第 1 步。
+
+向用户提示：
+
+> 检测到本项目已通过 rehydration-mode-v3 初始化（`docs/` 下有项目记忆/当前任务/决策/会话日志）。是否把这些记忆迁移到 zsh 的 `skill-docs/` 命名空间？
+>
+> A. 迁移，`docs/` 保留为历史快照（推荐）
+> B. 迁移后清空 `docs/` 中的 v3 记忆文件
+> C. 暂不迁移，直接初始化一套新的 zsh 记忆
+
+- 用户选 A 或 B 后：
+  1. `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --dry-run` — 展示迁移计划。
+  2. 用户二次确认后 `python <skill_dir>/scripts/migrate_from_v3.py <project_root> --apply`。
+  3. 迁移完成后 `docs/` 不会被改动；若选 B，仅在迁移成功后删除 `docs/{PROJECT_MEMORY,CURRENT_TASK,SESSION_LOG,DECISIONS}.md` 与 `docs/session-log-*.md`（仅删文件，保留 `docs/` 目录）。
+- 用户选 C：跳到第 1 步走 fresh 初始化。
+
+`migrate_from_v3.py` 只迁移、不改写源、不动 `docs/`；已存在的 `skill-docs/` 文件按 `skip_existing` 保留。
+
+### 第 1-5 步
+
+1. 如果项目没有 `AGENT_MEMORY.md`（且未命中第 0 步），走“初始化”。
 2. 如果用户要继续历史工作，走“恢复上下文”。
 3. 如果用户要保存进度，走“脱水保存”。
 4. 如果用户要更新任务、日志、决策或整理记忆，走对应的“会话中管理”。
