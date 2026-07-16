@@ -1,0 +1,20 @@
+<!-- ZSH:MEMORY:START -->
+## Project Memory (ZSH) — Agent-Neutral
+
+This project uses a **cross-agent, model-independent memory system**. On session start
+or "continue previous work":
+
+1. **Read `AGENT_MEMORY.md`** — sole entry point (memory map + read/write protocol).
+2. Treat **`skill-docs/CURRENT_TASK.md`** as the authoritative persisted work state.
+3. **Do not infer history** before reading the memory files. When this agent's native
+   memory conflicts with ZSH project memory, **ZSH project memory wins** — keep the ZSH
+   baseline and ask before overwriting.
+4. At session end, follow the write-back protocol in `AGENT_MEMORY.md`
+   (skip duplicates, confirm conflicts, reject secrets / absolute local paths).
+
+Memory files: `skill-docs/{PROJECT_MEMORY,SESSION_LOG,DECISIONS}.md`
++ `skill-docs/memory-archive/INDEX.md` (weekly archives, read-only).
+
+> ℹ️ Your native memory / this instruction file is **candidate-only**. ZSH project memory
+> stores the verified authoritative facts.
+<!-- ZSH:MEMORY:END -->

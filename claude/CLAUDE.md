@@ -15,6 +15,7 @@ This is a **personal Claude Code skills collection** — a Git repository that s
 |-------|-------------|--------|
 | `moduleskill2global` | Move skills between project-level and global-level installation | Active |
 | `rehydration-mode-v3` | 再水化记忆系统 V3 — 三层记忆 + 周封存 + claude-mem 集成 + Java 全栈检测 | Active |
+| `zsh` | 跨 Agent 项目记忆与上下文恢复 — 兼容 auto-memory（原生记忆仅作候选）+ 可与 claude-mem 互补集成 | Active |
 | `rehydration-mode-v2` | 再水化记忆系统 V2（旧版，仍可用） | Legacy |
 | `rehydration-mode-v1` | 已废弃，仅保留作历史参考 | Deprecated |
 
@@ -30,7 +31,8 @@ my-skills-collect/
 ├── moduleskill2global/                    ← skill 目录
 ├── rehydration-mode-v3/                   ← skill 目录（含 SKILL.md/scripts/references/assets）
 ├── rehydration-mode-v2/                   ← skill 目录
-└── rehydration-mode-v1/                   ← skill 目录（废弃）
+├── rehydration-mode-v1/                   ← skill 目录（废弃）
+└── zsh/                                   ← skill 目录（跨 Agent 记忆，兼容 auto-memory / claude-mem）
 ```
 
 ---

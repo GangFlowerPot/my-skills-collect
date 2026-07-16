@@ -5,6 +5,7 @@
 安装内容:
   - moduleskill2global    : skill — 项目级/全局级 skill 互转
   - rehydration-mode-v3   : skill — 再水化记忆系统 V3
+  - zsh                   : skill — 跨 Agent 项目记忆与上下文恢复系统（兼容 auto-memory / claude-mem）
   - claude-mem            : plugin — 原始会话内容存储（通过 Claude Code /plugin 命令引导安装）
 
 安装目标（全局）:
@@ -39,7 +40,7 @@ CLAUDE_DIR = os.path.join(HOME, ".claude", "skills")
 COLLECTION_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 可安装的 skill 列表（目录名 = skill 名）
-AVAILABLE_SKILLS = ["moduleskill2global", "rehydration-mode-v3"]
+AVAILABLE_SKILLS = ["moduleskill2global", "rehydration-mode-v3", "zsh"]
 
 
 def _mkdir_p(path):
@@ -220,8 +221,9 @@ def guide_claude_mem():
     print("")
     print("分工说明:")
     print("  - rehydration-mode-v3 : 存储结构化摘要（架构/任务/日志/决策）")
+    print("  - zsh                 : 跨 Agent 项目记忆（AGENT_MEMORY.md 导航 + skill-docs/），兼容 auto-memory")
     print("  - claude-mem          : 存储原始会话内容（代码/命令/输出）")
-    print("  - 两者互补，不冗余")
+    print("  - rehydration-mode-v3 / zsh 与 claude-mem 互补，不冗余")
     print("")
     print("=" * 60)
     print("")

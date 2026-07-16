@@ -1,0 +1,47 @@
+{
+  "skill_name": "zsh",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "在一个已有自定义 CLAUDE.md 的项目中初始化跨 Agent 记忆（Claude Code），先预览再执行，不能破坏原规则。",
+      "expected_output": "生成完整记忆结构，向 CLAUDE.md 的 ZSH:MEMORY 托管区块注入薄适配内容，并通过导航验证；CLAUDE.local.md（如存在）只读不写。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我换了一个 Agent，帮我从项目记忆中恢复上次工作，但不要把所有历史日志都读进来。",
+      "expected_output": "按最小或标准恢复顺序读取，汇报任务、位置、阻塞和下一步，仅在必要时定向读取归档。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "检查这个项目的记忆导航是否完整，其中一个目标文件已经被移动。",
+      "expected_output": "只读检测并准确报告失效路径，不编造缺失内容，也不自动覆盖文件。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "当前 Agent 的 auto-memory（来自 CLAUDE.md 原生注入）和项目记忆里都有数据库信息，其中 auto-memory 说 PostgreSQL，ZSH 记忆说 MySQL。保存进度前检查应该写什么。",
+      "expected_output": "声明 ZSH 项目记忆为当前持久化基线，把 auto-memory 差异归类为冲突并等待用户确认，不静默覆盖；auto-memory 仅作候选。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "在 Git 项目初始化 ZSH（Claude Code），记忆应随项目版本化；另一个个人 Git 项目明确要求记忆只保留本地。",
+      "expected_output": "前者使用 shared 策略，仅排除备份；后者使用 local 策略，在 .git/info/exclude 排除导航和 skill-docs。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "项目已安装 claude-mem，用户问'上次那个模块是怎么实现的'，应该先读哪里再查哪里。",
+      "expected_output": "先读 AGENT_MEMORY.md 导航入口，再读 PROJECT_MEMORY.md 热记忆与 CURRENT_TASK.md，再读 SESSION_LOG.md 最近条目；最终按需查询 claude-mem 获取代码细节。不把 claude-mem 的原始内容复制到 ZSH 摘要中。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "CLAUDE.local.md 用户私有原生记忆里有一条项目状态，而 skill-docs/CURRENT_TASK.md 里有冲突状态；脱水保存时如何处理。",
+      "expected_output": "CLAUDE.local.md 只读不写；auto-memory 仅作候选；ZSH 托管区块仅更新 ZSH:MEMORY 内部；以 ZSH CURRENT_TASK.md 当前基线为准，把差异归类为冲突并请求用户确认后才更新。",
+      "files": []
+    }
+  ]
+}
