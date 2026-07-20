@@ -8,6 +8,7 @@ docs/ is never modified or deleted — it becomes a read-only historical snapsho
 
 import argparse
 import re
+from datetime import date
 from pathlib import Path
 
 from _common import MEMORY_ROOT, atomic_write, emit, now_iso, project_root, read_text, render, safe_path
@@ -37,6 +38,31 @@ def transform_content(text):
     for source, target in PATH_REMAP:
         text = text.replace(source, target)
     return text
+
+
+def inject_current_week_header(text):
+    """为 v3 迁移来的「日汇总」SESSION_LOG 注入 `**当前周**: YYYY-WNN` 字段。
+
+    v3 迁移后头部是 `# 会话日志` + `## YYYY-MM-DD 日汇总`，无 `**当前周**:` 字段，
+    导致 session_log_manager.archive() 的 log_week() 识别不了，返回 week_not_detected。
+    本函数从首个 `## YYYY-MM-DD 日汇总` 推算 ISO 周 ID，注入到标题行之后。
+    若已有 `**当前周**:` 字段或提取不到日期，原文返回。
+    """
+    if re.search(r"\*\*当前周\*\*:\s*\d{4}-W\d{2}", text):
+        return text
+    date_match = re.search(r"^##\s+(\d{4}-\d{2}-\d{2})\s+日汇总", text, re.MULTILINE)
+    if not date_match:
+        return text
+    try:
+        iso_year, iso_week, _ = date.fromisoformat(date_match.group(1)).isocalendar()
+    except ValueError:
+        return text
+    week_id = "{}-W{:02d}".format(iso_year, iso_week)
+    header_match = re.search(r"^#\s+会话日志\s*$", text, re.MULTILINE)
+    if not header_match:
+        return text
+    insert_pos = header_match.end()
+    return text[:insert_pos] + "\n\n**当前周**: {}".format(week_id) + text[insert_pos:]
 
 
 def archive_actions(root, archives):
@@ -94,7 +120,10 @@ def apply_migration(root, plan):
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
         if action["action"] in ("migrate", "migrate_archive"):
-            atomic_write(target, transform_content(read_text(root / action["source"])))
+            content = transform_content(read_text(root / action["source"]))
+            if action["target"].endswith("/SESSION_LOG.md"):
+                content = inject_current_week_header(content)
+            atomic_write(target, content)
             created.append(action["target"])
         elif action["target"] == "AGENT_MEMORY.md":
             atomic_write(target, render(read_text(SKILL_ASSETS / "AGENT_MEMORY.md.tmpl"), values))
