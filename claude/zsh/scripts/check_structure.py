@@ -20,8 +20,31 @@ FILES = [
 
 
 def check_claude_mem():
-    """Check if the claude-mem plugin is installed (Claude-exclusive)."""
+    """Check if the claude-mem plugin is installed (Claude-exclusive).
+
+    Reads ~/.claude/plugins/installed_plugins.json (official registry) and falls
+    back to directory scan for older installs. Returns installed/version/path.
+    """
+    import json as _json
     home = os.path.expanduser("~")
+    registry = os.path.join(home, ".claude", "plugins", "installed_plugins.json")
+    if os.path.isfile(registry):
+        try:
+            with open(registry, "r", encoding="utf-8") as f:
+                data = _json.load(f)
+            plugins = data.get("plugins", {})
+            for key, entries in plugins.items():
+                if "claude-mem" in key.lower():
+                    if entries and isinstance(entries, list) and entries[0]:
+                        info = entries[0]
+                        return {
+                            "installed": True,
+                            "version": info.get("version"),
+                            "path": info.get("installPath"),
+                        }
+        except (OSError, _json.JSONDecodeError, KeyError, IndexError):
+            pass
+    # Fallback: directory scan (older installs)
     locations = [
         os.path.join(home, ".claude", "plugins", "claude-mem"),
         os.path.join(home, ".agents", "plugins", "claude-mem"),
