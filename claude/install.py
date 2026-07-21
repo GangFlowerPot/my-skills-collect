@@ -16,6 +16,7 @@
   python install.py                # 安装全部（默认）
   python install.py --skills-only  # 只装 skill，不提示 claude-mem
   python install.py --skip-mem     # 同上
+  python install.py --link-to-source  # 链接到源模式：直接 Junction 到仓内源（git pull 即自动生效）
   python install.py rehydration-mode-v3 moduleskill2global  # 指定安装
   python install.py --list         # 列出可安装的 skill
   python install.py --uninstall    # 卸载（删除已安装的文件）
@@ -95,8 +96,12 @@ def _make_link(src, link_name):
         os.symlink(src, link_name)
 
 
-def _copy_skill(skill_name):
-    """复制 skill 到 agents/skills 并创建符号链接到 .claude/skills。"""
+def _copy_skill(skill_name, link_to_source=False):
+    """复制 skill 到 agents/skills 并创建符号链接到 .claude/skills。
+
+    link_to_source=True 时跳过复制，直接创建指向仓内源的 Junction（方案 B）。
+    适合仓路径固定的多机同步仓：git pull 后自动生效，无需重装。
+    """
     src = os.path.join(COLLECTION_DIR, skill_name)
     dst = os.path.join(AGENTS_DIR, skill_name)
     link = os.path.join(CLAUDE_DIR, skill_name)
@@ -105,7 +110,14 @@ def _copy_skill(skill_name):
         print("  [error] skill 目录不存在: {}".format(src))
         return False
 
-    # 1. 复制到 agents/skills
+    if link_to_source:
+        # 方案 B：直接联接仓内源，跳过副本
+        _make_link(src, link)
+        link_type = "联接" if IS_WINDOWS else "符号链接"
+        print("  [ok] {}: {} -> {} (链接到源)".format(link_type, link, src))
+        return True
+
+    # 方案 A（默认）：复制到 agents/skills
     _mkdir_p(AGENTS_DIR)
     if os.path.exists(dst):
         _rmtree(dst)
@@ -144,7 +156,7 @@ def _remove_skill(skill_name):
     return removed
 
 
-def install_skills(skill_names):
+def install_skills(skill_names, link_to_source=False):
     """安装指定的 skill 列表。"""
     if not skill_names:
         return
@@ -152,6 +164,8 @@ def install_skills(skill_names):
     print("")
     print("=" * 60)
     print("安装 {} 个 skill".format(len(skill_names)))
+    if link_to_source:
+        print("模式: 链接到源（git pull 即自动生效）")
     print("=" * 60)
     print("系统:   {}".format(platform.system()))
     print("代理目录: {}".format(AGENTS_DIR))
@@ -161,7 +175,7 @@ def install_skills(skill_names):
     success = []
     for name in skill_names:
         print("[{}] ".format(name))
-        if _copy_skill(name):
+        if _copy_skill(name, link_to_source=link_to_source):
             success.append(name)
         print("")
 
@@ -271,6 +285,11 @@ def main():
         skip_mem = True
         args = [a for a in args if a not in ("--skills-only", "--skip-mem")]
 
+    link_to_source = False
+    if "--link-to-source" in args:
+        link_to_source = True
+        args = [a for a in args if a != "--link-to-source"]
+
     # 剩余参数为要安装的 skill 名
     to_install = args if args else AVAILABLE_SKILLS
 
@@ -282,7 +301,7 @@ def main():
         else:
             print("[warn] '{}' 不在可安装列表中，跳过。可用: {}".format(name, AVAILABLE_SKILLS))
 
-    install_skills(valid)
+    install_skills(valid, link_to_source=link_to_source)
 
     if not skip_mem:
         guide_claude_mem()
