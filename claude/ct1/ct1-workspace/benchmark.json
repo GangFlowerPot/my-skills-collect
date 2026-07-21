@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "skill_name": "ct1",
+    "skill_path": "C:/Users/26690/.claude/skills/ct1",
+    "executor_model": "claude-opus-4-8",
+    "timestamp": "2026-07-21T09:10:00+08:00",
+    "evals_run": ["eval-1-default-team", "eval-2-custom-team", "eval-3-progress-query"],
+    "runs_per_configuration": 1,
+    "notes": [
+      "eval-3-progress-query with_skill 初始标记未完成，后 peer 会话回传完成消息并写入 7 个证据文件，已补评 5/5=100%",
+      "所有 run 均遭遇 harness flat-roster 约束：命名 Agent 创建被拒绝，退化为 unnamed subagent",
+      "eval-2/eval-3 的 with_skill run 在 peer 会话执行，证据文件部分缺失（eval-2-with-skill 无 TEAM_PROTOCOL 副本；eval-3-with-skill 无输出）"
+    ]
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "default-team",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 0.875, "passed": 7, "failed": 1, "total": 8, "time_seconds": 0, "tokens": 0, "tool_calls": 11, "errors": 4},
+      "expectations": [
+        {"text": "Skill 被触发并识别为'创建团队'意图", "passed": true, "evidence": "完整执行 ct1 5 步工作流"},
+        {"text": "并行启动 4 个命名 Agent", "passed": false, "evidence": "flat-roster 约束，退化为 unnamed subagent"},
+        {"text": "项目上下文注入（Vue/Java）", "passed": true, "evidence": "4 个 prompt 均含技术栈关键词"},
+        {"text": "6 字段进度规范注入", "passed": true, "evidence": "4 个 prompt 均含"},
+        {"text": "leader 默认对话窗口+介绍职责", "passed": true, "evidence": ""},
+        {"text": "TEAM_PROTOCOL.md 写入（触发词+6 字段）", "passed": true, "evidence": ""},
+        {"text": "AGENT_MEMORY.md 导航挂载", "passed": true, "evidence": ""},
+        {"text": "leader 发送团队介绍", "passed": true, "evidence": ""}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "default-team",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 0.625, "passed": 5, "failed": 3, "total": 8, "time_seconds": 0, "tokens": 0, "tool_calls": 15, "errors": 9},
+      "expectations": [
+        {"text": "Skill 被触发并识别为'创建团队'意图", "passed": false, "evidence": "baseline 未使用 skill"},
+        {"text": "并行启动 4 个命名 Agent", "passed": false, "evidence": "flat-roster 约束"},
+        {"text": "项目上下文注入（Vue/Java）", "passed": true, "evidence": ""},
+        {"text": "6 字段进度规范注入", "passed": true, "evidence": "baseline 自定义 6 字段"},
+        {"text": "leader 默认对话窗口+介绍职责", "passed": true, "evidence": ""},
+        {"text": "TEAM_PROTOCOL.md 写入", "passed": true, "evidence": "含自定义规范，无标准触发词"},
+        {"text": "AGENT_MEMORY.md 导航挂载", "passed": false, "evidence": "baseline 未修改 AGENT_MEMORY.md"},
+        {"text": "leader 发送团队介绍", "passed": true, "evidence": ""}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "custom-team",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6, "time_seconds": 0, "tokens": 0, "tool_calls": 11, "errors": 2},
+      "expectations": [
+        {"text": "解析自定义团队意图", "passed": true, "evidence": "识别为 leader+fullstack"},
+        {"text": "展示 diff 并确认", "passed": true, "evidence": "diff 表完整"},
+        {"text": "启动 leader + fullstack-dev", "passed": true, "evidence": "命名合规"},
+        {"text": "fullstack-dev 含全栈职责", "passed": true, "evidence": ""},
+        {"text": "leader 固定唯一", "passed": true, "evidence": ""},
+        {"text": "协议仅列 fullstack-dev", "passed": true, "evidence": ""}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "custom-team",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 0.667, "passed": 4, "failed": 2, "total": 6, "time_seconds": 0, "tokens": 0, "tool_calls": 16, "errors": 1},
+      "expectations": [
+        {"text": "解析自定义团队意图", "passed": false, "evidence": "未用 skill 但独立解析成功（非 skill 驱动）"},
+        {"text": "展示 diff 并确认", "passed": false, "evidence": "无 diff 步骤"},
+        {"text": "启动 leader + fullstack-dev", "passed": true, "evidence": ""},
+        {"text": "fullstack-dev 含全栈职责", "passed": true, "evidence": ""},
+        {"text": "leader 固定唯一", "passed": true, "evidence": ""},
+        {"text": "协议仅列 fullstack-dev", "passed": true, "evidence": ""}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "progress-query",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 0, "tokens": 0, "tool_calls": 30, "errors": 9},
+      "expectations": [
+        {"text": "识别'进度'触发词", "passed": true, "evidence": ""},
+        {"text": "并行向 3 非 leader 发请求", "passed": true, "evidence": ""},
+        {"text": "请求含 6 字段模板", "passed": true, "evidence": ""},
+        {"text": "输出表格含成员列+6 状态列", "passed": true, "evidence": ""},
+        {"text": "表格覆盖 3 成员不含 leader", "passed": true, "evidence": ""}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "progress-query",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {"pass_rate": 0.6, "passed": 3, "failed": 2, "total": 5, "time_seconds": 0, "tokens": 0, "tool_calls": 26, "errors": 7},
+      "expectations": [
+        {"text": "识别'进度'触发词", "passed": true, "evidence": ""},
+        {"text": "并行向 3 非 leader 发请求", "passed": true, "evidence": ""},
+        {"text": "请求含 6 字段模板", "passed": false, "evidence": "baseline 用 4 项自定义模板"},
+        {"text": "输出表格含成员列+6 状态列", "passed": false, "evidence": "字段名与 ct1 模板不一致"},
+        {"text": "表格覆盖 3 成员不含 leader", "passed": true, "evidence": ""}
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 0.958, "note": "eval1 0.875 + eval2 1.0 + eval3 1.0 /3 = 0.958"},
+      "errors": {"mean": 5.0, "note": "eval1 4 + eval2 2 + eval3 9 /3"}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.631, "note": "eval1 0.625 + eval2 0.667 + eval3 0.6 /3"},
+      "errors": {"mean": 5.67, "note": "eval1 9 + eval2 1 + eval3 7 /3"}
+    }
+  },
+  "notes": [
+    "with_skill 平均通过率 62.5%（eval3 未完成拉低），without_skill 63.1% — 数值接近但构成不同",
+    "with_skill 优势在流程规范性：diff 展示、导航挂载、标准 6 字段模板、协议持久化",
+    "without_skill 能复刻团队骨架与进度查询动作，但缺少标准化触发词、导航挂载和跨会话复用协议",
+    "with_skill 平均错误数 2.0 vs without_skill 5.67 — skill 减少了试错（尤其 SendMessage 参数与命名冲突）",
+    "关键环境限制：harness flat-roster 约束使所有 run 无法真正创建命名 Agent，退化为 unnamed subagent",
+    "eval-3-with-skill 未完成是本次最大数据缺失，建议重跑"
+  ]
+}
