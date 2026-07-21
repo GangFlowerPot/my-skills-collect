@@ -1,6 +1,6 @@
 # 项目记忆 — my-skills-collect
 
-**最后更新**: 2026-07-16（跨日会话，起于 2026-07-15）
+**最后更新**: 2026-07-20（R2 实测 + 迁移修复）
 
 ⚠️ 本仓库是 **skills 集合仓**（本身是产品），不是使用 skill 的应用项目。
 日常工作 = 开发/改进本仓内的 skill（git-rule、rehydration-mode-v3、zsh 等）。
@@ -20,7 +20,7 @@ skill 内部用 `{{UPPER_SNAKE}}` 占位符 + `_common.render` 渲染。
 
 | 模块 | 路径 | 职责 | 状态 |
 |---|---|---|---|
-| zsh（Claude 版） | `claude/zsh/` | 跨 Agent 项目记忆 + 上下文恢复，CLAUDE.md ZSH:MEMORY 托管区块 | ✅ 已推送 d4490bc |
+| zsh（Claude 版） | `claude/zsh/` | 跨 Agent 项目记忆 + 上下文恢复，CLAUDE.md ZSH:MEMORY 托管区块 | ✅ 已推送 d4490bc + b540cf1（R2 修复） |
 | zsh（Codex 版） | `codex/zsh/` | 跨 Agent 项目记忆，AGENTS.md ZSH:START 托管区块 | ✅ 已推送 d4490bc |
 | rehydration-mode-v3 | `claude/rehydration-mode-v3/` | 三层热/温/冷记忆 + 周封存 + claude-mem 集成 | ✅ 独立 skill（zsh 仅参考其格式） |
 
@@ -34,7 +34,11 @@ skill 内部用 `{{UPPER_SNAKE}}` 占位符 + `_common.render` 渲染。
   `CLAUDE.md` 的 `ZSH:MEMORY` = Claude 专属。不做通用注入脚本。
 - **跨 agent 归档**：session_log_manager.py 做自然周归档；无 skill agent 写完记忆后
   给交接提示，归档挂靠装 skill agent 的下次启动检查（脚本本身零 token）。
-- 详细决策指针：参见 `docs/DECISIONS.md#adr-001` ~ `#adr-004`。
+- **v3→zsh 迁移修复**：migrate_from_v3.py 迁移时注入 `**当前周**: YYYY-WNN` 字段，
+  避免 archive 返回 `week_not_detected`（参见 ADR-005）。
+- **claude-mem 探测修复**：check_structure.py 读 installed_plugins.json 作为主路径（参见 ADR-006）。
+- **install.py 链接到源**：新增 `--link-to-source` 参数，直接 Junction 到仓内源（git pull 即自动生效）。
+- 详细决策指针：参见 `docs/DECISIONS.md#adr-001` ~ `#adr-006`。
 
 ---
 
@@ -55,9 +59,9 @@ skill 内部用 `{{UPPER_SNAKE}}` 占位符 + `_common.render` 渲染。
    - 影响: 本地无法用 `python` 跑/校验脚本（但目标环境 Py3.8+ 正常）
    - 实操: 本仓所有 Py3 脚本的 py_compile 报错均为环境误报，非代码缺陷
 
-2. **zsh SESSION_LOG R2 风险**
-   - session_log_manager archive 切分逻辑需对「日汇总」pattern 生效
-   - 状态: 模板已改为小时条目（R1 通过），R2 需 apply+archive 真跑一次确认（未实测）
+2. **v3→zsh 迁移的 archive 兼容性（已修复 ✅）**
+   - session_log_manager.archive() 的 `log_week()` 不兼容「日汇总」pattern
+   - 状态: 已通过 migrate_from_v3.py 注入 `**当前周**:` 字段修复（ADR-005，b540cf1）
 
 ### 环境信息
 

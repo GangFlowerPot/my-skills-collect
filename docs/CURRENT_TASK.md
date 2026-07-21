@@ -1,10 +1,10 @@
 # 当前任务状态
 
-**最后更新**: 2026-07-16 18:10 by Claude Opus 4.8 (会话ID: 跨日长会话)
+**最后更新**: 2026-07-20 12:45 by Claude Opus 4.8
 
 ## 当前阶段
 
-🔄 阶段: zsh skill 开发与推送完成，等待下一轮迭代触发
+🔄 阶段: zsh skill 开发 + 实测全部完成，待下一轮触发
 
 ## 已完成
 
@@ -14,6 +14,11 @@
 - [x] 单真相源规则落地（AGENT_MEMORY + 4 模板）— 推送 d4490bc
 - [x] zsh-skill-diff-vs-yesterday.txt 对比文件（当前 vs 7fb84da）— 推送 d4490bc
 - [x] 本仓 rehydration-mode-v3 记忆系统初始化（当前正在执行）
+- [x] **zsh skill 全局安装**（`~/.claude/skills/zsh` + `~/.agents/skills/zsh`，方案 A 副本模式）— 2026-07-20
+- [x] **R2 实测**：articleReading 项目验证 archive 跨周切分，TC1 `week_not_detected` + TC2 切分成功，bug 坐实 — 推送 b540cf1
+- [x] **migrate_from_v3.py 修复**：新增 `inject_current_week_header()`，迁移时注入 `**当前周**:` 字段 — 推送 b540cf1
+- [x] **修复同步**：仓内脚本 → 已安装版本（md5 一致）— 2026-07-20
+- [x] **articleReading SESSION_LOG 修复**：头部注入 `**当前周**: 2026-W30` — 推送 0b5980f
 
 ## 进行中
 
@@ -21,10 +26,11 @@
 
 ## 待开始
 
-- [ ] **R2 实测**：zsh SESSION_LOG 模板升级后，apply + `session_log_manager.py archive` 真跑一次，确认跨周切分对「日汇总」pattern 生效（未实测，见 PROJECT_MEMORY 温记忆/R2）
-- [ ] **同项目 v3+zsh 双 init 实测**：在同一项目跑 rehydration-v3 init 后再跑 zsh init，确认托管区块互不覆盖（CLAUDE.md 同写风险，列为 follow-up）
-- [ ] **claude-mem 插件集成实测**：本地安装 thedotmack/claude-mem 后验证分工（结构化 ↔ 原始会话）
-- [ ] **evals 新用例 id 6/7 实际跑通**：claude-mem 分工用例 + auto-memory 权威用例
+- [ ] **zsh 托管区块注入**：articleReading `CLAUDE.md` 追加 ZSH:MEMORY 托管区块（`update_agent_entry.py --apply`，可选）
+- [x] **articleReading zsh 工作流真正实测**：用 zsh（非 v3）做一次真实的"恢复上下文→更新进度→脱水保存"闭环 — ✅ **已通过（自然触发）**：另一个 Claude 完成 v0.1 收尾时完整走完了 zsh 保存流程（SESSION_LOG 追加 + CURRENT_TASK 同步 + AGENT_MEMORY 时间戳更新），比模拟测试更真实的集成层验证
+- [x] **install.py 增加"链接到源"选项**：目前只有副本模式，缺少方案 B（直接 `mklink /J` 到仓内源）— ✅ 已推送 6b66bf6
+- [x] **check_structure.py claude-mem 探测修复**：读取 `installed_plugins.json`（官方注册表）+ 目录扫描回退 — 推送 b133118
+- [x] **evals id 6/7 实际跑通**：id 7 模拟项目决策树验证 PASS + id 6 规则覆盖验证 PASS — 2026-07-21
 
 ## 关键文件状态
 

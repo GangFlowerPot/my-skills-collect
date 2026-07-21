@@ -6,6 +6,73 @@ ADR 编号：ADR-{自增，从 001 开始}；新增 ADR 追加到文件顶部。
 
 ---
 
+## ADR-006: check_structure.py 的 claude-mem 探测改用 installed_plugins.json
+
+**日期**: 2026-07-21
+**状态**: 已决定 ✅
+**提出者**: 修复安装探测 bug
+
+### 背景
+
+`check_structure.py` 的 `check_claude_mem()` 只查两个固定路径（`~/.claude/plugins/claude-mem`、`~/.agents/plugins/claude-mem`），无法识别新版本 claude-mem（13.11.0）的实际安装位置（`~/.claude/plugins/cache/thedotmack/claude-mem/13.11.0`），导致返回 `installed: false`。
+
+### 决策
+
+`check_claude_mem()` 优先读 `~/.claude/plugins/installed_plugins.json`（官方注册表），检查 `claude-mem@thedotmack` 条目；失败时回退到旧逻辑目录扫描。
+
+### 原因
+
+- 官方注册表是 claude-mem 安装状态的最权威来源
+- 目录结构可能随版本变化，硬编码路径脆弱
+- 回退逻辑兼容旧版安装
+
+### 影响
+
+- 探测结果新增 `version` 字段（如 `13.11.0`）
+- 路径指向真实安装位置
+
+### 代码位置
+
+- `claude/zsh/scripts/check_structure.py` 的 `check_claude_mem()`
+
+---
+
+## ADR-005: v3→zsh 迁移的 SESSION_LOG 头部「当前周字段注入」修复
+
+**日期**: 2026-07-20
+**状态**: 已决定 ✅
+**提出者**: 讨论后确认
+
+### 背景
+
+R2 实测确认 bug：v3 迁移来的「日汇总」SESSION_LOG 头部无 `**当前周**: YYYY-WNN` 字段，
+导致 `session_log_manager.archive()` 的 `log_week()` 返回 None，archive 返回 `week_not_detected`
+静默跳过跨周切分。
+
+### 决策
+
+保持 log_week() 不兼容「日汇总」pattern（不做长期方案）；修复点改为 migrate_from_v3.py：
+迁移时从首个 `## YYYY-MM-DD 日汇总` 提取日期，推算 ISO 周 ID，在 `# 会话日志` 后追加
+`**当前周**: YYYY-WNN`。已迁移项目（articleReading 等）手动补一行头部或重跑迁移。
+
+### 原因
+
+- 用户明确长期方案（log_week 兼容「日汇总」）没必要：新项目用 zsh fresh 初始化自带 `**当前周**:`；
+  只需覆盖已迁移的存量项目
+- 修复 migrate_from_v3.py 成本最低的：改 1 文件、约 30 行、未来迁移自动生效
+- 不修改识别逻辑，保持 archive 简洁
+
+### 影响
+
+- 未来 v3→zsh 迁移自动注入字段，不会再触达 `week_not_detected`
+- 已迁移项目需人工处理（重跑迁移或手动补一行）
+
+### 代码位置
+
+- `claude/zsh/scripts/migrate_from_v3.py` 的 `inject_current_week_header()`
+
+---
+
 ## ADR-004: 跨 agent 记忆归档的「交接提示 + 零 token」模型
 
 **日期**: 2026-07-16

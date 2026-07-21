@@ -53,9 +53,89 @@
 
 ```bash
 git diff --stat
- claude/zsh/  | 模板升级 + 迁移功能（7fb84da → d4490bc）
- codex/zsh/  | 等价同步
- zsh-skill-diff-vs-yesterday.txt | +761 行（新增对比文件）
+ claude/zsh/scripts/migrate_from_v3.py | +31 行（inject_current_week_header）
+ docs/*                                 | +360 行（本仓记忆初始化）
+ 推送: b540cf1（my-skills-collect）、0b5980f（articleReading）
+```
+
+---
+
+### 12:45 zsh R2 实测 + 迁移修复（articleReading）
+
+**任务**: 验证 archive 跨周切分对 v3 迁移「日汇总」pattern 的兼容性，并修复
+
+**完成的工作**:
+
+1. R2 实测（articleReading，r2-archive-test 分支，已清理）
+   - 文件: `D:/claudeCode/articleReading/skill-docs/SESSION_LOG.md`
+   - 包含: TC1（`week_not_detected` bug 坐实）+ TC2（跨周切分成功，生成 session-log-2026-W28.md）
+
+2. migrate_from_v3.py 修复
+   - 文件: `claude/zsh/scripts/migrate_from_v3.py`
+   - 包含: 新增 `inject_current_week_header()`，从 `## YYYY-MM-DD 日汇总` 推算 ISO 周 ID，迁移时注入 `**当前周**:`
+
+3. 修复同步 + articleReading 应用
+   - 仓内脚本 → 已安装脚本（md5 一致）
+   - articleReading SESSION_LOG 头部注入 `**当前周**: 2026-W30`（推送 0b5980f）
+
+**关键决策**:
+- 决策: 短期修复选 migrate_from_v3.py 而非修改 log_week()（ADR-005）
+- 原因: 用户明确长期方案（让 log_week 兼容「日汇总」）没必要；新项目用 zsh、已迁移项目通过修复迁移脚本覆盖
+- 记录: 见 `docs/DECISIONS.md#adr-005`
+
+**遇到的问题**:
+- v3 迁移的「日汇总」SESSION_LOG 无 `**当前周**:` 字段 → archive 静默跳过（`week_not_detected`）
+- 解决: migrate_from_v3.py 注入字段；articleReading 手动补一行
+
+**代码变更**:
+
+```bash
+git diff --stat（my-skills-collect）
+ claude/zsh/scripts/migrate_from_v3.py | +31 行
+ docs/*                                 | +360 行
+ 推送: b540cf1
+
+git diff --stat（articleReading）
+ skill-docs/SESSION_LOG.md | +2 行
+ 推送: 0b5980f
+```
+
+---
+
+### 15:30 zsh claude-mem 集成 + evals + install.py 链接到源（本仓）
+
+**任务**: 完成任务 4/5 + 任务 3 + 任务 2 评估
+
+**完成的工作**:
+
+1. claude-mem 集成验证（任务 4）
+   - 文件: `~/.claude/plugins/cache/thedotmack/claude-mem/13.11.0`
+   - 包含: 确认 claude-mem 13.11.0 已安装；修复 check_structure.py 探测逻辑（读 installed_plugins.json）
+
+2. evals id 6/7 跑通（任务 5）
+   - 文件: `claude/zsh/evals/evals.json`、`/tmp/zsh-eval-test`（临时，已清理）
+   - 包含: id 7 模拟项目决策树验证 PASS（CLAUDE.local.md 冲突处理）；id 6 规则覆盖验证 PASS
+
+3. install.py 链接到源（任务 3）
+   - 文件: `claude/install.py`
+   - 包含: 新增 `--link-to-source` 参数，直接 Junction 到仓内源（git pull 即自动生效）
+
+4. 任务 2 评估
+   - 检查 articleReading 记忆文件（全部更新到 2026-07-21 16:45）
+   - 结论: 另一个 Claude 完成 v0.1 收尾时已自然触发完整 zsh 保存流程，任务 2 已通过
+
+**关键决策**:
+- 决策: check_structure.py 读 installed_plugins.json 作为 claude-mem 探测主路径（ADR-006）
+- 原因: 旧逻辑只查两个固定路径，无法识别新版本实际安装位置
+- 记录: 见 `docs/DECISIONS.md#adr-006`
+
+**代码变更**:
+
+```bash
+git diff --stat（my-skills-collect）
+ claude/zsh/scripts/check_structure.py | +24 行（claude-mem 探测修复）
+ claude/install.py                     | +25 行（--link-to-source）
+ 推送: b133118、6b66bf6
 ```
 
 ---
