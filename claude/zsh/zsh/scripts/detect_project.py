@@ -17,7 +17,23 @@ SIGNALS = {
 }
 
 
+def _zsh_layout(root):
+    """Detect whether a project uses zsh memory, and which layout.
+
+    Returns "zsh" (new layout: zsh/AGENT_MEMORY.md), "skill-docs" (legacy
+    layout: root AGENT_MEMORY.md + skill-docs/), or None (no zsh memory).
+    The sole signal is AGENT_MEMORY.md presence in either location, so
+    legacy projects like articleReading keep being recognized.
+    """
+    if (root / "zsh" / "AGENT_MEMORY.md").is_file():
+        return "zsh"
+    if (root / "AGENT_MEMORY.md").is_file() and (root / "skill-docs").is_dir():
+        return "skill-docs"
+    return None
+
+
 def detect(root):
+    layout = _zsh_layout(root)
     languages = []
     for name, patterns in SIGNALS.items():
         if any(any(root.glob(pattern)) for pattern in patterns):
@@ -29,7 +45,8 @@ def detect(root):
         "languages": languages,
         "has_claude_md": (root / "CLAUDE.md").is_file(),
         "has_agents_md": (root / "AGENTS.md").is_file(),
-        "has_agent_memory": (root / "AGENT_MEMORY.md").is_file(),
+        "zsh_layout": layout,
+        "has_agent_memory": layout is not None,
         **_v3(root),
     }
 

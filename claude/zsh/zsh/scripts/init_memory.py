@@ -6,12 +6,13 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from _common import MEMORY_ROOT, atomic_write, emit, now_iso, project_root, read_text, render, safe_path
+from detect_project import _zsh_layout
 from detect_project import detect
 from git_policy import apply_git_policy
 from update_agent_entry import update
 
 TEMPLATES = {
-    "AGENT_MEMORY.md": "AGENT_MEMORY.md.tmpl",
+    MEMORY_ROOT + "/AGENT_MEMORY.md": "AGENT_MEMORY.md.tmpl",
     MEMORY_ROOT + "/PROJECT_MEMORY.md": "PROJECT_MEMORY.md.tmpl",
     MEMORY_ROOT + "/CURRENT_TASK.md": "CURRENT_TASK.md.tmpl",
     MEMORY_ROOT + "/SESSION_LOG.md": "SESSION_LOG.md.tmpl",
@@ -43,6 +44,11 @@ def initialize(root, apply_changes, git_policy):
     assets = Path(__file__).resolve().parent.parent / "assets"
     replacements = values(root)
     actions = []
+    # Guard: if the project already uses zsh memory in any layout (new zsh/ or
+    # legacy skill-docs/), refuse to (re-)initialize. Otherwise a legacy project
+    # would get a duplicate zsh/ tree created next to its existing files.
+    if _zsh_layout(root) is not None:
+        return {"ok": False, "mode": "apply" if apply_changes else "dry-run", "files": [], "reason": "already_initialized", "zsh_layout": _zsh_layout(root)}
     # Validate the managed marker structure before creating any memory files.
     preflight = update(root, "dry-run")
     if not preflight.get("ok"):

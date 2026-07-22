@@ -77,10 +77,10 @@ def archive_actions(root, archives):
 def plan_migration(root):
     detected = _v3(root)
     files = []
-    if (root / "AGENT_MEMORY.md").is_file():
-        files.append({"source": None, "target": "AGENT_MEMORY.md", "action": "skip_existing"})
+    if (root / "zsh" / "AGENT_MEMORY.md").is_file() or (root / "AGENT_MEMORY.md").is_file():
+        files.append({"source": None, "target": MEMORY_ROOT + "/AGENT_MEMORY.md", "action": "skip_existing"})
     else:
-        files.append({"source": None, "target": "AGENT_MEMORY.md", "action": "generate"})
+        files.append({"source": None, "target": MEMORY_ROOT + "/AGENT_MEMORY.md", "action": "generate"})
     for source_relative, target_relative in SOURCE_TARGETS:
         source = root / source_relative
         if not source.is_file():
@@ -125,7 +125,7 @@ def apply_migration(root, plan):
                 content = inject_current_week_header(content)
             atomic_write(target, content)
             created.append(action["target"])
-        elif action["target"] == "AGENT_MEMORY.md":
+        elif action["target"] == MEMORY_ROOT + "/AGENT_MEMORY.md":
             atomic_write(target, render(read_text(SKILL_ASSETS / "AGENT_MEMORY.md.tmpl"), values))
             created.append(action["target"])
         elif action["target"].endswith("memory-archive/INDEX.md"):

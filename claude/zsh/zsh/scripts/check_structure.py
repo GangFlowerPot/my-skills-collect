@@ -6,17 +6,33 @@ import os
 from datetime import datetime
 
 from _common import MEMORY_ROOT, emit, project_root
+from detect_project import _zsh_layout
 from validate_navigation import validate
 
-FILES = [
-    "CLAUDE.md",
-    "AGENT_MEMORY.md",
-    MEMORY_ROOT + "/CURRENT_TASK.md",
-    MEMORY_ROOT + "/PROJECT_MEMORY.md",
-    MEMORY_ROOT + "/SESSION_LOG.md",
-    MEMORY_ROOT + "/DECISIONS.md",
-    MEMORY_ROOT + "/memory-archive/INDEX.md",
-]
+
+def _memory_root(root):
+    """Resolve the actual memory-root directory for this project.
+
+    New layout ("zsh"): everything lives under zsh/.
+    Legacy layout ("skill-docs"): AGENT_MEMORY.md sits at the project root
+    while the other memory files live under skill-docs/.
+    """
+    return "zsh" if _zsh_layout(root) == "zsh" else "skill-docs"
+
+
+def _files(root):
+    """Build the list of files to inspect based on the project's zsh layout."""
+    memory_root = _memory_root(root)
+    root_memory = memory_root + "/AGENT_MEMORY.md" if memory_root == "zsh" else "AGENT_MEMORY.md"
+    return [
+        "CLAUDE.md",
+        root_memory,
+        memory_root + "/CURRENT_TASK.md",
+        memory_root + "/PROJECT_MEMORY.md",
+        memory_root + "/SESSION_LOG.md",
+        memory_root + "/DECISIONS.md",
+        memory_root + "/memory-archive/INDEX.md",
+    ]
 
 
 def check_claude_mem():
@@ -57,14 +73,15 @@ def check_claude_mem():
 
 def inspect(root):
     result = []
-    for relative in FILES:
+    memory_root = _memory_root(root)
+    for relative in _files(root):
         path = root / relative
         item = {"path": relative, "exists": path.is_file()}
         if path.is_file():
             stat = path.stat()
             item.update({"size_bytes": stat.st_size, "modified_at": datetime.fromtimestamp(stat.st_mtime).astimezone().isoformat(timespec="seconds")})
         result.append(item)
-    archive = root / MEMORY_ROOT / "memory-archive"
+    archive = root / memory_root / "memory-archive"
     navigation = validate(root)
     return {"ok": navigation["ok"], "files": result, "archived_weeks": len(list(archive.glob("session-log-*.md"))) if archive.is_dir() else 0, "navigation": navigation, "claude_mem": check_claude_mem()}
 

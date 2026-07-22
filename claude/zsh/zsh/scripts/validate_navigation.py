@@ -5,16 +5,34 @@ import argparse
 import re
 
 from _common import MEMORY_ROOT, emit, project_root, read_text, safe_path
+from detect_project import _zsh_layout
 from update_agent_entry import classify
 
-REQUIRED = [
-    "AGENT_MEMORY.md",
-    MEMORY_ROOT + "/CURRENT_TASK.md",
-    MEMORY_ROOT + "/PROJECT_MEMORY.md",
-    MEMORY_ROOT + "/SESSION_LOG.md",
-    MEMORY_ROOT + "/DECISIONS.md",
-    MEMORY_ROOT + "/memory-archive/INDEX.md",
-]
+
+def _memory_root(root):
+    """Resolve the actual memory-root directory for this project.
+
+    New layout ("zsh"): everything lives under zsh/.
+    Legacy layout ("skill-docs"): AGENT_MEMORY.md sits at the project root
+    while the other memory files live under skill-docs/.
+    """
+    return "zsh" if _zsh_layout(root) == "zsh" else "skill-docs"
+
+
+def _required(root):
+    """Build REQUIRED file list based on the project's zsh layout."""
+    memory_root = _memory_root(root)
+    root_memory = memory_root + "/AGENT_MEMORY.md" if memory_root == "zsh" else "AGENT_MEMORY.md"
+    return [
+        root_memory,
+        memory_root + "/CURRENT_TASK.md",
+        memory_root + "/PROJECT_MEMORY.md",
+        memory_root + "/SESSION_LOG.md",
+        memory_root + "/DECISIONS.md",
+        memory_root + "/memory-archive/INDEX.md",
+    ]
+
+
 REQUIRED_METADATA = ["schema", "project", "memory_root", "updated_at", "status"]
 
 
@@ -31,21 +49,23 @@ def metadata(content):
 
 
 def validate(root):
+    layout = _zsh_layout(root)
+    memory_root = "zsh" if layout == "zsh" else "skill-docs"
     checks = []
-    for relative in REQUIRED:
+    for relative in _required(root):
         path = safe_path(root, relative)
         checks.append({"path": relative, "exists": path.is_file()})
-    nav = root / "AGENT_MEMORY.md"
+    nav = root / memory_root / "AGENT_MEMORY.md" if layout == "zsh" else root / "AGENT_MEMORY.md"
     meta = metadata(read_text(nav)) if nav.is_file() else {}
     missing_metadata = [key for key in REQUIRED_METADATA if not meta.get(key)]
     metadata_errors = []
-    if meta.get("memory_root") and meta["memory_root"] != MEMORY_ROOT:
-        metadata_errors.append("memory_root_must_be_{}".format(MEMORY_ROOT))
+    if meta.get("memory_root") and meta["memory_root"] not in ("zsh", "skill-docs"):
+        metadata_errors.append("memory_root_must_be_zsh_or_skill-docs")
     agents = root / "CLAUDE.md"
     adapter_state = classify(read_text(agents)) if agents.is_file() else "missing"
     referenced = []
     if nav.is_file():
-        pattern = r"`((?:{}/)[^`]+\.md)`".format(re.escape(MEMORY_ROOT))
+        pattern = r"`((?:{}/)[^`]+\.md)`".format(re.escape(memory_root))
         for relative in sorted(set(re.findall(pattern, read_text(nav)))):
             try:
                 exists = safe_path(root, relative).is_file()
@@ -61,7 +81,6 @@ def main():
     parser.add_argument("project_root", nargs="?", default=".")
     args = parser.parse_args()
     result = validate(project_root(args.project_root))
-    emit(result)
     raise SystemExit(0 if result["ok"] else 2)
 
 

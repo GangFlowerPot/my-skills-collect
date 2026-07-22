@@ -1,7 +1,7 @@
 ---
 schema: zsh-memory/v1
 project: "{{PROJECT_NAME}}"
-memory_root: skill-docs
+memory_root: zsh
 updated_at: "{{UPDATED_AT}}"
 status: active
 ---
@@ -12,31 +12,31 @@ status: active
 
 ## 快速恢复
 
-1. 读取 `skill-docs/CURRENT_TASK.md`，确认当前阶段、任务、阻塞和精确续接位置。
-2. 读取 `skill-docs/PROJECT_MEMORY.md` 的热记忆，补足项目核心背景。
-3. 读取 `skill-docs/SESSION_LOG.md` 的最后一个会话，确认最近发生的变化。
-4. 读取 `skill-docs/DECISIONS.md` 中与当前任务相关且状态有效的决策。
+1. 读取 `zsh/CURRENT_TASK.md`，确认当前阶段、任务、阻塞和精确续接位置。
+2. 读取 `zsh/PROJECT_MEMORY.md` 的热记忆，补足项目核心背景。
+3. 读取 `zsh/SESSION_LOG.md` 的最后一个会话，确认最近发生的变化。
+4. 读取 `zsh/DECISIONS.md` 中与当前任务相关且状态有效的决策。
 
 ## 记忆地图
 
 | 内容 | 路径 | 读取时机 | 写入规则 |
 |---|---|---|---|
-| 当前任务 | `skill-docs/CURRENT_TASK.md` | 每次恢复必读 | 任务状态变化或会话结束时更新 |
-| 项目记忆 | `skill-docs/PROJECT_MEMORY.md` | 需要项目背景时；热记忆优先 | 架构、约定或长期事实变化后更新 |
-| 当前日志 | `skill-docs/SESSION_LOG.md` | 需要近期上下文时 | 会话结束时追加，禁止覆盖历史条目 |
-| 决策记录 | `skill-docs/DECISIONS.md` | 涉及设计选择时 | 重要决策确认后追加 ADR |
-| 历史索引 | `skill-docs/memory-archive/INDEX.md` | 当前文件不足时 | 周日志归档时更新 |
+| 当前任务 | `zsh/CURRENT_TASK.md` | 每次恢复必读 | 任务状态变化或会话结束时更新 |
+| 项目记忆 | `zsh/PROJECT_MEMORY.md` | 需要项目背景时；热记忆优先 | 架构、约定或长期事实变化后更新 |
+| 当前日志 | `zsh/SESSION_LOG.md` | 需要近期上下文时 | 会话结束时追加，禁止覆盖历史条目 |
+| 决策记录 | `zsh/DECISIONS.md` | 涉及设计选择时 | 重要决策确认后追加 ADR |
+| 历史索引 | `zsh/memory-archive/INDEX.md` | 当前文件不足时 | 周日志归档时更新 |
 
 ## 信息优先级
 
 发生冲突时依次采用：
 
 1. 用户当前明确指令
-2. `skill-docs/CURRENT_TASK.md`
-3. `skill-docs/DECISIONS.md` 中状态为“已接受”的最新相关决策
-4. `skill-docs/PROJECT_MEMORY.md` 热记忆
-5. `skill-docs/SESSION_LOG.md`
-6. `skill-docs/memory-archive/` 历史归档
+2. `zsh/CURRENT_TASK.md`
+3. `zsh/DECISIONS.md` 中状态为“已接受”的最新相关决策
+4. `zsh/PROJECT_MEMORY.md` 热记忆
+5. `zsh/SESSION_LOG.md`
+6. `zsh/memory-archive/` 历史归档
 7. Agent 原生记忆
 8. Agent 当前推断
 
@@ -46,8 +46,8 @@ status: active
 
 为避免 v3 中「同一决策三重表征 / 任务状态双重维护」的冗余，本 skill 明确：
 
-- **决策内容**（背景 / 原因 / 影响 / 替代方案 / 代码位置）唯一真相源 = `skill-docs/DECISIONS.md`。`PROJECT_MEMORY.md` 热记忆只放简短快照 + 指向 `DECISIONS.md#adr-xxx` 的指针，**不重复**决策内容。
-- **任务状态**（进度 / 阻塞 / 续接位置）唯一真相源 = `skill-docs/CURRENT_TASK.md`。`SESSION_LOG.md` 为追加型叙事，**不重复**遗留工作 / 进度（那些归 CURRENT_TASK）。
+- **决策内容**（背景 / 原因 / 影响 / 替代方案 / 代码位置）唯一真相源 = `zsh/DECISIONS.md`。`PROJECT_MEMORY.md` 热记忆只放简短快照 + 指向 `DECISIONS.md#adr-xxx` 的指针，**不重复**决策内容。
+- **任务状态**（进度 / 阻塞 / 续接位置）唯一真相源 = `zsh/CURRENT_TASK.md`。`SESSION_LOG.md` 为追加型叙事，**不重复**遗留工作 / 进度（那些归 CURRENT_TASK）。
 - 回写时若与上述文件冲突，以对应真相源为准；PROJECT_MEMORY 热记忆与 DECISIONS 冲突时以 DECISIONS 为准。
 
 ## Agent 原生记忆兼容

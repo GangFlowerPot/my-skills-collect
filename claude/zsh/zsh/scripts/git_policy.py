@@ -16,7 +16,7 @@ def is_git_repo(root):
 def managed_block(policy):
     lines = [START]
     if policy == "local":
-        lines.extend(["/AGENT_MEMORY.md", "/{}/".format(MEMORY_ROOT)])
+        lines.extend(["/zsh/AGENT_MEMORY.md", "/{}/".format(MEMORY_ROOT)])
     lines.append("/CLAUDE.md.zsh-backup")
     lines.append(END)
     return "\n".join(lines)
@@ -56,7 +56,7 @@ def apply_git_policy(root, requested, apply_changes):
         return result
     result.update({"path": str(exclude), "changed": proposed != current})
     if effective == "shared":
-        result["note"] = "ZSH does not change project .gitignore rules; verify existing rules do not exclude AGENT_MEMORY.md or skill-docs/. Backup excluded: CLAUDE.md.zsh-backup."
+        result["note"] = "ZSH does not change project .gitignore rules; verify existing rules do not exclude zsh/AGENT_MEMORY.md or zsh/. Backup excluded: CLAUDE.md.zsh-backup."
     if not apply_changes:
         result["proposed_block"] = managed_block(effective)
     elif result["changed"]:

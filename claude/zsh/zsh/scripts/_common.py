@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 MIN_PYTHON = (3, 8)
-MEMORY_ROOT = "skill-docs"
+MEMORY_ROOT = "zsh"
 
 
 def require_python():
