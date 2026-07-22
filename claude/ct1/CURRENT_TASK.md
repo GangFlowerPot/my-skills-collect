@@ -1,6 +1,6 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-21 09:35 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-22 01:00 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
@@ -12,7 +12,8 @@
 - [x] 识别 `ynwl_back/` BladeX/Spring Cloud Maven 多模块架构、服务入口与基础拓扑。
 - [x] 初始化 zsh 导航、项目记忆、任务、日志、决策与归档索引。
 - [x] 将架构事实、风险、待验证项及接手入口写入 `PROJECT_MEMORY.md`。
-- [x] 组建四人团队（leader / frontend-dev / backend-dev / tester-2），建立协作协议与进度查询机制。
+- [x] 组建四人团队（leader / frontend-dev / backend-dev / qa-engineer），建立协作协议与进度查询机制。
+- [x] 解决 tester 名字被 harness 残留注册问题：停止 tester-2，改用干净名字 `qa-engineer` 重建测试角色。
 - [x] 部署进度查询协议到 `skill-docs/TEAM_PROTOCOL.md` 并挂载 `AGENT_MEMORY.md` 导航。
 - [x] 创建 `ct1` skill（全局安装于 `~/.claude/skills/ct1/`）：可复用多人 Agent 团队组建 + 进度查询机制，默认四人配置，支持自定义角色/人数，宽泛触发（中英文）。
 - [x] 对 ct1 执行完整 eval（6/6 run）：with-skill 平均 95.8% vs baseline 63.1%（+32.7%）。
@@ -48,14 +49,13 @@
 | 统筹领导决策者 | leader | ✅ 空闲待命 |
 | 前端开发 | frontend-dev | ✅ 空闲待命 |
 | 后端开发 | backend-dev | ✅ 空闲待命 |
-| 测试 | tester-2 | ✅ 空闲待命（名字被迫 -2，harness 残留） |
+| 测试 | qa-engineer | ✅ 空闲待命 |
 
-> 协作规则：默认用户 ↔ leader；出方案时前后端分别出 + 测试出用例由 leader 汇总；需求讨论时用户同时与 leader 和 tester 沟通。进度查询触发词：进度 / status / progress 等。
+> 协作规则：默认用户 ↔ leader；出方案时前后端分别出 + 测试出用例由 leader 汇总；需求讨论时用户同时与 leader 和 qa-engineer 沟通。进度查询触发词：进度 / status / progress 等。
 
 ## 阻塞项
 
 - 无。完整运行验证需要可用的 JDK 8/Maven、兼容旧版 node-sass 的 Node 环境，以及 Nacos、数据库、Redis 等外部服务配置。
-- `tester` 名字被 harness 残留注册占用，被迫为 `tester-2`（功能无影响）。
 
 ## 精确续接位置
 

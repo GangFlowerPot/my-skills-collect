@@ -53,3 +53,22 @@
 - 同步到 `D:/claudeCode/skills/my-skills-collect/claude/ct1/` 并推送。
 
 **eval 证据保存**: `~/.claude/skills/ct1-workspace/iteration-1/`（6 个 run 的完整证据 + grading.json + benchmark.json）。
+
+### 01:00 团队名字清理（tester-2 → qa-engineer）
+
+**任务**: 解决测试角色名字被 harness 残留注册占用问题，获得干净无数字的 Agent 名字。
+
+**完成的工作**:
+
+1. 停止 tester-2 后以 `tester` 重建，仍被 harness 自动命名为 tester-2——确认该名在本会话被**永久注册残留**（原始团队 + 多轮 eval + 冒烟测试创建了过多 tester 实例，harness 会话级缓存无法通过停止实例释放）。
+2. 改用本会话从未使用的英文名 `qa-engineer` 成功创建测试角色，名字干净无后缀。
+3. 更新 `skill-docs/CURRENT_TASK.md`：团队状态表改为 leader / frontend-dev / backend-dev / qa-engineer。
+
+**最终团队（名字全部干净 ✅）**:
+- leader（统筹领导决策者）
+- frontend-dev（前端开发）
+- backend-dev（后端开发）
+- qa-engineer（测试）
+
+**遇到的问题**:
+- harness 对已注册 Agent 名字做会话级持久化缓存，即使实例全部停止，`tester` 仍被判为"占用"自动加 -2。规避方案：选用全新未用过的英文名。
