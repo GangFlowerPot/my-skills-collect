@@ -148,7 +148,7 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 
 ## 进度查询协议
 
-这是本 skill 部署的配套能力。协议文件是它的唯一真相源；下面摘要关键规则，细节以 `references/team-protocol.md` 为准。
+这是本 skill 部署的配套能力。协议文件是它的唯一真相源；下面摘要关键规则，细节以 `references/team-protocol.md` 为准。**本节包含进度同步 + 问题升级**：状态回复扩展为 8 字段（新增【最近上报里程碑】【待答复问题】），leader 聚合时同时收集待答复问题展示给用户。问题升级循环的完整规范（子 agent 问题记录、里程碑检查点、答复分发）见 `references/question-escalation-protocol.md`。
 
 ### 触发词
 
@@ -194,6 +194,7 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 - **出方案**：各技术角色各自出方案，测试同步出覆盖全栈的测试用例 → leader 汇总后呈报用户
 - **沟通需求**：用户同时与 leader（产品/风险/进度/资源角度）和测试（质量/边界/用户体验/验收标准角度）对话
 - **进度查询**：主线程按触发词并行查非 leader 成员，不经过 leader
+- **问题升级**：子 agent 工作中遇到疑问时主动记录，在进度里程碑（33% / 66% / 100%）随状态回复上报给 leader；leader 聚合后展示给用户回答，再分发给子 agent；子 agent 收到答复前跳过该工作项继续推进（不暂停）。完整规范见 `references/question-escalation-protocol.md`
 
 ## 注意事项
 
@@ -203,3 +204,4 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 - **技术栈跟着项目走**：默认角色名是"前端/后端/测试"，但 prompt 里的技术约束必须来自第 1 步探测到的真实栈，不要硬编码 Vue/Java
 - **leader 是枢纽但进度查询绕过它**：进度查询直接查执行者，不增加 leader 负担
 - **任务推进中的动态补充**：团队组建后，任务推进中出现新信息时，用 `[CONTEXT ADDENDUM]` 结构化消息灌入（`references/dynamic-supplement-protocol.md`），避免 leader 自由总结导致信息衰减
+- **问题升级循环**：子 agent 在 33%/66%/100% 里程碑上报疑问 → leader 聚合展示给用户 → 用户回答 → leader 通过 `[CONTEXT ADDENDUM]`（来源=用户答复）分发给对应 agent；子 agent 收到答复前跳过该工作项继续推进（不暂停）。完整规范见 `references/question-escalation-protocol.md`
