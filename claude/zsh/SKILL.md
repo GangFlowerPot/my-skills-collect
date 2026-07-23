@@ -60,6 +60,20 @@ python <skill_dir>/zsh/scripts/detect_project.py <project_root>
 3. 如果用户要保存进度，走"脱水保存"。
 4. 如果用户要更新任务、日志、决策或整理记忆，走对应的"会话中管理"。
 5. 只需检查健康度时，运行只读验证脚本，不修改项目。
+6. 如果项目仍在使用旧布局（根目录 `AGENT_MEMORY.md` + `skill-docs/`），走"迁移布局"。
+
+## 迁移布局
+
+把旧布局（根目录 `AGENT_MEMORY.md` + `skill-docs/`）升级为新布局（全部收进 `zsh/`）。一次性数据移动，不改写 `docs/` 历史快照：
+
+```powershell
+python <skill_dir>/zsh/scripts/migrate_layout.py <project_root> --dry-run
+python <skill_dir>/zsh/scripts/migrate_layout.py <project_root> --apply
+```
+
+- 仅当 `detect_project.py` 报告 `zsh_layout: "skill-docs"` 时进入本分支。
+- 已在新布局（`zsh/`）的项目会直接返回 `already_migrated`，无需操作。
+- 迁移后运行 `validate_navigation.py` 确认通过。
 
 ## 初始化
 
