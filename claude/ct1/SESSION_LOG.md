@@ -54,6 +54,42 @@
 
 **eval 证据保存**: `~/.claude/skills/ct1-workspace/iteration-1/`（6 个 run 的完整证据 + grading.json + benchmark.json）。
 
+### 13:20 Reviewer 角色 + 代码审查循环设计、实现与端到端测试
+
+**任务**: 新增第 5 默认角色 reviewer（十年全栈经验，精通 Java 后端/前端/中间件），实现代码审查→修改→再审查循环（至少三轮），leader 分流（下发修改/升级用户），最终汇总展示用户。
+
+**完成的工作**:
+
+1. **设计**：
+   - 用户确认三项决策：(1) reviewer = 默认第 5 角色；(2) 触发时机 = 里程碑节点(33/66/100%)；(3) 审查范围 = 全面审查（质量/架构/安全/性能/规范/中间件）
+   - reviewer 不写生产代码、不直接联系用户、不修改自己结论
+
+2. **实现（6 个文件）**:
+   - 新建 `references/code-review-protocol.md`（314 行）
+   - 扩展 `references/team-protocol.md`（131→156 行）：+reviewer +【本轮完成文件】字段
+   - 扩展 `references/context-contract.md`：+reviewer 切片
+   - 更新 `references/question-escalation-protocol.md`：+reviewer 审查来源
+   - 更新 `SKILL.md`（207→210 行）：+reviewer 角色 + 审查规则
+   - 扩展 `ct1-workspace/e2e-test-context-injection.md`（+175 行）：第 9 节审查全链路
+
+3. **端到端测试（ynwl 项目）**:
+   - reviewer 角色/审查触发/分流/三轮循环/终态汇总 ✅
+   - 边界：通过判定/跳过决策/跨轮追踪/dev 申述 ✅
+
+4. **提交**（待推送）:
+   - commit a96d4b1：`feat(ct1): reviewer角色 + 代码审查→修改→再审查循环（至少三轮）`
+
+**遇到的问题**:
+- team-protocol.md 表格中 emoji 含变体选择器，Edit 匹配失败；通过分段匹配（先表头、再表体、再注释）解决
+
+**代码变更**:
+- 新增 `references/code-review-protocol.md`
+- 扩展 `references/team-protocol.md`（+reviewer +【本轮完成文件】）
+- 扩展 `references/context-contract.md`（+reviewer 切片）
+- 更新 `references/question-escalation-protocol.md`（+reviewer 审查来源）
+- 更新 `SKILL.md`（+reviewer 角色 + 审查规则）
+- 扩展 `ct1-workspace/e2e-test-context-injection.md`（第 9 节）
+
 ### 11:59 问题升级循环设计、实现与端到端测试
 
 **任务**: 在进度查询协议上叠加问题升级闭环——子 agent 主动记录疑问，在 33/66/100% 里程碑上报给 leader，leader 聚合展示给用户回答，再分发给子 agent，子 agent 跳过并继续（不暂停）。

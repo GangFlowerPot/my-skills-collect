@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-23 11:59 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-23 13:20 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、**问题升级循环设计与实现**均已完成。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。
 
 ## 已完成
 
@@ -19,12 +19,14 @@
 - [x] 对 ct1 执行完整 eval（6/6 run）：with-skill 平均 95.8% vs baseline 63.1%（+32.7%）。
 - [x] 根据 eval 结果改进 ct1：增加 flat-roster 回退指引、协议文件双写 + 并发处理。
 - [x] 同步 ct1 skill 及相关记忆到 `D:/claudeCode/skills/my-skills-collect/claude/` 并推送到 origin/main。
-- [x] **设计并实现问题升级循环**（Question Escalation Loop）：
-  - 新建 `references/question-escalation-protocol.md`（371 行）：问题记录 schema、里程碑检查点(33/66/100%)、leader 聚合去重、CONTEXT ADDENDUM 答复分发、边界情况、工作示例
-  - 扩展 `references/team-protocol.md`（66→131 行）：6→8 字段状态模板（+最近上报里程碑+待答复问题）、里程碑检查点行为、leader 双 section 展示格式、执行者回复规范
-  - 更新 `SKILL.md`：协作规则摘要增加问题升级、进度查询协议节引用新机制、注意事项增加问题升级循环
-  - 端到端测试：ynwl 项目演示 33% 节点遇到问题→上报→用户回答→分发→继续全链路 + 跳过里程碑/去重/已解决作废等边界
-  - 提交并推送到 origin/main（commit 25c3a07）
+- [x] **设计并实现 Reviewer 角色 + 代码审查循环**：
+  - 新建 `references/code-review-protocol.md`（314 行）：reviewer 角色定义（十年全栈经验，精通 Java 后端/前端/中间件）、Code Review 报告 schema（严重/建议/需用户决策）、leader 分流规则、三轮循环(33/66/100%)、dev 报告扩展（本轮完成文件）、边界情况、工作示例
+  - 扩展 `references/team-protocol.md`（131→156 行）：默认团队加 reviewer；状态模板加【本轮完成文件】字段；reviewer 状态示例
+  - 扩展 `references/context-contract.md`：新增 reviewer 切片（架构+规范+审查标准清单）
+  - 更新 `references/question-escalation-protocol.md`：补充 reviewer 审查作为问题来源
+  - 更新 `SKILL.md`（207→210 行）：默认团队加 reviewer；协作规则摘要+注意事项加审查规则
+  - 端到端测试：ynwl 项目演示 33% 审查→分流→修改→66% 再审→100% 终态全链路 + 边界情况
+  - 提交并推送到 origin/main（commit a96d4b1，待推送）
 
 ## 进行中
 
@@ -53,8 +55,9 @@
 | `references/five-element-prompt.md` | ✅ | 五要素 prompt 模板（新增） |
 | `references/dynamic-supplement-protocol.md` | ✅ | 动态补充协议（新增） |
 | `references/question-escalation-protocol.md` | ✅ | 问题升级循环协议（新增） |
-| `references/team-protocol.md` | ✅ | 6→8 字段模板 + leader 聚合格式（扩展） |
-| `SKILL.md` | ✅ | Step 1.5 + Step 3 增强 + 问题升级（新增） |
+| `references/code-review-protocol.md` | ✅ | 代码审查协议（新增） |
+| `references/team-protocol.md` | ✅ | 6→8 字段模板 + reviewer + leader 聚合格式（扩展） |
+| `SKILL.md` | ✅ | Step 1.5 + Step 3 增强 + 问题升级 + reviewer（新增） |
 
 ## 团队状态
 
@@ -73,9 +76,9 @@
 
 ## 精确续接位置
 
-- 文件：本文件 + `ct1-workspace/e2e-test-context-injection.md` + `references/question-escalation-protocol.md`
-- 位置：上下文灌输机制 + 问题升级循环均已设计/实现/测试通过；下一步是真实项目中的实际 spawn 验证（含问题升级全流程）
-- 状态：两大机制静态基线完成；等待真实使用反馈迭代
+- 文件：本文件 + `references/code-review-protocol.md` + `ct1-workspace/e2e-test-context-injection.md`
+- 位置：上下文灌输机制 + 问题升级循环 + reviewer 审查循环均已设计/实现/测试通过；下一步是真实项目中的实际 spawn 验证（含审查全流程）
+- 状态：三大机制静态基线完成；等待真实使用反馈迭代
 
 ## 下次会话建议
 
