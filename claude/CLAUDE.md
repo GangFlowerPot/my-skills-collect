@@ -73,6 +73,25 @@ cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
 
 > **确认方式**：用户回复 `1` 即表示确认推送。
 
+**📝 提交前先保存记忆**：每次提交代码前，**必须先执行记忆脱水**——将本次会话的工作内容保存到项目记忆文件（`CURRENT_TASK.md` / `SESSION_LOG.md` / `AGENT_MEMORY.md`）中。具体：
+
+1. **更新 `CURRENT_TASK.md`**：当前阶段、已完成列表、续接位置、下次会话建议
+2. **追加 `SESSION_LOG.md`**：本次会话条目（任务/完成的工作/遇到的问题/代码变更），**只追加不覆盖历史**
+3. **刷新 `AGENT_MEMORY.md`**：`updated_at` 更新为实际回写时间
+
+**为什么**：代码提交只保存了文件变更，但**会话上下文（做到哪了、为什么做、下次从哪继续）只存在于项目记忆中**。如果先提交不保存记忆，新会话启动时将无法无缝续接本次工作。
+
+**流程**：
+```
+1. 完成代码工作
+2. 记忆脱水 → 保存到 CURRENT_TASK.md / SESSION_LOG.md / AGENT_MEMORY.md
+3. git add -A（代码 + 记忆文件）
+4. git commit（代码提交和记忆提交可以合并为一个 commit，或分两个 commit）
+5. git push
+```
+
+> **记忆文件位置**：每个 skill 工作区内（如 `claude/ct1/CURRENT_TASK.md`）。如果项目使用 zsh 记忆体系，按 `AGENT_MEMORY.md` 导航指向的文件回写。
+
 **示例交互**：
 ```
 📋 即将推送到 origin/main：
