@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-23 10:50 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-23 11:59 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、**子 Agent 上下文灌输机制设计与实现**均已完成。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、**问题升级循环设计与实现**均已完成。
 
 ## 已完成
 
@@ -19,13 +19,12 @@
 - [x] 对 ct1 执行完整 eval（6/6 run）：with-skill 平均 95.8% vs baseline 63.1%（+32.7%）。
 - [x] 根据 eval 结果改进 ct1：增加 flat-roster 回退指引、协议文件双写 + 并发处理。
 - [x] 同步 ct1 skill 及相关记忆到 `D:/claudeCode/skills/my-skills-collect/claude/` 并推送到 origin/main。
-- [x] **设计并实现子 Agent 上下文灌输机制**（角色合约式组装方案）：
-  - 新增上下文合约 schema（`references/context-contract.md`）：项目级角色→文档切片映射，跨任务复用
-  - 新增五要素 prompt 模板（`references/five-element-prompt.md`）：角色 + 切片简报(~5KB) + 具体任务 + 文档引用 + 输出格式锚点
-  - 新增动态补充协议（`references/dynamic-supplement-protocol.md`）：`[CONTEXT ADDENDUM]` 结构化消息，避免 leader 转述信息衰减
-  - 增强 `SKILL.md`：新增 Step 1.5（合约定位/验证/时效检查），Step 3 改用「合约切片 + 五要素模板」替代旧的「3-8 行统一摘要注入每个 agent」（172→205 行）
-  - 端到端测试（`ct1-workspace/e2e-test-context-injection.md`）：基于 ynwl 项目全链路演示，验证信息保真 ✅、Token 降幅 72-88% ✅、对齐成本 ✅、编写成本降幅 ~83% ✅、动态补充 ✅
-  - 提交并推送到 origin/main（commit bcafac4）
+- [x] **设计并实现问题升级循环**（Question Escalation Loop）：
+  - 新建 `references/question-escalation-protocol.md`（371 行）：问题记录 schema、里程碑检查点(33/66/100%)、leader 聚合去重、CONTEXT ADDENDUM 答复分发、边界情况、工作示例
+  - 扩展 `references/team-protocol.md`（66→131 行）：6→8 字段状态模板（+最近上报里程碑+待答复问题）、里程碑检查点行为、leader 双 section 展示格式、执行者回复规范
+  - 更新 `SKILL.md`：协作规则摘要增加问题升级、进度查询协议节引用新机制、注意事项增加问题升级循环
+  - 端到端测试：ynwl 项目演示 33% 节点遇到问题→上报→用户回答→分发→继续全链路 + 跳过里程碑/去重/已解决作废等边界
+  - 提交并推送到 origin/main（commit 25c3a07）
 
 ## 进行中
 
@@ -53,7 +52,9 @@
 | `references/context-contract.md` | ✅ | 上下文合约 schema + ynwl 示例（新增） |
 | `references/five-element-prompt.md` | ✅ | 五要素 prompt 模板（新增） |
 | `references/dynamic-supplement-protocol.md` | ✅ | 动态补充协议（新增） |
-| `SKILL.md` | ✅ | Step 1.5 + Step 3 增强（新增） |
+| `references/question-escalation-protocol.md` | ✅ | 问题升级循环协议（新增） |
+| `references/team-protocol.md` | ✅ | 6→8 字段模板 + leader 聚合格式（扩展） |
+| `SKILL.md` | ✅ | Step 1.5 + Step 3 增强 + 问题升级（新增） |
 
 ## 团队状态
 
@@ -72,13 +73,13 @@
 
 ## 精确续接位置
 
-- 文件：本文件 + `ct1-workspace/e2e-test-context-injection.md`
-- 位置：上下文灌输机制已设计/实现/测试通过；下一步是真实项目中的实际 spawn 验证
-- 状态：机制静态基线完成；等待真实使用反馈迭代
+- 文件：本文件 + `ct1-workspace/e2e-test-context-injection.md` + `references/question-escalation-protocol.md`
+- 位置：上下文灌输机制 + 问题升级循环均已设计/实现/测试通过；下一步是真实项目中的实际 spawn 验证（含问题升级全流程）
+- 状态：两大机制静态基线完成；等待真实使用反馈迭代
 
 ## 下次会话建议
 
 1. 先读取 `AGENT_MEMORY.md` 与本文件。
-2. 若要验证上下文灌输机制：选一个真实项目，准备结构化文档（req.md / architecture.md / decisions.md），按 `references/context-contract.md` 建立合约，然后 spawn 子 agent 观察首次输出质量与 token 消耗。
+2. 若要验证两大机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 33% 节点触发问题升级循环，观察全流程。
 3. 团队已就绪，可直接对 leader 提出开发需求。
 4. 根据用户目标选择一个子系统，验证其构建、配置来源和运行调用链。

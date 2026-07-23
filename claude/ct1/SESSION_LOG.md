@@ -54,6 +54,42 @@
 
 **eval 证据保存**: `~/.claude/skills/ct1-workspace/iteration-1/`（6 个 run 的完整证据 + grading.json + benchmark.json）。
 
+### 11:59 问题升级循环设计、实现与端到端测试
+
+**任务**: 在进度查询协议上叠加问题升级闭环——子 agent 主动记录疑问，在 33/66/100% 里程碑上报给 leader，leader 聚合展示给用户回答，再分发给子 agent，子 agent 跳过并继续（不暂停）。
+
+**完成的工作**:
+
+1. **设计（Plan agent + 用户决策）**：
+   - 用户确认两项决策：(1) 收集方式 = 复用进度查询（扩展 6→8 字段，不新增独立轮次）；(2) 阻塞行为 = 可跳过继续（不暂停等待）
+   - 设计：问题记录 schema（question_log）、里程碑检查点算法、8 字段状态模板、leader 双 section 展示、CONTEXT ADDENDUM 答复分发、边界情况
+
+2. **实现（4 个文件）**:
+   - 新建 `references/question-escalation-protocol.md`（371 行）
+   - 扩展 `references/team-protocol.md`（66→131 行）：6→8 字段 + 里程碑检查点 + leader 聚合格式
+   - 更新 `SKILL.md`（205→207 行）：协作规则摘要 + 进度查询协议节 + 注意事项
+   - 扩展 `ct1-workspace/e2e-test-context-injection.md`（+164 行）：第 7 节问题升级全链路演示
+
+3. **端到端测试（ynwl 项目）**:
+   - 问题收集 / 展示 / 答复分发 ✅
+   - 继续不暂停（跳过→自行裁决） ✅
+   - 边界：无问题里程碑 / 跳过里程碑 / 去重 / 已解决作废 ✅
+
+4. **提交并推送**:
+   - commit 25c3a07：`feat(ct1): 问题升级循环 — 子agent疑问收集→里程碑上报→用户回答→分发`
+   - 推送到 origin/main 成功
+
+**遇到的问题**:
+- team-protocol.md 表格中 emoji 字符（🖥️/⚙️/🧪）含变体选择器，Edit 匹配失败；通过分段匹配（先表头、再表体、再注释）解决
+- 注释文本「随实际团队角色调整」与预期「变化」不符，Read 后精确匹配解决
+
+**代码变更**:
+- 新增 `references/question-escalation-protocol.md`
+- 扩展 `references/team-protocol.md`（6→8 字段 + leader 聚合格式）
+- 更新 `SKILL.md`（问题升级规则）
+- 扩展 `ct1-workspace/e2e-test-context-injection.md`（第 7 节）
+- 提交并推送到 origin/main（25c3a07）
+
 ### 10:50 子 Agent 上下文灌输机制设计、实现与端到端测试
 
 **任务**: 为 ct1 的子 agent 设计更好的上下文灌输机制，替代旧的「所有 agent 注入同一段 3-8 行摘要」方案，解决信息衰减、token 浪费、对齐成本高、编写瓶颈四个痛点。
