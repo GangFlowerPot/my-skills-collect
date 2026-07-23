@@ -54,6 +54,51 @@
 
 **eval 证据保存**: `~/.claude/skills/ct1-workspace/iteration-1/`（6 个 run 的完整证据 + grading.json + benchmark.json）。
 
+### 10:50 子 Agent 上下文灌输机制设计、实现与端到端测试
+
+**任务**: 为 ct1 的子 agent 设计更好的上下文灌输机制，替代旧的「所有 agent 注入同一段 3-8 行摘要」方案，解决信息衰减、token 浪费、对齐成本高、编写瓶颈四个痛点。
+
+**完成的工作**:
+
+1. **探索现有系统**：
+   - 用 2 个 Explore agent 并行探索 ct1（子 agent 分发机制）和 zsh/rehydration-v3（跨 agent 记忆）
+   - 发现：ct1 主线程直接写 prompt（leader 不是中介），所有 agent 收到相同 3-8 行摘要，无角色区分、无需求文档注入
+   - 发现：zsh 有热/温/冷三层记忆但**无角色基于角色的上下文切片**
+
+2. **设计方案**：角色合约式上下文组装（Role-Contract Context Assembly），四部分组成：
+   - 上下文合约（Context Contract）：项目级角色→文档切片映射，跨任务复用
+   - 角色切片简报（Role-Sliced Brief）：嵌入 ~5KB 角色相关切片 + 按需引用
+   - 五要素 prompt 模板：角色 + 上下文 + 具体任务 + 文档引用 + 输出格式锚点
+   - 动态补充协议（Dynamic Supplement Protocol）：`[CONTEXT ADDENDUM]` 结构化消息
+
+3. **实现（5 个文件）**:
+   - 新增 `references/context-contract.md`（102 行）：合约 schema + ynwl 示例
+   - 新增 `references/five-element-prompt.md`（106 行）：五要素模板 + 完整示例
+   - 新增 `references/dynamic-supplement-protocol.md`（83 行）：补充消息 schema + 推送/拉取通道
+   - 修改 `SKILL.md`（172→205 行）：新增 Step 1.5（合约定位/验证/时效检查），Step 3 改用合约切片+五要素模板
+   - 新增 `ct1-workspace/e2e-test-context-injection.md`（311 行）：端到端测试
+
+4. **端到端测试（基于 ynwl 真实项目）**:
+   - 信息保真 ✅：子 agent 读文档源头切片（带章节号），无 leader 转述
+   - Token 效率 ✅：单角色 ~5KB（vs 旧 18-39KB），降幅 72-88%
+   - 对齐成本 ✅：格式锚点让首次输出直接命中结构
+   - 编写成本 ✅：主线程只写 ~100 字任务（vs 旧 ~600 字），降幅 ~83%
+   - 动态补充 ✅：`[CONTEXT ADDENDUM]` 结构化，agent 能增量更新
+
+5. **提交并推送**:
+   - commit bcafac4：`feat(ct1): 角色合约式上下文灌输机制 — 按角色切片、五要素模板、动态补充`
+   - 推送到 origin/main 成功
+
+**遇到的问题**:
+- **plan mode 与推送确认的冲突**：用户回复 "1" 确认推送时系统进入 plan mode，无法执行推送；经澄清后退出 plan mode 才完成推送
+- **记忆文件位置不一致**：`AGENT_MEMORY.md` 声明 `memory_root: skill-docs`，但实际记忆文件在 ct1 根目录（无 skill-docs 子目录）；按实际位置回写
+
+**代码变更**:
+- 新增 `references/context-contract.md`、`references/five-element-prompt.md`、`references/dynamic-supplement-protocol.md`
+- 修改 `SKILL.md`（Step 1.5 + Step 3 增强）
+- 新增 `ct1-workspace/e2e-test-context-injection.md`
+- 提交并推送到 origin/main（bcafac4）
+
 ### 01:00 团队名字清理（tester-2 → qa-engineer）
 
 **任务**: 解决测试角色名字被 harness 残留注册占用问题，获得干净无数字的 Agent 名字。
