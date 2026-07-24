@@ -27,15 +27,44 @@ CLAUDE.md 中的 ZSH:MEMORY 托管区块（Claude Code 专属）   ← 让 Claud
 
 ## 触发后的路由
 
-先调用只读探测，再按结果分支：
+按用户意图直接分支。**恢复上下文和脱水保存不需要运行探测脚本**，直接读写 Markdown 即可；只在意图不明确或需要判断布局/迁移时才运行只读探测。
+
+### 意图：恢复上下文（继续上次 / 恢复 / rehydrate / memory restore）
+
+直接读 `zsh/AGENT_MEMORY.md`，按"恢复上下文"流程读取记忆文件。**不运行 `detect_project.py`**。
+
+- `zsh/AGENT_MEMORY.md` 存在 → 直接进入"恢复上下文"。
+- `zsh/AGENT_MEMORY.md` 不存在 → 再运行探测，判断是需要初始化还是迁移旧布局：
+
+  ```powershell
+  python <skill_dir>/zsh/scripts/detect_project.py <project_root>
+  ```
+
+### 意图：脱水保存（保存进度 / 脱水 / dehydrate / 今天到这）
+
+直接读写 Markdown 文件（更新 CURRENT_TASK、追加 SESSION_LOG、追加 DECISIONS）。跨周封存时运行：
+
+```powershell
+python <skill_dir>/zsh/scripts/session_log_manager.py <project_root> archive
+```
+
+**不运行 `detect_project.py`**。
+
+### 意图：会话中管理（更新任务 / 记录日志 / 记录决策 / 整理记忆）
+
+直接读写对应的 Markdown 文件。整理记忆时运行 `memory_compressor.py`（只读分析 + 建议）。**不运行 `detect_project.py`**。
+
+### 意图不明确 / 初始化 / 迁移 / 健康检查
+
+先运行只读探测，再按结果分支：
 
 ```powershell
 python <skill_dir>/zsh/scripts/detect_project.py <project_root>
 ```
 
-### 第 0 步：检测 v3 记忆（一次性迁移机会）
+#### 检测 v3 记忆（一次性迁移机会）
 
-仅当 `has_v3_memory: true` 且 `has_agent_memory: false`（项目已通过 rehydration-mode-v3 初始化、但尚无 zsh 记忆）时进入本分支；否则跳到第 1 步。
+仅当 `has_v3_memory: true` 且 `has_agent_memory: false`（项目已通过 rehydration-mode-v3 初始化、但尚无 zsh 记忆）时进入本分支；否则跳到下面的分支判断。
 
 向用户提示：
 
@@ -49,18 +78,15 @@ python <skill_dir>/zsh/scripts/detect_project.py <project_root>
   1. `python <skill_dir>/zsh/scripts/migrate_from_v3.py <project_root> --dry-run` — 展示迁移计划。
   2. 用户二次确认后 `python <skill_dir>/zsh/scripts/migrate_from_v3.py <project_root> --apply`。
   3. 迁移完成后 `docs/` 不会被改动；若选 B，仅在迁移成功后删除 `docs/{PROJECT_MEMORY,CURRENT_TASK,SESSION_LOG,DECISIONS}.md` 与 `docs/session-log-*.md`（仅删文件，保留 `docs/` 目录）。
-- 用户选 C：跳到第 1 步走 fresh 初始化。
+- 用户选 C：跳到下面的分支判断走 fresh 初始化。
 
 `migrate_from_v3.py` 只迁移、不改写源、不动 `docs/`；已存在的 `zsh/` 文件按 `skip_existing` 保留。
 
-### 第 1-5 步
+#### 分支判断
 
-1. 如果项目没有 zsh 记忆（`zsh/AGENT_MEMORY.md` 或旧布局的 `AGENT_MEMORY.md` 均不存在，且未命中第 0 步），走"初始化"。
-2. 如果用户要继续历史工作，走"恢复上下文"。
-3. 如果用户要保存进度，走"脱水保存"。
-4. 如果用户要更新任务、日志、决策或整理记忆，走对应的"会话中管理"。
-5. 只需检查健康度时，运行只读验证脚本，不修改项目。
-6. 如果项目仍在使用旧布局（根目录 `AGENT_MEMORY.md` + `skill-docs/`），走"迁移布局"。
+1. 如果项目没有 zsh 记忆（`zsh/AGENT_MEMORY.md` 或旧布局的 `AGENT_MEMORY.md` 均不存在，且未命中 v3 迁移），走"初始化"。
+2. 如果项目仍在使用旧布局（根目录 `AGENT_MEMORY.md` + `skill-docs/`），走"迁移布局"。
+3. 只需检查健康度时，运行只读验证脚本，不修改项目。
 
 ## 迁移布局
 
