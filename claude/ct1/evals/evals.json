@@ -3,45 +3,76 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "在 E:/work/ynwl 项目创建一个团队，用默认四人配置，不需要调整",
-      "expected_output": "ct1 skill 触发后，按工作流并行启动 leader/frontend-dev/backend-dev/tester 四个命名 Agent（均注入 ynwl 项目上下文、技术栈约束、协作协议、进度查询规范），leader 向用户做团队介绍，并在 skill-docs/TEAM_PROTOCOL.md 写入进度查询协议且挂载到 AGENT_MEMORY.md 导航。",
+      "prompt": "在 E:/work/ynwl 项目创建一个团队，用默认配置，不需要调整",
+      "expected_output": "ct1 skill 触发后，判断为 create-only 或 delivery 模式，根据任务图动态生成最小可行团队（leader 固定 + 按任务边界动态生成执行/质量/审查/reviewer 延迟启动），leader 向用户做团队介绍，并写入进度查询协议且挂载到项目记忆导航。状态回复使用 StatusReport/v2。",
       "files": [],
       "expectations": [
         "Skill 被触发并识别为'创建团队'意图",
-        "并行启动 4 个命名 Agent（一次消息多 Agent 调用，非串行）",
+        "判断运行模式（create-only / delivery）",
+        "根据任务图动态生成团队，不机械套用固定四人/五人",
+        "reviewer 标记为延迟启动（不在无代码阶段长期空闲）",
+        "并行启动当前阶段必需角色（一次消息多 Agent 调用，非串行）",
         "每个非 leader 角色的 prompt 包含 ynwl 项目上下文摘要（Vue / Java 等技术栈关键词）",
-        "每个非 leader 角色的 prompt 包含进度查询 6 字段回复规范",
+        "每个非 leader 角色的 prompt 包含 StatusReport/v2 回复规范",
         "leader 的 prompt 包含'默认对话窗口'职责和介绍团队的指令",
-        "skill-docs/TEAM_PROTOCOL.md 被写入且包含触发词和 6 字段模板",
-        "AGENT_MEMORY.md 记忆地图包含指向 TEAM_PROTOCOL.md 的导航条目",
+        "协议文件被写入且包含触发词和 StatusReport/v2 引用",
+        "项目记忆导航包含指向协议文件的导航条目",
         "leader 向用户发送团队介绍消息"
       ]
     },
     {
       "id": 2,
-      "prompt": "组建一个两人测试小队，只要一个 leader 和一个全栈开发，项目是 E:/work/ynwl",
-      "expected_output": "ct1 skill 触发后，解析自定义意图：去掉前端/后端/测试三个默认执行者，替换为一个'全栈开发'角色。最终团队为 leader + fullstack-dev 两人。协议文件只列 fullstack-dev。",
+      "prompt": "组建一个两人小队，只要一个 leader 和一个全栈开发，项目是 E:/work/ynwl",
+      "expected_output": "ct1 skill 触发后，解析自定义意图：动态生成 leader + fullstack-dev 两人团队。协议文件只列 fullstack-dev。",
       "files": [],
       "expectations": [
         "Skill 触发并从自然语言解析出自定义团队意图",
-        "向用户展示与默认配置的 diff（去掉 3 个默认执行者，新增全栈开发），确认后再启动",
+        "向用户展示团队方案（含拆分/合并理由），确认后再启动",
         "启动 2 个 Agent：leader + fullstack-dev（Agent 名不含空格，字母数字+连字符）",
         "fullstack-dev 的 prompt 包含前后端全栈职责描述",
         "leader 固定存在且唯一",
-        "skill-docs/TEAM_PROTOCOL.md 的进度查询范围只列 fullstack-dev（不含前端/后端/测试）"
+        "协议文件的进度查询范围只列 fullstack-dev（不含前端/后端/测试）"
       ]
     },
     {
       "id": 3,
       "prompt": "进度",
-      "expected_output": "团队已组建后，用户发'进度'触发进度查询。主线程并行向 frontend-dev/backend-dev/tester 发 6 字段状态请求，收集回复后汇总为一张 Markdown 表格（含成员/状态/当前任务/进度/阻塞项/下一步/需要的输入 七列）。",
+      "expected_output": "团队已组建后，用户发'进度'触发进度查询。主线程并行向非 leader 成员发 StatusReport/v2 状态请求，收集回复后汇总为一张 Markdown 表格。",
       "files": [],
       "expectations": [
         "识别'进度'为进度查询触发词",
-        "并行向 3 个非 leader 成员发送状态请求（同一消息多个 SendMessage）",
-        "请求内容包含 6 字段模板（状态/当前任务/进度/阻塞项/下一步/需要的输入）",
-        "输出为 Markdown 表格，含'成员'列和 6 个状态字段列",
-        "表格行覆盖 frontend-dev、backend-dev、tester（不含 leader）"
+        "并行向非 leader 成员发送状态请求（同一消息多个 SendMessage）",
+        "请求内容引用 StatusReport/v2（11 字段）",
+        "输出为 Markdown 表格，含 StatusReport/v2 字段列",
+        "表格行覆盖非 leader 成员（不含 leader）"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "修正 README 中两个拼写错误",
+      "expected_output": "单文件、低风险、一步完成的任务，应降级为单 Agent，不创建完整团队。",
+      "files": [],
+      "expectations": [
+        "识别为单文件低风险任务",
+        "不创建完整团队（负例边界）",
+        "使用单 Agent 直接完成",
+        "不生成团队协议文件"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "开发一个运单管理模块，包含复杂筛选、分页、状态操作、权限和多个后端接口，项目是 E:/work/ynwl",
+      "expected_output": "delivery 模式。建立 Requirement Brief（含 AC），构建任务图，动态生成团队（leader + waybill-ui-dev + waybill-service-dev + tester 延迟 + reviewer 延迟），reviewer 在 review-ready 时启动。",
+      "files": [],
+      "expectations": [
+        "识别为 delivery 模式（有明确需求）",
+        "建立 Requirement Brief，每个 AC 有唯一 ID",
+        "构建任务图（任务含 task_id、交付物、AC、依赖、write_scope、能力需求、风险）",
+        "动态生成团队：按业务边界拆分 UI 和服务角色",
+        "向用户展示团队方案（含拆分/合并理由）",
+        "reviewer 标记为延迟启动（不在团队创建时启动）",
+        "tester 在 test-ready 时进入执行阶段",
+        "每个开发任务至少关联一个 AC"
       ]
     }
   ]

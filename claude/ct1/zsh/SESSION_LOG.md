@@ -1,3 +1,36 @@
+### 11:10 ct1 skill 全生命周期重构 Iteration 1（一致性修复）
+
+**任务**: 按 `improve/AGENT_IMPROVEMENT_PLAN.md` 和 `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`，将 ct1 从"固定角色组队"重构为"依据任务图动态生成角色"的编排器。本次完成 Iteration 1（P0-01~P0-05）。
+
+**完成的工作**:
+
+1. **新建 StatusReport/v2**（`references/status-report-schema.md`，11 字段）：统一了过去混用的 6/8/9 字段模板，成为所有角色状态报告的唯一真相源，含版本检查规则。
+
+2. **更新 SKILL.md**（最大改动）：
+   - frontmatter：+delivery 语义、负例边界
+   - 新增"运行模式"章节（create-only/delivery + 判断规则）
+   - 重写"这个 skill 做什么"为 13 步全生命周期
+   - 重写"工作流"：第 0 步（任务规模判断）+ 两阶段组队（Pre-team/Execution Team）+ 需求澄清 + 任务图 + 动态团队生成算法 + 运行时扩缩 + DoD + 交付报告
+   - 统一团队定义：固定/执行/质量/审查/专项分类，删除四人/五人冲突，改为示例模板
+   - model_policy：不绑定具体版本（high-reasoning/default/lightweight）
+
+3. **更新 3 个 references**：team-protocol（引用 v2）、question-escalation（不再"扩展六字段"）、code-review（事件驱动审查）
+
+4. **更新 evals.json**：对齐新协议，新增单 Agent 降级（eval-4）+ 动态团队 eval（eval-5）
+
+5. **静态一致性检查**：搜索确认 skill 运行文件不再有旧的固定团队描述和 6/8/9 字段模板残留
+
+**遇到的问题**:
+- 检测/迁移脚本的启发式过窄（只识别"根目录 + skill-docs/"旧布局），已通过临时构造预期中间形态解决（前序会话）
+- 文件编辑时因前面改动导致 Edit 匹配失败，通过重新读取精确内容解决
+
+**代码变更**:
+- 新建 `references/status-report-schema.md`
+- 重写 `SKILL.md`（frontmatter + 运行模式 + 工作流 + 团队定义 + model_policy）
+- 更新 `references/team-protocol.md`、`references/question-escalation-protocol.md`、`references/code-review-protocol.md`
+- 重写 `evals/evals.json`
+- 同步旧 `TEAM_PROTOCOL.md` 副本到 v2
+
 ### 10:46 整改 zsh 记忆架构到最新版本（单 skill 级别）
 
 **任务**: 把 `claude/ct1/` 的 zsh 记忆从旧布局（根目录散放型）整改到最新 `zsh/` 布局，除 zsh 记忆相关文件外不动任何文件。

@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-27 10:46 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-27 11:10 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。⏳ **ct1 skill 全生命周期重构 Iteration 1（一致性修复）已完成**，Iteration 2~5 待执行。
 
 ## 已完成
 
@@ -35,6 +35,14 @@
   - 创建 `CLAUDE.md` ZSH:MEMORY 托管区块
   - 验证：`check_structure.py` 返回 `ok: true`，6 个必需文件全部存在
   - 约束遵守：非 zsh 文件（`SKILL.md`/`references/`/`evals/`/`ct1-workspace/`/`TEAM_PROTOCOL.md` 等）均未改动
+- [x] **ct1 skill 全生命周期重构 Iteration 1（一致性修复）**：
+  - 新建 `references/status-report-schema.md`（StatusReport/v2，11 字段，唯一真相源）
+  - 更新 `SKILL.md`：frontmatter（+delivery 语义 + 负例边界）、运行模式（create-only/delivery）、任务规模判断、两阶段组队（Pre-team/Execution Team）、需求澄清、任务图、动态团队生成、DoD、交付报告、统一团队定义（固定/执行/质量/审查/专项）、model_policy（不绑定具体版本）
+  - 更新 `references/team-protocol.md`：引用 StatusReport/v2，默认团队改为动态生成
+  - 更新 `references/question-escalation-protocol.md`：不再声称"扩展六字段"，改为引用 StatusReport/v2 的【待答复问题】
+  - 更新 `references/code-review-protocol.md`：不再自行扩展字段，审查触发改为事件驱动（review-ready）
+  - 更新 `evals/evals.json`：对齐新协议，新增单 Agent 降级 + 动态团队 eval
+  - 静态一致性检查通过：skill 运行文件不再有旧的固定团队描述和 6/8/9 字段模板残留
 
 ## 进行中
 
@@ -85,9 +93,9 @@
 
 ## 精确续接位置
 
-- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `references/code-review-protocol.md` + `ct1-workspace/e2e-test-context-injection.md`
-- 位置：zsh 记忆架构已整改到最新 `zsh/` 布局；下一步是真实项目中的实际 spawn 验证（含审查全流程）
-- 状态：三大机制静态基线完成；zsh 布局最新；等待真实使用反馈迭代
+- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/AGENT_IMPROVEMENT_PLAN.md` + `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`
+- 位置：Iteration 1（一致性修复）已完成；下一步 Iteration 2（需求和任务管理）：P1-01 Requirement Brief、P1-02 TASK_BOARD、P1-03 API 契约生命周期
+- 状态：基础协议统一（StatusReport/v2）、运行模式、动态团队生成已就绪；等待继续迭代
 
 ## 下次会话建议
 
