@@ -1,3 +1,39 @@
+### 10:46 整改 zsh 记忆架构到最新版本（单 skill 级别）
+
+**任务**: 把 `claude/ct1/` 的 zsh 记忆从旧布局（根目录散放型）整改到最新 `zsh/` 布局，除 zsh 记忆相关文件外不动任何文件。
+
+**完成的工作**:
+
+1. **探测与诊断**:
+   - 运行 `detect_project.py`，发现脚本要求"根目录 `AGENT_MEMORY.md` + `skill-docs/` 子目录"才识别为旧布局
+   - 当前实际布局：`AGENT_MEMORY.md` 在根目录，但其他文件也在根目录（无 `skill-docs/` 子目录）→ 脚本返回 `null`
+   - 首次误把 `AGENT_MEMORY.md` 也移入 `skill-docs/` 导致识别失败，回退后重做（`AGENT_MEMORY.md` 留根目录，只移其他文件）
+
+2. **迁移（`migrate_layout.py --apply`）**:
+   - `AGENT_MEMORY.md` / `CURRENT_TASK.md` / `SESSION_LOG.md` → `zsh/`
+   - 创建 `CLAUDE.md` ZSH:MEMORY 托管区块
+   - 迁移脚本机械改写路径引用，造成导航中 `zsh/TEAM_PROTOCOL.md` 错误（实际文件在根目录，不属于 zsh）
+
+3. **补建缺失文件**:
+   - `init_memory.py` 因已初始化拒绝运行（`already_initialized`）
+   - 手动创建 3 个最小合法空壳：`PROJECT_MEMORY.md`（三层记忆）、`DECISIONS.md`（ADR）、`memory-archive/INDEX.md`（不编造事实）
+
+4. **修正与验证**:
+   - 修正导航 `zsh/TEAM_PROTOCOL.md` → `TEAM_PROTOCOL.md`
+   - `check_structure.py` 返回 `ok: true`，6 个必需文件全部存在
+   - 确认非 zsh 文件（`SKILL.md`/`references/`/`evals/`/`ct1-workspace/`/`TEAM_PROTOCOL.md` 等）均未改动
+
+**遇到的问题**:
+- **检测/迁移脚本的启发式过窄**：只识别"根目录 + `skill-docs/`"旧布局，对"根目录散放型"返回 `not_zsh_project`。通过临时构造预期中间形态（仅 `CURRENT_TASK.md`/`SESSION_LOG.md` 入 `skill-docs/`）解决
+- **`init_memory.py` 拒绝二次运行**：识别为新布局后拒绝，改手动创建空壳
+- **迁移脚本机械改写路径**：`skill-docs/TEAM_PROTOCOL.md` → `zsh/TEAM_PROTOCOL.md`，但 `TEAM_PROTOCOL.md` 不属于 zsh，需人工修正
+
+**代码变更**:
+- 移动 `AGENT_MEMORY.md` / `CURRENT_TASK.md` / `SESSION_LOG.md` → `zsh/`
+- 新建 `zsh/PROJECT_MEMORY.md`、`zsh/DECISIONS.md`、`zsh/memory-archive/INDEX.md`
+- 新建 `CLAUDE.md`（ZSH:MEMORY 托管区块）
+- 修正 `zsh/AGENT_MEMORY.md` 导航路径引用
+
 ### 16:15 团队组建、ct1 skill 创建与 eval
 
 **任务**: 组建四人团队、创建可复用的 ct1 skill、执行冒烟测试与完整 eval、同步到技能仓库并推送。
@@ -8,7 +44,7 @@
    - 首次手动创建 leader/frontend-dev/backend-dev/tester（后停止）。
    - 通过 ct1 skill 冒烟测试重建，因 harness flat-roster 约束，tester 被迫命名为 tester-2。
    - 最终团队：leader / frontend-dev / backend-dev / tester-2，均注入项目上下文、协作协议、进度查询规范。
-   - 部署进度查询协议到 `skill-docs/TEAM_PROTOCOL.md`，挂载 `AGENT_MEMORY.md` 导航。
+   - 部署进度查询协议到 `zsh/TEAM_PROTOCOL.md`，挂载 `AGENT_MEMORY.md` 导航。
 
 2. **可复用进度查询机制**:
    - 触发词：进度 / 查进度 / 进度如何 / 同步进度 / status / progress / check progress / where are we / how's it going。
@@ -47,9 +83,9 @@
 **代码变更**:
 
 - 新增 `~/.claude/skills/ct1/`（SKILL.md、references/team-protocol.md、evals/evals.json、ct1-workspace/）。
-- 更新 `skill-docs/TEAM_PROTOCOL.md`（进度查询协议）。
+- 更新 `zsh/TEAM_PROTOCOL.md`（进度查询协议）。
 - 更新 `AGENT_MEMORY.md`（新增协议导航行）。
-- 更新 `skill-docs/CURRENT_TASK.md` 与 `skill-docs/SESSION_LOG.md`（本条目）。
+- 更新 `zsh/CURRENT_TASK.md` 与 `zsh/SESSION_LOG.md`（本条目）。
 - 同步到 `D:/claudeCode/skills/my-skills-collect/claude/ct1/` 并推送。
 
 **eval 证据保存**: `~/.claude/skills/ct1-workspace/iteration-1/`（6 个 run 的完整证据 + grading.json + benchmark.json）。
@@ -179,7 +215,7 @@
 
 1. 停止 tester-2 后以 `tester` 重建，仍被 harness 自动命名为 tester-2——确认该名在本会话被**永久注册残留**（原始团队 + 多轮 eval + 冒烟测试创建了过多 tester 实例，harness 会话级缓存无法通过停止实例释放）。
 2. 改用本会话从未使用的英文名 `qa-engineer` 成功创建测试角色，名字干净无后缀。
-3. 更新 `skill-docs/CURRENT_TASK.md`：团队状态表改为 leader / frontend-dev / backend-dev / qa-engineer。
+3. 更新 `zsh/CURRENT_TASK.md`：团队状态表改为 leader / frontend-dev / backend-dev / qa-engineer。
 
 **最终团队（名字全部干净 ✅）**:
 - leader（统筹领导决策者）

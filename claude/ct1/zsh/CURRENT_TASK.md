@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-23 13:20 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-27 10:46 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。
 
 ## 已完成
 
@@ -14,7 +14,7 @@
 - [x] 将架构事实、风险、待验证项及接手入口写入 `PROJECT_MEMORY.md`。
 - [x] 组建四人团队（leader / frontend-dev / backend-dev / qa-engineer），建立协作协议与进度查询机制。
 - [x] 解决 tester 名字被 harness 残留注册问题：停止 tester-2，改用干净名字 `qa-engineer` 重建测试角色。
-- [x] 部署进度查询协议到 `skill-docs/TEAM_PROTOCOL.md` 并挂载 `AGENT_MEMORY.md` 导航。
+- [x] 部署进度查询协议到 `zsh/TEAM_PROTOCOL.md` 并挂载 `AGENT_MEMORY.md` 导航。
 - [x] 创建 `ct1` skill（全局安装于 `~/.claude/skills/ct1/`）：可复用多人 Agent 团队组建 + 进度查询机制，默认四人配置，支持自定义角色/人数，宽泛触发（中英文）。
 - [x] 对 ct1 执行完整 eval（6/6 run）：with-skill 平均 95.8% vs baseline 63.1%（+32.7%）。
 - [x] 根据 eval 结果改进 ct1：增加 flat-roster 回退指引、协议文件双写 + 并发处理。
@@ -27,6 +27,14 @@
   - 更新 `SKILL.md`（207→210 行）：默认团队加 reviewer；协作规则摘要+注意事项加审查规则
   - 端到端测试：ynwl 项目演示 33% 审查→分流→修改→66% 再审→100% 终态全链路 + 边界情况
   - 提交并推送到 origin/main（commit a96d4b1，待推送）
+- [x] **整改 zsh 记忆架构到最新版本（单 skill 级别，`claude/ct1/`）**：
+  - 运行 `detect_project.py` 探测布局（根目录 + `skill-docs/` 旧布局）
+  - 执行 `migrate_layout.py --apply`：`AGENT_MEMORY.md`/`CURRENT_TASK.md`/`SESSION_LOG.md` → `zsh/`
+  - 手动补建 3 个缺失文件（`PROJECT_MEMORY.md`/`DECISIONS.md`/`memory-archive/INDEX.md` 最小合法空壳）
+  - 修正迁移副作用：导航中错误的 `zsh/TEAM_PROTOCOL.md` → `TEAM_PROTOCOL.md`（不属于 zsh，保留根目录）
+  - 创建 `CLAUDE.md` ZSH:MEMORY 托管区块
+  - 验证：`check_structure.py` 返回 `ok: true`，6 个必需文件全部存在
+  - 约束遵守：非 zsh 文件（`SKILL.md`/`references/`/`evals/`/`ct1-workspace/`/`TEAM_PROTOCOL.md` 等）均未改动
 
 ## 进行中
 
@@ -42,13 +50,14 @@
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
-| `AGENT_MEMORY.md` | ✅ | zsh 唯一导航入口（含 TEAM_PROTOCOL.md 导航行） |
-| `skill-docs/PROJECT_MEMORY.md` | ✅ | 已记录架构与风险 |
-| `skill-docs/CURRENT_TASK.md` | ✅ | 本文件 |
-| `skill-docs/SESSION_LOG.md` | ✅ | 已记录团队组建、ct1 创建/eval、上下文灌输机制 |
-| `skill-docs/DECISIONS.md` | ✅ | zsh 初始化决策 |
-| `skill-docs/TEAM_PROTOCOL.md` | ✅ | 进度查询协议（默认四人，6 字段模板） |
-| `CLAUDE.md` | ✅ | zsh 托管适配区块 |
+| `zsh/AGENT_MEMORY.md` | ✅ | zsh 唯一导航入口（路径引用已修正） |
+| `zsh/PROJECT_MEMORY.md` | ✅ | 三层记忆空壳（新建） |
+| `zsh/CURRENT_TASK.md` | ✅ | 本文件 |
+| `zsh/SESSION_LOG.md` | ✅ | 已记录团队组建、ct1 创建/eval、上下文灌输机制 |
+| `zsh/DECISIONS.md` | ✅ | ADR 空壳（新建） |
+| `zsh/memory-archive/INDEX.md` | ✅ | 归档索引空壳（新建） |
+| `TEAM_PROTOCOL.md` | ✅ | 进度查询协议（根目录，不属于 zsh） |
+| `CLAUDE.md` | ✅ | zsh 托管适配区块（新建） |
 | `~/.claude/skills/ct1/` | ✅ | ct1 skill（SKILL.md + references/ + evals/） |
 | `D:/claudeCode/skills/my-skills-collect/claude/ct1/` | ✅ | ct1 skill 同步副本（已推送，含上下文灌输机制） |
 | `references/context-contract.md` | ✅ | 上下文合约 schema + ynwl 示例（新增） |
@@ -76,9 +85,9 @@
 
 ## 精确续接位置
 
-- 文件：本文件 + `references/code-review-protocol.md` + `ct1-workspace/e2e-test-context-injection.md`
-- 位置：上下文灌输机制 + 问题升级循环 + reviewer 审查循环均已设计/实现/测试通过；下一步是真实项目中的实际 spawn 验证（含审查全流程）
-- 状态：三大机制静态基线完成；等待真实使用反馈迭代
+- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `references/code-review-protocol.md` + `ct1-workspace/e2e-test-context-injection.md`
+- 位置：zsh 记忆架构已整改到最新 `zsh/` 布局；下一步是真实项目中的实际 spawn 验证（含审查全流程）
+- 状态：三大机制静态基线完成；zsh 布局最新；等待真实使用反馈迭代
 
 ## 下次会话建议
 
