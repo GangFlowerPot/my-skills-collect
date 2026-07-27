@@ -190,7 +190,7 @@ description: 多 Agent 项目编排器——从需求拆分、动态组队、分
 
 `create-only` 模式可简化为高层任务列表。
 
-leader 或主线程按以下顺序构建初始任务图（详见 `references/task-graph-schema.md`）：
+leader 或主线程按以下顺序构建初始任务图（详见 `references/task-board-schema.md`）：
 
 1. 从用户需求提取业务目标和验收标准
 2. 检查项目目录、模块和技术栈
@@ -202,32 +202,19 @@ leader 或主线程按以下顺序构建初始任务图（详见 `references/tas
 
 > 禁止直接用 `.vue` → frontend-dev、`.java` → backend-dev 的映射替代任务分析。文件类型只能作为辅助证据。
 
+### 第 2.5 步：方案及接口契约
+
+前后端接口需建立正式契约（详见 `references/api-contract-protocol.md`）：
+
+- 契约字段：endpoint、owner、consumers、status、request/response/errors、permissions、version
+- 契约状态：draft → frontend-reviewed → tester-reviewed → frozen → implemented → verified
+- frozen 后的修改必须增加版本；leader 找出所有 consumer，用 `[CONTEXT ADDENDUM]` 通知相关角色
+
 ### 第 3 步：动态生成最小可行团队
 
 **正式团队人数必须在理解项目方向并形成初始任务图之后决定。**
 
-#### 团队设计最低充分信息
-
-决定正式人数前，至少必须掌握：项目目标、本次交付物、涉及业务域/模块/服务、技术层面（前端/后端/数据/部署/安全）、主要任务依赖、风险区域、预计写入范围、可验证的主要完成条件。
-
-缺失到无法判断任务边界时，继续探测或向用户提出必要问题，不能通过套用固定团队模板弥补信息不足。
-
-#### 团队生成算法
-
-1. **能力提取**：从任务图的 `required_capabilities` 汇总能力需求
-2. **任务聚类**：按高内聚、低耦合原则聚类任务（相同业务域、重叠写入范围、强依赖、相近能力、独立交付物）
-3. **合并评分**：任务总工作量小、强依赖、写入范围重叠、契约不稳定时合并（如小型 CRUD → `fullstack-dev`）
-4. **拆分评分**：有独立交付物、写入范围不重叠、契约稳定、各部分有足够工作量、并行能缩短关键路径时拆分
-5. **冲突检查**：任意两个角色的 write_scope 明显重叠时，细化 ownership 或合并
-6. **并行价值判断**：两个任务是否能同时开始、是否有未冻结共享契约、是否频繁修改相同文件、能否缩短关键路径
-
-#### 向用户展示团队方案
-
-向用户展示"任务图摘要 + 动态团队方案 + 为什么这样分"（格式见 `assets/TEAM_PROPOSAL.template.md`），必须解释：
-
-- 为什么需要这些角色；每个角色负责哪些任务
-- 为什么某些任务合并；为什么某些角色延迟启动
-- 哪些角色没有创建以及原因；预计并行关系与关键依赖
+详见 `references/dynamic-team-selection.md`（团队生成算法、Role Candidate schema、角色生命周期）和 `references/team-selection.md`（团队设计最低充分信息、多团队隔离）。
 
 用户确认或按安全默认值继续。
 
@@ -283,6 +270,14 @@ leader 或主线程按以下顺序构建初始任务图（详见 `references/tas
 
 团队变化必须更新：Task Graph、Role Candidate、TEAM_STATE、owned tasks、write scope、handoff 信息。角色退场时输出 Handoff Brief。
 
+#### Agent 健康检查与替补
+
+详见 `references/recovery-protocol.md`。健康状态：active/idle/waiting_input/unresponsive/failed/replaced/completed。恢复流程：第 1 次无响应重请求 → 第 2 次检查活跃 → 确认失败保存状态 → leader 选择重试/重分配/启动替补 → 替补接收 Handoff Brief → 先验证已有产物再继续。
+
+#### 文件所有权与工作区
+
+详见 `references/workspace-strategy.md`。每个任务声明 write_scope；公共文件指定唯一 owner；tester/reviewer 默认只读；不允许通过直接覆盖解决冲突。
+
 ### 第 5 步：leader 介绍团队
 
 leader 启动后会自动发介绍消息。主线程把它**原样转述**给用户，不要改写。等用户看到介绍后，团队就正式可用。
@@ -308,6 +303,8 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 
 `create-only` 模式跳过本步。
 
+详见 `references/testing-gate.md`（测试门禁）和 `references/delivery-report.md`（交付报告）。
+
 #### 任务级 DoD
 
 任务进入 `accepted` 前必须满足：产物已生成；符合现有技术栈和架构；开发自测完成；严重审查问题为零；对应测试通过；AC 有验证证据；相关文档或契约已更新；临时假设已记录。
@@ -315,6 +312,16 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 #### 项目级 DoD
 
 项目进入 `delivered` 前必须满足：所有必需任务为 `accepted`；所有必需 AC 通过；P0/P1 缺陷为零；构建和必需测试成功；数据迁移和回滚要求已处理；已知限制已披露；交付报告已生成。
+
+#### 测试门禁（来自 testing-gate）
+
+| 门禁 | 要求 |
+|---|---|
+| AC 覆盖 | 每个必需 AC 至少有一个测试 |
+| 缺陷 | P0/P1 缺陷为零 |
+| 执行 | 必需测试全部执行 |
+| 记录 | 测试命令、结果和环境已记录 |
+| 环境 | 环境不可用不得标记为"测试通过" |
 
 > 不得仅凭"100%"声明完成；每个门禁都有证据；不满足 DoD 时输出"有条件完成"或"未完成"。
 

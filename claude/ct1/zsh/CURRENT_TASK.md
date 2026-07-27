@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-27 11:10 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-27 12:30 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。⏳ **ct1 skill 全生命周期重构 Iteration 1（一致性修复）已完成**，Iteration 2~5 待执行。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。
 
 ## 已完成
 
@@ -43,6 +43,14 @@
   - 更新 `references/code-review-protocol.md`：不再自行扩展字段，审查触发改为事件驱动（review-ready）
   - 更新 `evals/evals.json`：对齐新协议，新增单 Agent 降级 + 动态团队 eval
   - 静态一致性检查通过：skill 运行文件不再有旧的固定团队描述和 6/8/9 字段模板残留
+  - 新建 3 个 validation scripts（validate_protocol / validate_task_board / check_delivery_gate）并全部通过
+- [x] **ct1 skill 全生命周期重构 Iteration 2~5**：
+  - **Iteration 2**（需求和任务管理）：新建 requirement-brief/task-board-schema/api-contract-protocol 3 个 references + 2 个 templates
+  - **Iteration 3**（测试和交付）：新建 testing-gate/delivery-report 2 个 references + 2 个 templates
+  - **Iteration 4**（工程可靠性）：新建 workspace-strategy/recovery-protocol/dynamic-team-selection/decision-level/lifecycle/team-selection 6 个 references
+  - **Iteration 5**（效率和最终评测）：code-review 风险驱动审查 + 新建 trigger-evals/protocol-evals/delivery-evals 3 个 eval 文件 + 3 个 validation scripts
+  - SKILL.md 贯穿 4 个 Iteration 的多处引用与补充
+  - 最终静态一致性检查通过
 
 ## 进行中
 
@@ -94,8 +102,8 @@
 ## 精确续接位置
 
 - 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/AGENT_IMPROVEMENT_PLAN.md` + `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`
-- 位置：Iteration 1（一致性修复）已完成；下一步 Iteration 2（需求和任务管理）：P1-01 Requirement Brief、P1-02 TASK_BOARD、P1-03 API 契约生命周期
-- 状态：基础协议统一（StatusReport/v2）、运行模式、动态团队生成已就绪；等待继续迭代
+- 位置：ct1 skill 全生命周期重构 Iteration 1~5 全部完成；下一步是按文档要求运行完整 eval 并对比旧版
+- 状态：基础协议统一（StatusReport/v2）、运行模式、动态团队生成、需求/任务/测试/交付/可靠性/评测全部就绪
 
 ## 下次会话建议
 

@@ -1,3 +1,42 @@
+### 12:30 ct1 skill 全生命周期重构 Iteration 2~5（需求和任务管理、测试交付、工程可靠性、效率评测）
+
+**任务**: 按 `improve/AGENT_IMPROVEMENT_PLAN.md` 和 `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`，继续完成 Iteration 2~5。
+
+**完成的工作**:
+
+1. **Iteration 2**（需求和任务管理）：
+   - 新建 `references/requirement-brief.md` + `assets/REQUIREMENT_BRIEF.template.md`
+   - 新建 `references/task-board-schema.md`（含 task-graph）+ `assets/TASK_BOARD.template.md`
+   - 新建 `references/api-contract-protocol.md`（契约状态机 + 变更规则）
+   - SKILL.md 新增第 2.5 步（方案及接口契约）
+
+2. **Iteration 3**（测试和交付）：
+   - 新建 `references/testing-gate.md`（tester 7 项职责 + 缺陷状态机 + 测试门禁）+ `assets/TEST_PLAN.template.md` + `assets/TEST_REPORT.template.md`
+   - 新建 `references/delivery-report.md`（12 section 报告格式 + 交付判定）+ `assets/DELIVERY_REPORT.template.md`
+   - SKILL.md 第 7 步补充 testing-gate 门禁
+
+3. **Iteration 4**（工程可靠性）：
+   - 新建 `references/workspace-strategy.md`（文件所有权 + 强制规则）
+   - 新建 `references/recovery-protocol.md`（健康状态 + 恢复流程 + Handoff Brief）
+   - 新建 `references/dynamic-team-selection.md`（Role Candidate schema + 角色生命周期 + 团队生成算法）
+   - 新建 `references/decision-level.md`（问题分级：agent-assumption/cross-agent/leader-decidable/user-required）
+   - 新建 `references/lifecycle.md`（全生命周期 + 两阶段组队）
+   - 新建 `references/team-selection.md`（团队设计最低充分信息 + 多团队隔离）
+   - SKILL.md 第 3/4.5 步引用新协议
+
+4. **Iteration 5**（效率和最终评测）：
+   - code-review-protocol.md 改为风险驱动审查（低/中/高 + 事件触发）
+   - 新建 `evals/trigger-evals.json`（8 应触发 + 7 不应触发）
+   - 新建 `evals/protocol-evals.json`（9 个场景）
+   - 新建 `evals/delivery-evals.json`（10 个场景）
+   - 新建 3 个 validation scripts（validate_protocol / validate_task_board / check_delivery_gate）并全部通过
+
+5. **最终静态一致性检查通过**
+
+**代码变更**:
+- 新建 13 个 references + 5 个 templates + 3 个 eval 文件 + 3 个 scripts
+- SKILL.md 贯穿 4 个 Iteration 的多处引用与补充
+
 ### 11:10 ct1 skill 全生命周期重构 Iteration 1（一致性修复）
 
 **任务**: 按 `improve/AGENT_IMPROVEMENT_PLAN.md` 和 `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`，将 ct1 从"固定角色组队"重构为"依据任务图动态生成角色"的编排器。本次完成 Iteration 1（P0-01~P0-05）。

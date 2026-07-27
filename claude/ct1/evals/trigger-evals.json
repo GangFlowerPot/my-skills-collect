@@ -1,0 +1,97 @@
+{
+  "skill_name": "ct1",
+  "eval_type": "trigger",
+  "description": "触发评测：8~10 个应触发 + 8~10 个不应触发",
+  "evals": [
+    {
+      "id": "t1",
+      "should_trigger": true,
+      "prompt": "在 ynwl 项目组建一个团队",
+      "reason": "明确组队意图"
+    },
+    {
+      "id": "t2",
+      "should_trigger": true,
+      "prompt": "create a team for the logistics project",
+      "reason": "英文组队意图"
+    },
+    {
+      "id": "t3",
+      "should_trigger": true,
+      "prompt": "开发一个运单管理模块，包含前后端和测试",
+      "reason": "交付类意图，需要多角色"
+    },
+    {
+      "id": "t4",
+      "should_trigger": true,
+      "prompt": "实现权限隔离功能并交付",
+      "reason": "明确需求，delivery 模式"
+    },
+    {
+      "id": "t5",
+      "should_trigger": true,
+      "prompt": "搭建一个前后端协作小组来做客户模块",
+      "reason": "隐式多角色协作"
+    },
+    {
+      "id": "t6",
+      "should_trigger": true,
+      "prompt": "build the payment module end-to-end",
+      "reason": "端到端交付意图"
+    },
+    {
+      "id": "t7",
+      "should_trigger": true,
+      "prompt": "组建两人小队，leader 加一个全栈",
+      "reason": "自定义组队"
+    },
+    {
+      "id": "t8",
+      "should_trigger": true,
+      "prompt": "这个需求需要前端后端和测试一起做，你安排一下",
+      "reason": "隐式多人协作"
+    },
+    {
+      "id": "t9",
+      "should_trigger": false,
+      "prompt": "修正 README 中两个拼写错误",
+      "reason": "单文件低风险，应单 Agent"
+    },
+    {
+      "id": "t10",
+      "should_trigger": false,
+      "prompt": "解释一下 frontend-dev 的职责是什么",
+      "reason": "解释现有团队角色"
+    },
+    {
+      "id": "t11",
+      "should_trigger": false,
+      "prompt": "创建一个翻译团队名单",
+      "reason": "非软件开发团队"
+    },
+    {
+      "id": "t12",
+      "should_trigger": false,
+      "prompt": "查一下现在团队的进度",
+      "reason": "查询现有进度，无团队时不应触发"
+    },
+    {
+      "id": "t13",
+      "should_trigger": false,
+      "prompt": "帮我审查一下这段代码",
+      "reason": "普通代码审查请求，非组队/交付"
+    },
+    {
+      "id": "t14",
+      "should_trigger": false,
+      "prompt": "把这个文件里的 console.log 删掉",
+      "reason": "单文件一步修改"
+    },
+    {
+      "id": "t15",
+      "should_trigger": false,
+      "prompt": "创建一个写作小组",
+      "reason": "非软件开发团队"
+    }
+  ]
+}

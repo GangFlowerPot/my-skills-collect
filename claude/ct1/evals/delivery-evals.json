@@ -1,0 +1,108 @@
+{
+  "skill_name": "ct1",
+  "eval_type": "delivery",
+  "description": "端到端交付评测：10 个场景覆盖正常交付、契约变化、缺陷退回、安全审查等",
+  "evals": [
+    {
+      "id": "d1",
+      "name": "前后端小功能正常交付",
+      "prompt": "开发一个商品分类 CRUD 模块",
+      "expectations": [
+        "建立 Requirement Brief（含 AC）",
+        "任务图拆分合理",
+        "最终交付报告结论为通过",
+        "每个 AC 有测试映射"
+      ]
+    },
+    {
+      "id": "d2",
+      "name": "API 契约中途变化",
+      "prompt": "开发中后端接口字段变更",
+      "expectations": [
+        "契约版本 +1",
+        "leader 通知所有 consumer",
+        "受影响任务重新评估状态"
+      ]
+    },
+    {
+      "id": "d3",
+      "name": "tester 发现失败并退回开发",
+      "prompt": "测试发现 P0 缺陷",
+      "expectations": [
+        "缺陷状态 open → assigned → fixed → retest → closed",
+        "对应开发任务退回 in_progress",
+        "修复后有复测记录"
+      ]
+    },
+    {
+      "id": "d4",
+      "name": "reviewer 发现严重安全问题",
+      "prompt": "审查发现安全漏洞",
+      "expectations": [
+        "标记为严重问题",
+        "下发 dev 修改",
+        "任务不能进入 test 状态"
+      ]
+    },
+    {
+      "id": "d5",
+      "name": "Agent 失败后替补接管",
+      "prompt": "backend-dev 失败",
+      "expectations": [
+        "leader 启动替补",
+        "替补接收 Handoff Brief",
+        "未完成工作不会误报为完成"
+      ]
+    },
+    {
+      "id": "d6",
+      "name": "用户中途追加需求",
+      "prompt": "开发中用户增加新功能",
+      "expectations": [
+        "更新任务图",
+        "新增角色或扩容现有角色",
+        "不重建全部团队"
+      ]
+    },
+    {
+      "id": "d7",
+      "name": "多 Agent 尝试修改同一文件",
+      "prompt": "两角色同时修改公共文件",
+      "expectations": [
+        "检测到 write_scope 冲突",
+        "指定唯一 owner",
+        "不允许多 Agent 无协调并行修改"
+      ]
+    },
+    {
+      "id": "d8",
+      "name": "测试环境不可用",
+      "prompt": "测试环境暂时不可用",
+      "expectations": [
+        "未执行测试说明原因和风险",
+        "不标记为测试通过",
+        "交付报告披露限制"
+      ]
+    },
+    {
+      "id": "d9",
+      "name": "最终仍有非阻断风险",
+      "prompt": "交付时存在已知非阻断风险",
+      "expectations": [
+        "交付结论为有条件通过",
+        "已知限制已披露",
+        "不掩盖遗留问题"
+      ]
+    },
+    {
+      "id": "d10",
+      "name": "关键 AC 未完成时禁止交付通过",
+      "prompt": "关键验收标准未完成",
+      "expectations": [
+        "交付结论为未通过",
+        "不输出通过",
+        "明确披露未完成事项"
+      ]
+    }
+  ]
+}

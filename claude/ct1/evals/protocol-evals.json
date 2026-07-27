@@ -1,0 +1,94 @@
+{
+  "skill_name": "ct1",
+  "eval_type": "protocol",
+  "description": "协议评测：覆盖团队配置、StatusReport/v2、问题分级、恢复、多团队等 9 个场景",
+  "evals": [
+    {
+      "id": "p1",
+      "name": "默认团队配置一致",
+      "prompt": "在 ynwl 项目创建一个团队",
+      "expectations": [
+        "团队角色定义无冲突（不存在同时四人/五人默认）",
+        "reviewer 标记为延迟启动",
+        "角色名按任务边界命名"
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "reviewer 延迟启动",
+      "prompt": "开发一个简单配置页面",
+      "expectations": [
+        "reviewer 不在团队创建时立即启动",
+        "reviewer 启动条件为 review-ready 事件"
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "StatusReport/v2",
+      "prompt": "进度",
+      "expectations": [
+        "状态请求引用 StatusReport/v2（11 字段）",
+        "汇总表格含任务ID、触发事件、验证结果列"
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "问题分级与路由",
+      "prompt": "开发中遇到是否删除历史数据的问题",
+      "expectations": [
+        "该问题标记为 user-required",
+        "不允许自动作废",
+        "必须升级给用户"
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Agent 无响应和替补",
+      "prompt": "backend-dev 连续两次无响应",
+      "expectations": [
+        "leader 保存 backend-dev 状态",
+        "启动替补并发送 Handoff Brief",
+        "替补先验证已有产物再继续"
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "多团队隔离",
+      "prompt": "在已有团队的项目中再创建一个团队",
+      "expectations": [
+        "新团队使用独立 team_id",
+        "运行状态存储在 .claude/teams/<team-id>/",
+        "不覆盖已有团队状态"
+      ]
+    },
+    {
+      "id": "p7",
+      "name": "旧协议升级",
+      "prompt": "项目存在 v1 版本协议文件",
+      "expectations": [
+        "检测到 v1 版本",
+        "提示或自动迁移到 v2"
+      ]
+    },
+    {
+      "id": "p8",
+      "name": "上下文哈希失效",
+      "prompt": "项目文档已更新但合约未同步",
+      "expectations": [
+        "通过 sha256 比较发现变化",
+        "只重建受影响角色切片",
+        "不因 mtime 改变而误判"
+      ]
+    },
+    {
+      "id": "p9",
+      "name": "文件 ownership 冲突",
+      "prompt": "frontend-dev 和 backend-dev 同时修改 openapi.yaml",
+      "expectations": [
+        "检测到 write_scope 重叠",
+        "指定唯一公共文件 owner",
+        "不允许两个 Agent 无协调并行修改"
+      ]
+    }
+  ]
+}
