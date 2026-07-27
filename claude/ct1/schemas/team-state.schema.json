@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TeamState",
+  "description": "ct1 team state schema",
+  "type": "object",
+  "properties": {
+    "team_id": { "type": "string" },
+    "mode": { "type": "string", "enum": ["create-only", "delivery"] },
+    "project_status": { "type": "string", "enum": ["discovery", "planned", "executing", "integrating", "verifying", "conditionally_deliverable", "delivered", "blocked", "cancelled"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "active_roles": { "type": "array", "items": { "type": "string" } },
+    "retired_roles": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["team_id", "mode", "project_status"]
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DeliveryState",
+  "description": "ct1 delivery state schema",
+  "type": "object",
+  "properties": {
+    "conclusion": { "type": "string", "enum": ["通过", "有条件通过", "未通过"] },
+    "ac_completion": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ac_id": { "type": "string" },
+          "result": { "type": "string", "enum": ["通过", "失败", "未执行"] },
+          "evidence": { "type": "string" }
+        },
+        "required": ["ac_id", "result"]
+      }
+    },
+    "tasks_status": { "type": "object", "propertyNames": { "type": "string" }, "additionalProperties": { "type": "string" } },
+    "defects": {
+      "type": "object",
+      "properties": {
+        "P0": { "type": "integer", "minimum": 0 },
+        "P1": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "review_issues": {
+      "type": "object",
+      "properties": {
+        "severe": { "type": "integer", "minimum": 0 },
+        "suggestions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "user_required_pending": { "type": "array", "items": { "type": "string" } },
+    "known_risks": { "type": "string" },
+    "incomplete_items": { "type": "string" }
+  },
+  "required": ["conclusion"]
+}

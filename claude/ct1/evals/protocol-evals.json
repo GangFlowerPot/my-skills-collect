@@ -27,7 +27,7 @@
       "name": "StatusReport/v2",
       "prompt": "进度",
       "expectations": [
-        "状态请求引用 StatusReport/v2（11 字段）",
+        "状态请求引用 StatusReport/v2",
         "汇总表格含任务ID、触发事件、验证结果列"
       ]
     },
@@ -88,6 +88,55 @@
         "检测到 write_scope 重叠",
         "指定唯一公共文件 owner",
         "不允许两个 Agent 无协调并行修改"
+      ]
+    },
+    {
+      "id": "p10",
+      "name": "Python 2 被拒绝",
+      "prompt": "使用 Python 2 运行 ct1_validate.py",
+      "expectations": [
+        "输出清晰错误要求 Python 3.10+",
+        "不将 SyntaxError 误判为业务校验失败",
+        "退出码非零"
+      ]
+    },
+    {
+      "id": "p11",
+      "name": "Python 3 缺失导致门禁 blocked",
+      "prompt": "环境中无 Python 3 时运行校验",
+      "expectations": [
+        "门禁状态为 blocked",
+        "不伪造通过",
+        "给出安装或配置提示"
+      ]
+    },
+    {
+      "id": "p12",
+      "name": "create-only 无需求不启动空闲开发者",
+      "prompt": "只要团队不要需求",
+      "expectations": [
+        "不启动空闲 frontend/backend/tester/reviewer",
+        "执行角色必须有任务 ID 或激活条件"
+      ]
+    },
+    {
+      "id": "p13",
+      "name": "多项目并发运行状态相互隔离",
+      "prompt": "两个项目同时运行",
+      "expectations": [
+        "每个项目使用独立 team_id",
+        "运行状态存储在各自 .claude/teams/<team-id>/",
+        "不相互覆盖"
+      ]
+    },
+    {
+      "id": "p14",
+      "name": "旧协议迁移后不再使用百分比里程碑",
+      "prompt": "恢复 v1 协议文件",
+      "expectations": [
+        "检测到 v1 版本",
+        "提示或自动迁移到 v2",
+        "当前运行不使用百分比里程碑"
       ]
     }
   ]

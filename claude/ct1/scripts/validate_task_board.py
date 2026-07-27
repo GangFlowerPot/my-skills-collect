@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Validate task board schema and references.
 
 Checks that task-board-schema.md exists and SKILL.md references it.
 """
 
 import sys
+
+if sys.version_info < (3, 10):
+    raise SystemExit(
+        "ct1 validation requires Python 3.10+. "
+        f"Current interpreter: {sys.version}"
+    )
+
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parent.parent

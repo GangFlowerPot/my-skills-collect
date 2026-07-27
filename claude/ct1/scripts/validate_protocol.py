@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Validate protocol consistency across ct1 references.
 
 Checks that StatusReport/v2 is the only status template definition
 and no old 6/8/9 field templates remain in skill runtime files.
 """
 
-import json
 import sys
+
+if sys.version_info < (3, 10):
+    raise SystemExit(
+        "ct1 validation requires Python 3.10+. "
+        f"Current interpreter: {sys.version}"
+    )
+
+import json
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parent.parent

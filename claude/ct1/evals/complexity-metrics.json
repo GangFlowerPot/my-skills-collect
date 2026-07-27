@@ -1,0 +1,53 @@
+{
+  "skill_name": "ct1",
+  "metrics": {
+    "description": "结构与复杂度指标（P2-03）。目标是减少无效复杂度，而不是单纯减少文件数量。",
+    "measurements": [
+      {
+        "id": "m1",
+        "name": "SKILL.md 行数",
+        "description": "主入口文件行数，目标 < 500"
+      },
+      {
+        "id": "m2",
+        "name": "runtime 必须加载的 reference 数量",
+        "description": "每次启动必须读取的 reference 文件数"
+      },
+      {
+        "id": "m3",
+        "name": "重复 schema 数量",
+        "description": "同一概念被定义为多个 schema 的数量，目标 0"
+      },
+      {
+        "id": "m4",
+        "name": "每次启动的 Agent 数",
+        "description": "单次团队创建的 Agent 数量"
+      },
+      {
+        "id": "m5",
+        "name": "无 owned task 的 Agent 数",
+        "description": "启动时没有明确任务的 Agent 数，目标 0"
+      },
+      {
+        "id": "m6",
+        "name": "write scope 冲突数",
+        "description": "未协调的 write scope 重叠数，目标 0"
+      },
+      {
+        "id": "m7",
+        "name": "协议校验耗时",
+        "description": "运行 ct1_validate.py 的总耗时（秒）"
+      },
+      {
+        "id": "m8",
+        "name": "交付门禁真假阳性",
+        "description": "门禁通过/失败的准确率"
+      },
+      {
+        "id": "m9",
+        "name": "使用 Skill 与旧版 Skill 的 token/time 差异",
+        "description": "新版 vs 旧版的 token 消耗和时间对比"
+      }
+    ]
+  }
+}

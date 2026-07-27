@@ -13,7 +13,7 @@
   - `v2`：直接使用
   - 未知版本：停止自动覆盖，报告给用户
 
-## Schema（11 字段，固定顺序）
+## Schema（固定字段和顺序）
 
 ```
 【协议版本】StatusReport/v2
@@ -24,11 +24,13 @@
 【阻塞项】无 / 问题或依赖 ID
 【下一步】下一个具体动作
 【需要的输入】无 / 所需输入
-【触发事件】无 / 设计完成 / 契约就绪 / 可审查 / 可测试 / 待验收
+【触发事件】无 / design_ready / contract_ready / review_ready / test_ready / acceptance_ready
 【待答复问题】无 / 问题列表
 【变更文件】无 / 文件路径列表
 【验证结果】未执行 / 命令、结果和限制
 ```
+
+> 字段数量以本 schema 为准。其他文档不重复定义完整字段表，只引用"严格按照 StatusReport/v2 的固定字段和顺序输出"。
 
 ### 字段含义
 
@@ -53,13 +55,13 @@
 
 ### 触发事件枚举
 
-`设计完成 / 契约就绪 / 可审查 / 可测试 / 待验收`
+`design_ready / contract_ready / review_ready / test_ready / acceptance_ready`
 
 ## 各角色用法
 
 ### 执行者（frontend-dev / backend-dev / fullstack-dev 等）
 
-按 11 字段完整回复。里程碑节点必须填写 `触发事件`、`待答复问题`、`变更文件`。
+按 StatusReport/v2 完整字段和固定顺序回复。触发事件节点必须填写 `触发事件`、`待答复问题`、`变更文件`。
 
 ### reviewer
 

@@ -24,7 +24,7 @@
 
 ## 状态请求模板（发给每位执行者）
 
-所有角色统一使用 **StatusReport/v2**（11 字段）。完整 schema 见 `references/status-report-schema.md`。
+所有角色统一使用 **StatusReport/v2**。完整 schema 见 `references/status-report-schema.md`。
 
 ```
 请按 StatusReport/v2 格式报告你当前的状态：
@@ -36,7 +36,7 @@
 【阻塞项】无 / 问题或依赖 ID
 【下一步】下一个具体动作
 【需要的输入】无 / 所需输入
-【触发事件】无 / 设计完成 / 契约就绪 / 可审查 / 可测试 / 待验收
+【触发事件】无 / design_ready / contract_ready / review_ready / test_ready / acceptance_ready
 【待答复问题】无 / 当前卡点的问题
 【变更文件】无 / 本轮新增或修改的文件列表
 【验证结果】未执行 / 命令、结果和限制
@@ -85,10 +85,10 @@
 【阻塞项】无
 【下一步】等待答复后决定登录态实现方案，继续实现登录表单
 【需要的输入】无
-【触发事件】可审查
+【触发事件】review_ready
 【待答复问题】
-1. [Q-FE-001][可审查] 是否采用方案A（JWT+refresh token）或方案B（session）实现登录态？ (关联任务: 前端登录模块)
-2. [Q-FE-002][可审查] 表单验证错误提示文案是否沿用旧版？ (关联任务: 前端登录模块)
+1. [Q-FE-001][review_ready] 是否采用方案A（JWT+refresh token）或方案B（session）实现登录态？ (关联任务: 前端登录模块)
+2. [Q-FE-002][review_ready] 表单验证错误提示文案是否沿用旧版？ (关联任务: 前端登录模块)
 【变更文件】
 - src/components/LoginForm.vue（新增）
 - src/store/user.js（修改）

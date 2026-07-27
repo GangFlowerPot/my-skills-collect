@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Check delivery gate constraints.
 
 Validates that delivery-evals.json contains required scenarios:
@@ -7,8 +8,15 @@ Validates that delivery-evals.json contains required scenarios:
 - incomplete AC blocks delivery
 """
 
-import json
 import sys
+
+if sys.version_info < (3, 10):
+    raise SystemExit(
+        "ct1 validation requires Python 3.10+. "
+        f"Current interpreter: {sys.version}"
+    )
+
+import json
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parent.parent

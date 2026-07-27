@@ -54,10 +54,11 @@ backlog
   → review
   → test
   → accepted
-  → delivered
 
 任意非终态均可进入 blocked。
 ```
+
+> `delivered` 不是任务状态，而是项目状态。单任务 accepted 不会使项目自动 delivered；项目 delivered 必须经过项目级交付门禁。
 
 ### 状态约束
 

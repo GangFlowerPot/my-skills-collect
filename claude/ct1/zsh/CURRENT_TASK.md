@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-27 12:30 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-27 13:30 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。
 
 ## 已完成
 
@@ -44,6 +44,13 @@
   - 更新 `evals/evals.json`：对齐新协议，新增单 Agent 降级 + 动态团队 eval
   - 静态一致性检查通过：skill 运行文件不再有旧的固定团队描述和 6/8/9 字段模板残留
   - 新建 3 个 validation scripts（validate_protocol / validate_task_board / check_delivery_gate）并全部通过
+- [x] **ct1 下一轮优化（NEXT_ROUND_OPTIMIZATION_PLAN.md）Iteration A~E**：
+  - **Iteration A**（协议清理）：修正 StatusReport 字段数（11→12）、清除百分比流程（33/66/100%→事件驱动）、统一事件名为英文下划线、长示例移入 examples/、建立文档职责矩阵
+  - **Iteration B**（Python 3 基线）：新建统一入口 ct1_validate.py、所有脚本增加版本检查、SKILL.md 增加运行依赖章节、明确 Python 3.10+ 和探测策略
+  - **Iteration C**（结构化运行状态）：新建 6 个 JSON schemas（task-graph/role-roster/team-state/status-report/test-report/delivery-state）、删除 Skill 目录双写、分离任务状态与项目状态
+  - **Iteration D**（真实门禁）：新建 validate_task_graph.py（依赖图/owner/AC/验证证据）和 validate_write_scopes.py（role roster/write scope 冲突）
+  - **Iteration E**（评估与回归）：补充 14 个真实运行测试场景（Python 2/3、create-only、多项目隔离等）、新建 complexity-metrics.json
+  - 最终静态一致性检查通过：skill 文件无百分比和"11 字段"残留
 - [x] **ct1 skill 全生命周期重构 Iteration 2~5**：
   - **Iteration 2**（需求和任务管理）：新建 requirement-brief/task-board-schema/api-contract-protocol 3 个 references + 2 个 templates
   - **Iteration 3**（测试和交付）：新建 testing-gate/delivery-report 2 个 references + 2 个 templates
@@ -101,9 +108,9 @@
 
 ## 精确续接位置
 
-- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/AGENT_IMPROVEMENT_PLAN.md` + `improve/DYNAMIC_TEAM_REFACTOR_PROMPT.md`
-- 位置：ct1 skill 全生命周期重构 Iteration 1~5 全部完成；下一步是按文档要求运行完整 eval 并对比旧版
-- 状态：基础协议统一（StatusReport/v2）、运行模式、动态团队生成、需求/任务/测试/交付/可靠性/评测全部就绪
+- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/NEXT_ROUND_OPTIMIZATION_PLAN.md`
+- 位置：ct1 下一轮优化 Iteration A~E 全部完成；可按文档第 11 节最终验收清单逐项核验
+- 状态：协议收敛、Python 3 基线、结构化状态、真实门禁、评估体系全部就绪
 
 ## 下次会话建议
 

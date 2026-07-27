@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StatusReport",
+  "description": "ct1 StatusReport/v2 schema - single source of truth",
+  "type": "object",
+  "properties": {
+    "protocol_version": { "type": "string", "const": "StatusReport/v2" },
+    "task_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["空闲", "就绪", "工作中", "阻塞", "审查中", "测试中", "完成"] },
+    "current_task": { "type": "string" },
+    "progress": { "type": "string", "description": "可验证结果，非主观百分比" },
+    "blockers": { "type": "string" },
+    "next_steps": { "type": "string" },
+    "required_input": { "type": "string" },
+    "trigger_event": { "type": "string", "enum": ["无", "design_ready", "contract_ready", "review_ready", "test_ready", "acceptance_ready"] },
+    "pending_questions": { "type": "string" },
+    "changed_files": { "type": "string" },
+    "verification_result": { "type": "string" }
+  },
+  "required": ["protocol_version", "task_id", "status", "current_task"]
+}

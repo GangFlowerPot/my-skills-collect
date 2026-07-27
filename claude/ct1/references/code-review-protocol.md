@@ -82,7 +82,7 @@ dev 修复代码 → 汇报 leader
 ```
 ## Code Review 报告
 审查对象: {frontend-dev / backend-dev} 的 {模块名}
-审查轮次: 第 {N} 轮（里程碑: {33%/66%/100%}）
+审查轮次: 第 {N} 轮（触发事件: {design_ready/review_ready/acceptance_ready}）
 审查文件: {file1, file2, ...}
 
 ### 严重问题（必须修复）— 阻塞项
@@ -114,7 +114,7 @@ dev 修复代码 → 汇报 leader
 
 | 程度 | 定义 | 处理 |
 |---|---|---|
-| 严重问题 | 安全漏洞、数据丢失风险、性能瓶颈、架构缺陷、生产事故隐患 | 必须修复，阻塞下一里程碑 |
+| 严重问题 | 安全漏洞、数据丢失风险、性能瓶颈、架构缺陷、生产事故隐患 | 必须修复，阻塞下一触发事件 |
 | 建议改进 | 代码规范、可读性、可维护性、轻微性能优化 | 建议修复，不阻塞 |
 | 需用户决策 | 涉及产品方向、技术选型、资源投入的取舍 | 升级用户决策 |
 
@@ -132,7 +132,7 @@ dev 修复代码 → 汇报 leader
 
 ```
 [CONTEXT ADDENDUM]
-来源：reviewer 审查（第 {N} 轮 / {dev} / {里程碑}）
+来源：reviewer 审查（第 {N} 轮 / {dev} / {触发事件}）
 关联任务：{模块} 代码修复
 审查问题：
   1. [R-{dev}-001][严重][安全] src/X.java:42 — 问题描述。修复建议：...
@@ -144,7 +144,7 @@ dev 修复代码 → 汇报 leader
 
 reviewer 的「需用户决策」项，leader 按问题升级循环的格式填入【待答复问题】：
 ```
-[R-{dev}-U01][33%] 是否使用 Redis 缓存运单列表？ (关联任务: 运单列表接口)
+[R-{dev}-U01][review_ready] 是否使用 Redis 缓存运单列表？ (关联任务: 运单列表接口)
 ```
 用户回答后，leader 通过 `[CONTEXT ADDENDUM]`（来源=用户答复）分发给对应 dev。
 
@@ -167,20 +167,20 @@ reviewer 的「需用户决策」项，leader 按问题升级循环的格式填�
 使用以下事件替代固定百分比：
 
 ```text
-design-ready
-contract-ready
-first-runnable-slice
-review-ready
-release-ready
+design_ready
+contract_ready
+review_ready
+test_ready
+acceptance_ready
 ```
 
 ### 审查轮次
 
 | 轮次 | 触发事件 | 审查内容 | 输出 |
 |---|---|---|---|
-| 设计审查（高风险） | design-ready | 架构合理性、安全、性能 | 报告 → 下发修改 |
-| 实现中审查（高风险） | first-runnable-slice | 已完成代码 + 架构 | 报告 → 下发修改 |
-| 最终审查 | review-ready | 修复验证 + 新增代码 + 遗留问题 | 最终报告 → 汇总展示用户 |
+| 设计审查（高风险） | design_ready | 架构合理性、安全、性能 | 报告 → 下发修改 |
+| 实现中审查（高风险） | review_ready | 已完成代码 + 架构 | 报告 → 下发修改 |
+| 最终审查 | acceptance_ready | 修复验证 + 新增代码 + 遗留问题 | 最终报告 → 汇总展示用户 |
 
 ### 最终审查特殊处理
 
@@ -215,110 +215,46 @@ dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 lead
 
 | 边界情况 | 处理方式 |
 |---|---|
-| **无严重问题（审查通过）** | reviewer 输出「是否通过: 是」，leader 告知 dev 通过，无需修改；继续下一里程碑 |
+| **无严重问题（审查通过）** | reviewer 输出「是否通过: 是」，leader 告知 dev 通过，无需修改；继续下一触发事件 |
 | **用户跳过决策** | leader 基于已有上下文自行裁决，`status = 已作废`，`void_reason = leader 代答`；告知 reviewer |
 | **跨轮次遗留问题** | reviewer 在每轮报告开头列出「上轮遗留未修复问题」，确保追踪不丢失 |
 | **修复引入新问题** | reviewer 在第 2/3 轮报告中对比上一轮，标注「新发现问题」与「已修复问题」 |
 | **dev 不同意审查意见** | dev 可向 leader 申述；leader 裁决：采纳 dev 意见（通知 reviewer 作废该问题）或维持原意见（dev 必须修复） |
-| **100% 后仍有严重问题** | reviewer 不允许 100% 里程碑通过；dev 必须修复后才能进入空闲状态 |
+| **acceptance_ready 后仍有严重问题** | reviewer 不允许 acceptance_ready 通过；dev 必须修复后才能进入空闲状态 |
 | **零开发/新增需求** | 所有编码产出都必须经过审查循环，无例外 |
 
 ---
 
 ## 9. 完整工作示例
 
-**场景**：frontend-dev 在 33% 完成运单列表页编码，leader 送审。
+详见 `examples/code-review-e2e.md`（风险驱动审查完整流程：dev 汇报 → leader 送审 → reviewer 出报告 → leader 分流 → 用户决策 → dev 修复后再审）。
 
-### 9.1 Dev 汇报（33% 里程碑）
+本节保留最小示例：
+
+### Dev 汇报（review_ready）
 
 ```
-【状态】工作中
-【当前任务】运单列表页组件开发
-【进度】33%（完成组件树与状态管理）
-【阻塞项】无
-【下一步】等待审查通过后继续交互实现
-【需要的输入】无
-【最近上报里程碑】33%
-【待答复问题】无
-【本轮完成文件】
+【触发事件】review_ready
+【变更文件】
 - src/components/WaybillList.vue（新增）
 - src/store/waybill.js（修改）
+【验证结果】未执行
 ```
 
-### 9.2 Leader 送审
-
-leader 向 reviewer 发送：
-```
-请审查 frontend-dev 的运单列表页代码（第 1 轮 / 33% 里程碑）：
-- src/components/WaybillList.vue
-- src/store/waybill.js
-
-审查范围：代码质量、架构合理性、安全、性能、编码规范、中间件使用。
-按 Code Review 报告模板输出。
-```
-
-### 9.3 Reviewer 输出报告
+### Reviewer 报告（摘要）
 
 ```
 ## Code Review 报告
 审查对象: frontend-dev 的 运单列表页
-审查轮次: 第 1 轮（里程碑: 33%）
-审查文件: src/components/WaybillList.vue, src/store/waybill.js
+审查轮次: 第 1 轮（触发事件: review_ready）
 
-### 严重问题（必须修复）— 阻塞项
+### 严重问题（必须修复）
 | 编号 | 位置 | 问题描述 | 修复建议 | 分类 |
-|------|------|----------|----------|------|
-| R-FE-001 | WaybillList.vue:58 | 列表数据未做空值保护，data 可能为 null 导致渲染崩溃 | 添加 v-if="data && data.length" 或默认空数组 | 安全 |
-
-### 建议改进（建议修复）— 非阻塞
-| 编号 | 位置 | 问题描述 | 修复建议 | 分类 |
-|------|------|----------|----------|------|
-| R-FE-002 | waybill.js:23 | mutation 命名 WAYBILL_LIST 不符合项目驼峰规范 | 改为 setWaybillList | 规范 |
-| R-FE-003 | WaybillList.vue:112 | 分页逻辑与筛选逻辑耦合在同一方法，难以维护 | 拆分为 fetchList / handleFilter / handlePage 三个方法 | 架构 |
-
-### 需用户决策
-| 编号 | 问题描述 | 选项 | 影响范围 |
-|------|----------|------|----------|
-| R-FE-U01 | 运单列表是否需要跨页保持筛选条件？ | A. 保持（需持久化到 localStorage） B. 不保持（刷新重置） | 用户体验与 waybillStore 设计 |
+| R-FE-001 | WaybillList.vue:58 | 列表数据未做空值保护 | 添加 v-if 或默认空数组 | 安全 |
 
 ### 总结
 - 是否通过: 否（存在 1 个严重问题）
-- 整体评价: 组件结构清晰，状态管理基本合理；需修复空值保护与命名规范
-- 本轮重点: 数据安全性与代码规范
 ```
-
-### 9.4 Leader 分流
-
-**严重问题 + 建议改进 → 下发 frontend-dev**：
-```
-[CONTEXT ADDENDUM]
-来源：reviewer 审查（第 1 轮 / frontend-dev / 33%）
-关联任务：运单列表页代码修复
-审查问题：
-  1. [R-FE-001][严重][安全] WaybillList.vue:58 — 列表数据未做空值保护。修复建议：添加 v-if 或默认空数组
-  2. [R-FE-002][建议][规范] waybill.js:23 — mutation 命名不规范。修复建议：改为 setWaybillList
-  3. [R-FE-003][建议][架构] WaybillList.vue:112 — 分页与筛选耦合。修复建议：拆分为三个方法
-对原有上下文的变更：需修复上述问题后重新提交审查
-```
-
-**需用户决策 → 升级**：
-leader 将 R-FE-U01 填入 33% 里程碑的【待答复问题】：
-```
-【待答复问题】
-1. [R-FE-U01][33%] 运单列表是否需要跨页保持筛选条件？ A. 保持（持久化 localStorage） B. 不保持 (关联任务: 运单列表页)
-```
-
-### 9.5 用户决策
-
-```
-R-FE-U01: A（保持）
-```
-
-leader 通过 `[CONTEXT ADDENDUM]`（来源=用户答复）分发给 frontend-dev。
-
-### 9.6 Dev 修复后（66% 再审）
-
-frontend-dev 修复 R-FE-001/002/003 + 实现跨页保持 → 汇报 66% 里程碑（含修复说明 + 新完成文件）→ leader 再次送审 reviewer → reviewer 输出第 2 轮报告（对比上轮，标注已修复/新问题）→ 循环。
 
 ---
 

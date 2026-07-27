@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TaskGraph",
+  "description": "ct1 task graph schema",
+  "type": "object",
+  "properties": {
+    "version": { "type": "string" },
+    "requirement_id": { "type": "string" },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]+$" },
+          "title": { "type": "string" },
+          "owner": { "type": "string" },
+          "status": { "type": "string", "enum": ["backlog", "ready", "in_progress", "review", "test", "accepted", "blocked", "cancelled"] },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+          "risk": { "type": "string", "enum": ["high", "medium", "low"] },
+          "depends_on": { "type": "array", "items": { "type": "string" } },
+          "acceptance_criteria": { "type": "array", "items": { "type": "string" } },
+          "write_scope": { "type": "array", "items": { "type": "string" } },
+          "artifacts": { "type": "array", "items": { "type": "string" } },
+          "verification": { "type": "array", "items": { "type": "string" } },
+          "handoff_to": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["id", "title", "owner", "status"]
+      }
+    }
+  },
+  "required": ["tasks"]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TestReport",
+  "description": "ct1 test report schema",
+  "type": "object",
+  "properties": {
+    "conclusion": { "type": "string", "enum": ["通过", "有条件通过", "未通过"] },
+    "ac_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ac_id": { "type": "string" },
+          "result": { "type": "string", "enum": ["通过", "失败", "未执行"] },
+          "evidence": { "type": "string" }
+        },
+        "required": ["ac_id", "result"]
+      }
+    },
+    "defects": {
+      "type": "object",
+      "properties": {
+        "P0": { "type": "integer", "minimum": 0 },
+        "P1": { "type": "integer", "minimum": 0 },
+        "P2": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "environment": { "type": "string" },
+    "known_limitations": { "type": "string" }
+  },
+  "required": ["conclusion"]
+}

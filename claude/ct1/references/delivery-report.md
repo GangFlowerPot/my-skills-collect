@@ -4,6 +4,22 @@
 
 `delivery` 模式的最终产物。报告内容与任务板、测试报告和审查记录一致，不掩盖未测试、环境限制或遗留问题。
 
+## 项目状态机
+
+```
+discovery
+  → planned
+  → executing
+  → integrating
+  → verifying
+  → conditionally_deliverable
+  → delivered
+
+任意非终态均可进入 blocked / cancelled。
+```
+
+> `delivered` 是项目状态，不是任务状态。项目 delivered 必须经过项目级交付门禁（所有必需任务 accepted、所有必需 AC 通过、P0/P1 缺陷为零、严重审查问题为零、user-required 决策无未确认项）。
+
 ## 报告格式
 
 ```markdown

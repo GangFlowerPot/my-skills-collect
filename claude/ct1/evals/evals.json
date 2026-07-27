@@ -42,7 +42,7 @@
       "expectations": [
         "识别'进度'为进度查询触发词",
         "并行向非 leader 成员发送状态请求（同一消息多个 SendMessage）",
-        "请求内容引用 StatusReport/v2（11 字段）",
+        "请求内容引用 StatusReport/v2",
         "输出为 Markdown 表格，含 StatusReport/v2 字段列",
         "表格行覆盖非 leader 成员（不含 leader）"
       ]

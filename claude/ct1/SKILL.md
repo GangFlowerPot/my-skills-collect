@@ -5,6 +5,34 @@ description: 多 Agent 项目编排器——从需求拆分、动态组队、分
 
 # ct1 — 多 Agent 项目编排器
 
+## 运行依赖
+
+ct1 校验脚本需要 **Python 3.10+**。Python 2 不支持。
+
+### 统一运行入口
+
+```powershell
+# Windows（显式指定 Python 3 路径）
+$env:CT1_PYTHON = "C:\Path\To\Python313\python.exe"
+& $env:CT1_PYTHON scripts/ct1_validate.py
+```
+
+```bash
+# Unix
+python3 scripts/ct1_validate.py
+```
+
+### Python 探测策略
+
+1. 优先使用显式配置的 `CT1_PYTHON`
+2. 探测 `python3`
+3. 探测 `py -3`
+4. 探测 `python`，但必须验证 `sys.version_info.major == 3`
+5. 如果可用，可使用 `uv run python`
+6. 所有候选均不可用时，停止 Python 门禁并报告阻塞（不伪造通过）
+
+找不到 Python 3 时交付门禁状态为 `blocked`，不是 `passed`。
+
 ## 何时使用
 
 只要用户想搭建一个**有多角色分工、能并行工作、可查询进度**的 Agent 协作小组，或者要**推进一个需求从开发到交付**，就用这个 skill。典型触发：
@@ -292,7 +320,7 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 
 协议文件内容见 `references/team-protocol.md`（触发词、StatusReport/v2 引用、汇总格式、执行规范）。部署时把"默认团队配置"替换成**本次实际组建的团队**（只列非 leader 成员）。
 
-**验证副本（双写）**：除了上面的项目目录副本，再写一份到 `<skill目录>/ct1-workspace/team-protocol-snapshot.md`（全局 skill 工作区），仅用于离线验证与调试对照。两份内容必须一致。
+> 项目状态只写入 `<project>/.claude/teams/<team-id>/`，不写回全局 Skill 安装目录。调试快照写入项目团队目录下的 `debug/`。
 
 然后**挂载导航**：
 - 如果项目有 `AGENT_MEMORY.md` → 在其"记忆地图"表加一行指向该协议文件
@@ -362,7 +390,7 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 
 ### 状态回复格式
 
-所有角色统一使用 StatusReport/v2（11 字段）。完整 schema 见 `references/status-report-schema.md`。
+所有角色统一使用 StatusReport/v2。完整 schema 见 `references/status-report-schema.md`。
 
 ### 汇总表格格式
 
