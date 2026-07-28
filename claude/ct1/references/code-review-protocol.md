@@ -186,11 +186,62 @@ acceptance_ready
 
 - reviewer 输出最终报告
 - leader 汇总：最终进度结果 + 遗留未决策问题
+- **用户业务确认**（见 §6.1 Node C）
 - 展示用户：「审查通过」或「存在 N 个未决策问题需你决定」
 
 ---
 
-## 7. Dev 的触发事件节点报告
+## 6.1 功能里程碑对照表（Node A/B/C）
+
+> reviewer 启动条件 = 事件驱动 + 功能里程碑。**功能里程碑在 Step 3 组队时写入 TEAM_STATE**（`reviewer_milestones` 字段），而非事后补充。**不得使用百分比**，使用功能节点绑定触发事件。
+
+### 功能节点定义
+
+| 节点 | 标签 | 触发事件 | 审查内容 | 用户业务确认 |
+|---|---|---|---|---|
+| **Node A** | 骨架 + 认证 | review_ready | 登录流、JWT、页面路由、骨架结构、认证方向 | ☐ 确认骨架 + 认证方向 |
+| **Node B** | 核心业务交互 | review_ready | 创建/填写/统计主流程、核心业务交互正确性 | ☐ 确认核心业务交互 |
+| **Node C** | 最终验收 | acceptance_ready | 修复验证 + 新增代码 + 遗留问题 + 业务完整性 | ☐ 最终验收 |
+
+### 与触发事件的关系
+
+```text
+Node A (review_ready) ──reviewer 审查──▶ 用户业务确认 ──▶ Node B
+Node B (review_ready) ──reviewer 审查──▶ 用户业务确认 ──▶ Node C
+Node C (acceptance_ready) ──reviewer 审查──▶ 用户业务确认 ──▶ 交付
+```
+
+### 用户业务确认（开发中用户检查点）
+
+> **reviewer 不替用户验收业务方向**。每个功能节点审查后，leader 必须做轻量用户业务确认，避免业务方向偏差到最终交付才暴露。
+
+**确认内容**：
+- Node A 后：确认骨架 + 认证的方向（登录流、JWT、页面路由）
+- Node B 后：确认核心业务交互（创建/填写/统计的主流程）
+- Node C：最终验收
+
+**确认方式**：
+- leader 向用户展示 reviewer 报告 + 功能 demo/描述
+- 用户确认方向 → 继续下一节点
+- 方向偏差 → 记录为阻断项，dev 修复后重新送审
+
+### 写入时机
+
+Step 3 组队时，leader 根据任务图将 `reviewer_milestones` 写入 TEAM_STATE：
+
+```json
+{
+  "reviewer_milestones": [
+    { "node": "A", "label": "骨架+认证", "trigger_event": "review_ready", "description": "登录流、JWT、页面路由、骨架结构" },
+    { "node": "B", "label": "核心业务交互", "trigger_event": "review_ready", "description": "创建/填写/统计主流程" },
+    { "node": "C", "label": "最终验收", "trigger_event": "acceptance_ready" }
+  ]
+}
+```
+
+---
+
+## 8. Dev 的触发事件节点报告
 
 dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 leader 送审：
 
@@ -211,7 +262,7 @@ dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 lead
 
 ---
 
-## 8. 边界情况处理
+## 9. 边界情况处理
 
 | 边界情况 | 处理方式 |
 |---|---|
@@ -225,7 +276,7 @@ dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 lead
 
 ---
 
-## 9. 完整工作示例
+## 10. 完整工作示例
 
 详见 `examples/code-review-e2e.md`（风险驱动审查完整流程：dev 汇报 → leader 送审 → reviewer 出报告 → leader 分流 → 用户决策 → dev 修复后再审）。
 
@@ -258,7 +309,7 @@ dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 lead
 
 ---
 
-## 10. 与现有系统的关系
+## 11. 与现有系统的关系
 
 | 现有机制 | 如何复用 / 扩展 |
 |---|---|
@@ -267,7 +318,8 @@ dev 在触发事件节点的 StatusReport/v2 中，`变更文件` 字段供 lead
 | 问题升级循环 | reviewer 的「需用户决策」项走此循环 |
 | 上下文注入（5 要素） | reviewer 获得独立的上下文切片（架构+规范+审查标准） |
 | 触发事件节点 | 审查触发与 review-ready 事件联动 |
+| 功能里程碑（Node A/B/C） | reviewer 启动条件 = 事件驱动 + 里程碑对照（§6.1），写入 TEAM_STATE |
 
-## 协议归属
+## 12. 协议归属
 
 本协议是 `references/team-protocol.md` 的扩展，是 reviewer 角色与审查循环的唯一真相源。部署时，reviewer 作为延迟启动角色写入 `TEAM_PROTOCOL.md`。

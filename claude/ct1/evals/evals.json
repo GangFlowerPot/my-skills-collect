@@ -74,6 +74,25 @@
         "tester 在 test-ready 时进入执行阶段",
         "每个开发任务至少关联一个 AC"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "开发一个运单管理模块，包含复杂筛选、分页、状态操作、权限和多个后端接口，项目是 E:/work/ynwl",
+      "expected_output": "delivery 模式。Step 1.5 建立 Requirement Brief 时执行「技术基线验证」（数据层一致性、环境就绪、凭证方案），捕获数据层语义冲突（DDL vs ADR 裁定 vs 实际库表）为 user-required 问题。Step 3.75 开发计划确认硬门：leader 呈报团队架构 + 开发计划 + reviewer 功能里程碑（Node A/B/C），⏸ 等用户明确确认后才启动 Agent 开发。确认前 dev 角色只读。确认后 TEAM_STATE 写入 plan_confirmed 事件与 reviewer_milestones。",
+      "files": [],
+      "expectations": [
+        "识别为 delivery 模式",
+        "Step 1.5 Requirement Brief 包含「技术基线验证」章节（数据层一致性、环境就绪、凭证方案）",
+        "数据层语义冲突（如 BYTE vs CHAR）被标记为 user-required 问题，交用户确认",
+        "Step 3.75 开发计划确认硬门被触发（团队方案生成后、Agent 启动前）",
+        "leader 向用户呈报开发计划（任务拆分/执行顺序/reviewer 功能里程碑 Node A/B/C）",
+        "⏸ 工作流在用户确认前停止，不启动 Agent 开发",
+        "确认前 dev 角色只读，不写业务代码或配置文件",
+        "用户确认后 TEAM_STATE 写入 plan_confirmed 事件",
+        "reviewer 功能里程碑（Node A/B/C）在 Step 3 写入 TEAM_STATE.reviewer_milestones",
+        "StatusReport 状态含「等待用户确认」→ 确认后转「执行中」",
+        "无 33/66/100% 百分比门禁残留，里程碑为事件驱动"
+      ]
     }
   ]
 }

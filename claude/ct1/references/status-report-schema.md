@@ -18,13 +18,13 @@
 ```
 【协议版本】StatusReport/v2
 【任务ID】任务板中的唯一 ID（如 BE-003；未入任务板时填"—"）
-【状态】空闲 / 就绪 / 工作中 / 阻塞 / 审查中 / 测试中 / 完成
+【状态】空闲 / 就绪 / 工作中 / 阻塞 / 审查中 / 测试中 / 等待用户确认 / 完成
 【当前任务】一句话描述
 【进展】已经完成的可验证结果（非主观百分比）
 【阻塞项】无 / 问题或依赖 ID
 【下一步】下一个具体动作
 【需要的输入】无 / 所需输入
-【触发事件】无 / design_ready / contract_ready / review_ready / test_ready / acceptance_ready
+【触发事件】无 / plan_confirmed / design_ready / contract_ready / review_ready / test_ready / acceptance_ready
 【待答复问题】无 / 问题列表
 【变更文件】无 / 文件路径列表
 【验证结果】未执行 / 命令、结果和限制
@@ -51,11 +51,15 @@
 
 ### 状态枚举
 
-`空闲 / 就绪 / 工作中 / 阻塞 / 审查中 / 测试中 / 完成`
+`空闲 / 就绪 / 工作中 / 阻塞 / 审查中 / 测试中 / 等待用户确认 / 完成`
+
+> `等待用户确认`：开发计划已提交用户、尚未获确认前的状态。此时 dev 角色只读。
 
 ### 触发事件枚举
 
-`design_ready / contract_ready / review_ready / test_ready / acceptance_ready`
+`plan_confirmed / design_ready / contract_ready / review_ready / test_ready / acceptance_ready`
+
+> `plan_confirmed`：开发计划已获用户明确确认（Step 3.75 硬门）。dev 角色从"等待用户确认"转为"执行中"的触发条件。**不得使用主观百分比作为流程条件**。
 
 ## 各角色用法
 

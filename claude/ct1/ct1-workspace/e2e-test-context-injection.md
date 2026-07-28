@@ -1,5 +1,11 @@
 # 端到端测试：ynwl 项目的上下文灌输全链路演示
 
+> ⚠️ **历史版本（基于 33%/66%/100% 百分比门禁）**。本文件记录 Iteration A **之前**的旧门禁验证，保留作历史参考。
+>
+> **当前有效版本**：`ct1-workspace/e2e-test-gates-v2.md`（基于 Node A/B/C 功能里程碑 + `plan_confirmed` 事件驱动门禁，与 `references/code-review-protocol.md` §6.1 对齐）。
+>
+> 迁移原因：百分比门禁已被事件驱动功能里程碑替代（详见 `improve/NEXT_ROUND_OPTIMIZATION_PLAN.md` P0-02、`references/status-report-schema.md`）。
+
 > 这是一个**具体的工作示例**，用真实项目（ynwl 物流管理系统）演示上下文灌输机制的完整链路：
 > 合约建立 → 按角色切片 → 五要素 prompt 组装 → token 预算 → 动态补充。
 >

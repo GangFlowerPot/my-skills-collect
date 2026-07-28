@@ -33,6 +33,7 @@ status: pending
 - 外部发布
 - 不可逆数据库迁移
 - 明显改变需求范围
+- **数据层语义冲突**（DDL 语义 vs 现有 ADR 裁定 vs 实际库表，如 BYTE vs CHAR）
 
 ## 验收标准
 

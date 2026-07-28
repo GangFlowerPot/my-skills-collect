@@ -11,7 +11,22 @@
     "updated_at": { "type": "string", "format": "date-time" },
     "roles": { "type": "array", "items": { "type": "string" } },
     "active_roles": { "type": "array", "items": { "type": "string" } },
-    "retired_roles": { "type": "array", "items": { "type": "string" } }
+    "retired_roles": { "type": "array", "items": { "type": "string" } },
+    "confirmed_events": { "type": "array", "items": { "type": "string" }, "description": "已获用户确认的触发事件，如 plan_confirmed" },
+    "reviewer_milestones": {
+      "type": "array",
+      "description": "Reviewer 功能里程碑，Step 3 组队时写入，绑定触发事件（非百分比）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "node": { "type": "string", "enum": ["A", "B", "C"] },
+          "label": { "type": "string" },
+          "trigger_event": { "type": "string", "enum": ["review_ready", "acceptance_ready"] },
+          "description": { "type": "string" }
+        },
+        "required": ["node", "label", "trigger_event"]
+      }
+    }
   },
   "required": ["team_id", "mode", "project_status"]
 }

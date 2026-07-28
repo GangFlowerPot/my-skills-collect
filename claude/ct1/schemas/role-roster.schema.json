@@ -20,7 +20,7 @@
           "read_scope": { "type": "array", "items": { "type": "string" } },
           "write_scope": { "type": "array", "items": { "type": "string" } },
           "dependencies": { "type": "array", "items": { "type": "string" } },
-          "activation": { "type": "object", "properties": { "when": { "type": "string" } } },
+          "activation": { "type": "object", "properties": { "when": { "type": "string" }, "read_only_until": { "type": "string", "description": "事件未触发前角色只读，如 plan_confirmed" } } },
           "deactivation": { "type": "object", "properties": { "when": { "type": "string" } } }
         },
         "required": ["id", "type", "status"]
