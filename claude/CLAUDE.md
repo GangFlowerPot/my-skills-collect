@@ -73,7 +73,7 @@ cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
 
 > **确认方式**：用户回复 `1` 即表示确认推送。
 
-**📝 提交前先保存记忆**：每次提交代码前，**必须先执行记忆脱水**——将本次会话的工作内容保存到项目记忆文件（`CURRENT_TASK.md` / `SESSION_LOG.md` / `AGENT_MEMORY.md`）中。具体：
+**📝 提交前先保存记忆**：对**采用 zsh 记忆体系的 skill**，每次提交代码前必须先执行记忆脱水——将本次会话的工作内容保存到该 skill 的 zsh 项目记忆文件中。具体：
 
 1. **更新 `CURRENT_TASK.md`**：当前阶段、已完成列表、续接位置、下次会话建议
 2. **追加 `SESSION_LOG.md`**：本次会话条目（任务/完成的工作/遇到的问题/代码变更），**只追加不覆盖历史**
@@ -84,13 +84,13 @@ cd "D:/claudeCode/skills/my-skills-collect" && git pull origin main
 **流程**：
 ```
 1. 完成代码工作
-2. 记忆脱水 → 保存到 CURRENT_TASK.md / SESSION_LOG.md / AGENT_MEMORY.md
+2. 记忆脱水 → 保存到该 skill 的 zsh 记忆文件（`zsh/CURRENT_TASK.md` / `zsh/SESSION_LOG.md` / `zsh/AGENT_MEMORY.md`）
 3. git add -A（代码 + 记忆文件）
 4. git commit（代码提交和记忆提交可以合并为一个 commit，或分两个 commit）
 5. git push
 ```
 
-> **记忆文件位置**：每个 skill 工作区内（如 `claude/ct1/CURRENT_TASK.md`）。如果项目使用 zsh 记忆体系，按 `AGENT_MEMORY.md` 导航指向的文件回写。
+> **记忆文件位置**：每个采用 zsh 的 skill 工作区内（如 `claude/ct1/zsh/CURRENT_TASK.md`）。按该 skill 的 `zsh/AGENT_MEMORY.md` 导航指向的文件回写。未采用 zsh 的 skill 无此要求。
 
 **示例交互**：
 ```
