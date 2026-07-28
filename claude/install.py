@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""my-skills-collect 一键安装脚本（Windows / Linux / macOS）。
+r"""my-skills-collect 一键安装脚本（Windows / Linux / macOS）。
 
 安装内容:
-  - moduleskill2global    : skill — 项目级/全局级 skill 互转
-  - rehydration-mode-v3   : skill — 再水化记忆系统 V3
-  - zsh                   : skill — 跨 Agent 项目记忆与上下文恢复系统（兼容 auto-memory / claude-mem）
-  - claude-mem            : plugin — 原始会话内容存储（通过 Claude Code /plugin 命令引导安装）
+  - ct1                  : skill — 多 Agent 项目编排器（create-only / delivery 双模式）
+  - git-rule             : skill — Git 工作流准则（同步/推送/重试）
+  - moduleskill2global   : skill — 项目级/全局级 skill 互转
+  - rehydration-mode-v3  : skill — 再水化记忆系统 V3（已废弃，由 zsh 取代）
+  - zsh                  : skill — 跨 Agent 项目记忆与上下文恢复（推荐记忆系统，兼容 auto-memory / claude-mem）
+  - claude-mem           : plugin — 原始会话内容存储（通过 Claude Code /plugin 命令引导安装）
 
 安装目标（全局）:
   - Windows: %USERPROFILE%\.agents\skills\  +  %USERPROFILE%\.claude\skills\
@@ -17,7 +19,7 @@
   python install.py --skills-only  # 只装 skill，不提示 claude-mem
   python install.py --skip-mem     # 同上
   python install.py --link-to-source  # 链接到源模式：直接 Junction 到仓内源（git pull 即自动生效）
-  python install.py rehydration-mode-v3 moduleskill2global  # 指定安装
+  python install.py ct1 git-rule             # 指定安装（名称与子目录名一致）
   python install.py --list         # 列出可安装的 skill
   python install.py --uninstall    # 卸载（删除已安装的文件）
 """
@@ -41,7 +43,7 @@ CLAUDE_DIR = os.path.join(HOME, ".claude", "skills")
 COLLECTION_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 可安装的 skill 列表（目录名 = skill 名）
-AVAILABLE_SKILLS = ["moduleskill2global", "rehydration-mode-v3", "zsh"]
+AVAILABLE_SKILLS = ["ct1", "git-rule", "moduleskill2global", "rehydration-mode-v3", "zsh"]
 
 
 def _mkdir_p(path):
@@ -234,10 +236,12 @@ def guide_claude_mem():
     print("安装完成后，claude-mem 会随 Claude Code 自动加载。")
     print("")
     print("分工说明:")
-    print("  - rehydration-mode-v3 : 存储结构化摘要（架构/任务/日志/决策）")
-    print("  - zsh                 : 跨 Agent 项目记忆（AGENT_MEMORY.md 导航 + skill-docs/），兼容 auto-memory")
+    print("  - zsh                 : 跨 Agent 项目记忆（AGENT_MEMORY.md 导航 + zsh/），兼容 auto-memory  <- 推荐记忆系统")
+    print("  - rehydration-mode-v3 : 再水化记忆 V3（已废弃，由 zsh 取代，不再推荐安装）")
+    print("  - ct1                 : 多 Agent 项目编排器（组队/交付，与 zsh 项目记忆互补）")
+    print("  - git-rule            : Git 工作流准则（同步/推送/重试）")
     print("  - claude-mem          : 存储原始会话内容（代码/命令/输出）")
-    print("  - rehydration-mode-v3 / zsh 与 claude-mem 互补，不冗余")
+    print("  - zsh 与 claude-mem 互补，不冗余")
     print("")
     print("=" * 60)
     print("")
@@ -250,8 +254,11 @@ def list_available():
     for name in AVAILABLE_SKILLS:
         skill_dir = os.path.join(COLLECTION_DIR, name)
         has_skill_md = os.path.exists(os.path.join(skill_dir, "SKILL.md"))
-        status = "✅" if has_skill_md else "❌ (缺少 SKILL.md)"
-        print("  {}  {}  {}".format(status, name, status))
+        status = "[ok]" if has_skill_md else "[missing SKILL.md]"
+        line = "  {}  {}".format(status, name)
+        if name == "rehydration-mode-v3":
+            line += "  (已废弃，由 zsh 取代)"
+        print(line)
     print("")
 
 
