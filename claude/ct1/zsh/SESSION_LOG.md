@@ -312,3 +312,44 @@
 
 **遇到的问题**:
 - harness 对已注册 Agent 名字做会话级持久化缓存，即使实例全部停止，`tester` 仍被判为"占用"自动加 -2。规避方案：选用全新未用过的英文名。
+
+### 13:35 记忆恢复 + 记忆布局重新审视 + ct1 交付模式门禁优化
+
+**任务**: (1) 恢复记忆后重新审视"布局问题"；(2) 读取 `improve/门禁问题.md` 并落地 6 条优化建议。
+
+**完成的工作**:
+
+1. **重新审视记忆布局问题**（纠正之前的错误假设）：
+   - 最初错误假设"zsh 记忆必须在项目根 zsh/"，执行了错误迁移（已回滚）
+   - 用户纠正：skill 集合仓库中每个 skill 的记忆放在该 skill 自己的目录下
+   - 重新探查（3 个并行 Explore agent）确认：`claude/ct1/zsh/` 位置正确；真正的问题是根 `CLAUDE.md` 第 93 行示例路径缺少 `zsh/` 段
+   - 修正根 `CLAUDE.md` 第 76/87/93 行（加 `zsh/` 前缀 + 明确仅适用采用 zsh 的 skill）
+   - 删除 `docs/` 下 4 个过时 v3 快照（-519 行）
+   - 提交并推送 commit 63aa15c
+
+2. **ct1 交付模式门禁优化**（解决 P0：工作流一口气跑完无检查点）：
+   - 读取 `improve/门禁问题.md`（8 个问题 P0×2/P1×3/P2×2 + 6 条建议）
+   - 并行探查 ct1 工作流门禁结构 + 契约/DoD/StatusReport 结构
+   - 确认：Step 2.5→3→4 之间无强制用户检查点；Step 5 伪门在 delivery 模式失效
+   - 设计：引入 `plan_confirmed` 触发事件作为总锚点，复用现有事件驱动门禁（不走回百分比）
+   - 落地 12 个文件：SKILL.md（+Step 3.75 硬门）、requirement-brief.md+模板（+技术基线验证）、decision-level.md（+数据层语义冲突）、3 schemas（+plan_confirmed/+等待用户确认/+reviewer_milestones/+read_only_until）、status-report-schema.md（同步 enum）、code-review-protocol.md（+§6.1 功能里程碑 Node A/B/C + 用户业务确认）、evals.json（+Eval 6）、e2e-test-gates-v2.md（新建对齐新门禁）
+   - 静态一致性 grep 通过："请用户提第一个需求" 0 匹配、"或按安全默认值继续" 0 匹配、33/66/100% 在 SKILL/references/schemas 0 匹配
+   - 提交并推送 commit 4c948db
+
+3. **测试轮次问题**（用户提出，待讨论）：
+   - 当前测试仅 1 个门禁（Step 7），审查有 3 轮（Node A/B/C），不对称
+   - 用户认为测试轮次不足，需讨论：测试是否对齐功能里程碑分轮、测试左移
+   - **未解决，保存为下次会话首要讨论项**
+
+**遇到的问题**:
+- 工作目录频繁重置到 `claude/ct1/`，导致 git 命令多次误报（install.py/CLAUDE.md 误报为 modified，实际无改动）
+- 发现 `claude/zsh/` 下 6 个模板残留文件（之前错误迁移回滚失败的产物），与 `claude/ct1/zsh/` 真实记忆内容不同（project="claude" vs project="ynwl"，行数也不同）
+- 旧 e2e 测试（640+ 行）33/66/100% 遍布全文，采用"保留旧文件标注废弃 + 新建 v2"策略而非全文迁移
+
+**代码变更**:
+- 修改 `claude/CLAUDE.md`（路径修正）+ 删除 `docs/` 4 文件（commit 63aa15c）
+- 修改 11 个 ct1 文件 + 新建 `e2e-test-gates-v2.md`（commit 4c948db）
+
+**遗留待处理**:
+- `claude/zsh/` 模板残留 6 文件 + `claude/CLAUDE.md.zsh-backup`（单独安排）
+- 测试轮次设计（下次会话首要讨论）

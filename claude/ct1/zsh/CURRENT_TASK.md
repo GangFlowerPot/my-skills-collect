@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-27 13:30 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-28 13:35 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。
 
 ## 已完成
 
@@ -58,6 +58,24 @@
   - **Iteration 5**（效率和最终评测）：code-review 风险驱动审查 + 新建 trigger-evals/protocol-evals/delivery-evals 3 个 eval 文件 + 3 个 validation scripts
   - SKILL.md 贯穿 4 个 Iteration 的多处引用与补充
   - 最终静态一致性检查通过
+- [x] **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理**（commit 63aa15c 已推送）：
+  - 修正根 `CLAUDE.md` 第 93 行示例路径（`claude/ct1/CURRENT_TASK.md` → `claude/ct1/zsh/CURRENT_TASK.md`），与 ct1 的 ZSH:MEMORY 块一致
+  - 行为规则§3 明确"记忆脱水仅适用于采用 zsh 的 skill"，裸文件名加 `zsh/` 前缀
+  - 删除 `docs/` 下 4 个过时的集合级 v3 记忆文件（7-21，-519 行）
+- [x] **ct1 交付模式门禁优化**（commit 4c948db 已推送）：
+  - **解决 P0**：delivery 模式下工作流从需求→设计→组队→编码一口气跑完、无用户检查点
+  - 新增 `plan_confirmed` 触发事件（StatusReport 状态加「等待用户确认」）
+  - SKILL.md 插入 **Step 3.75 开发计划确认硬门**（团队+计划一次性确认，⏸ 等用户明确确认后才启动 Agent）
+  - Step 4 leader prompt 从「请用户提第一个需求」改为「请用户确认开发计划」
+  - Step 3 删除「或按安全默认值继续」软门
+  - Requirement Brief 增加「技术基线验证」（数据层一致性/环境就绪/凭证方案）
+  - decision-level.md 新增「数据层语义冲突」为 user-required
+  - Reviewer **功能里程碑 Node A/B/C**（骨架+认证/核心业务交互/最终验收），绑定触发事件（review_ready/review_ready/acceptance_ready，非百分比）
+  - 每个功能节点后加**用户业务审查点**（reviewer 不替用户验收业务方向）
+  - Agent 只读约束：`plan_confirmed` 前 dev 角色只读（role-roster.schema.json 加 `read_only_until`）
+  - 新建 `e2e-test-gates-v2.md` 对齐新门禁（旧 e2e 标注为历史版本）
+  - Eval 6 专门测 CP-5 硬门行为
+  - 约束遵守：无 33/66/100% 百分比门禁残留，里程碑为事件驱动
 
 ## 进行中
 
@@ -106,15 +124,25 @@
 
 - 无。完整运行验证需要可用的 JDK 8/Maven、兼容旧版 node-sass 的 Node 环境，以及 Nacos、数据库、Redis 等外部服务配置。
 
+## 待开始
+
+- **测试轮次设计**（用户关注点）：当前测试仅 1 个门禁（Step 7），用户认为测试轮次不足。需讨论：测试是否对齐 Node A/B/C 里程碑分轮、测试左移、多轮测试门禁。**下次会话首先讨论此问题**。
+- **善后**：清理 `claude/zsh/` 下 6 个模板残留文件（之前错误迁移的回滚失败产物，与 `claude/ct1/zsh/` 真实记忆内容不同）+ `claude/CLAUDE.md.zsh-backup` 备份文件
+- 在真实项目中实际 spawn 子 agent，验证 Step 3.75 硬门 + Node A/B/C 功能里程碑的实际效果（首次输出质量、返工次数、token 消耗）
+- 根据真实使用反馈迭代合约 schema / 五要素模板 / 动态补充协议
+
 ## 精确续接位置
 
-- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/NEXT_ROUND_OPTIMIZATION_PLAN.md`
-- 位置：ct1 下一轮优化 Iteration A~E 全部完成；可按文档第 11 节最终验收清单逐项核验
-- 状态：协议收敛、Python 3 基线、结构化状态、真实门禁、评估体系全部就绪
+- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/门禁问题.md` + `references/code-review-protocol.md` §6.1
+- 位置：ct1 交付模式门禁优化完成（commit 4c948db 已推送）；测试轮次待设计
+- 状态：Step 3.75 硬门 + Node A/B/C 功能里程碑就绪；测试仅 Step 7 一个门禁，用户认为不足
 
 ## 下次会话建议
 
 1. 先读取 `AGENT_MEMORY.md` 与本文件。
-2. 若要验证两大机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 33% 节点触发问题升级循环，观察全流程。
+2. **首要讨论**：测试轮次设计——当前测试仅 1 个门禁（Step 7），审查有 3 轮（Node A/B/C），不对称。需确定：测试是否对齐功能里程碑分轮（Node A 冒烟/Node B 集成/Node C 回归）、是否测试左移（tester 不再延迟启动）。
+3. 善后：清理 `claude/zsh/` 模板残留 + zsh-backup。
+4. 若要验证门禁机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 Step 3.75 节点观察硬门拦截，在 Node A/B/C 观察功能里程碑驱动审查+测试。
+5. 团队已就绪，可直接对 leader 提出开发需求。
 3. 团队已就绪，可直接对 leader 提出开发需求。
 4. 根据用户目标选择一个子系统，验证其构建、配置来源和运行调用链。

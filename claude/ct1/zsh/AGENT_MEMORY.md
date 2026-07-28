@@ -2,7 +2,7 @@
 schema: zsh-memory/v1
 project: "ynwl"
 memory_root: zsh
-updated_at: "2026-07-27T13:30:00+08:00"
+updated_at: "2026-07-28T13:35:00+08:00"
 status: active
 ---
 
