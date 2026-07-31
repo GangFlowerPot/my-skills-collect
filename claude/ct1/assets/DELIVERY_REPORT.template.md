@@ -14,11 +14,31 @@
 | 步骤 | 结果 | 证据 |
 |---|---|---|
 | 1. 打开 | ... | ... |
-| 2. 登录 | ... | ... |
+| 2. 完成必要前置 | ... | ... |
 | 3. 触达核心价值 | ... | ... |
 
 - 跑通结论：☐ 跑通 ☐ 未跑通
 - 交付硬门：跑通 → 允许交付；未跑通 → 交付结论为未通过（即使 AC 全部通过）
+
+## 用户成功标准完成情况
+| US ID | 用户目标 | 结果 | 证据 |
+|---|---|---|---|
+| US-001 | ... | ... | ... |
+
+## 用户价值结论
+（引自 USER_VALUE_REVIEW，独立于测试和代码审查）
+
+```yaml
+user_value_decision: passed | conditional | blocked
+journey_reachable: true | false | unknown
+user_goal_achieved: true | false | unknown
+```
+
+- 证据摘要：
+- 已知体验限制披露：
+- 阻断问题关闭情况：
+- 独立性说明（独立于测试/审查结论）：
+- 交付硬门：user_value_decision=passed 且 user_goal_achieved=true → 允许交付；blocked 或 user_goal_achieved=false → 交付结论为未通过
 
 ## 变更摘要
 （本次交付的整体变化描述）

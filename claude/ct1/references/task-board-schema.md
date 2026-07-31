@@ -9,6 +9,7 @@ leader 通过聊天分配任务的替代——统一的任务状态、依赖、�
 ```yaml
 id: BE-003
 title: 实现创建运单接口
+task_type: implementation
 owner: backend-dev
 status: in_progress
 priority: high
@@ -17,6 +18,10 @@ depends_on:
   - ARCH-001
 acceptance_criteria:
   - AC-003
+user_success_criteria:
+  - US-001
+required_capabilities:
+  - spring-service-development
 write_scope:
   - backend/waybill/**
 artifacts:
@@ -32,14 +37,17 @@ handoff_to:
 
 | 字段 | 用途 |
 |---|---|
-| `id` | 唯一标识（格式：`{域}-{序号}`，如 `BE-003`、`FE-001`、`ARCH-001`） |
+| `id` | 唯一标识（格式：`{域}-{序号}`，如 `BE-003`、`FE-001`、`ARCH-001`、`PRODUCT-001`） |
 | `title` | 一句话描述 |
+| `task_type` | 任务类型：`implementation`（编码实现）/ `product-validation`（产品验证）/ `verification`（测试验证）/ `review`（审查）/ `discovery`（产品发现） |
 | `owner` | 负责角色（必须唯一） |
 | `status` | 当前状态（见状态机） |
 | `priority` | high / medium / low |
 | `risk` | high / medium / low |
 | `depends_on` | 依赖的任务 ID 列表 |
 | `acceptance_criteria` | 关联的 AC ID 列表 |
+| `user_success_criteria` | 关联的 US ID 列表（面向用户的任务必填） |
+| `required_capabilities` | 完成任务所需能力（如 `user-value`、`spring-service-development`） |
 | `write_scope` | 允许修改的路径范围 |
 | `artifacts` | 交付物文件列表 |
 | `verification` | 验证命令与预期结果 |
@@ -82,7 +90,15 @@ backlog
 7. 标注安全、数据、部署和兼容性风险
 8. 识别关键路径
 9. 判断哪些任务当前信息不足
-10. 再进入角色生成阶段
+10. **非编码产品任务检查**：
+    - 是否需要澄清目标用户和用户问题
+    - 是否需要验证关键产品假设
+    - 是否需要审查用户旅程
+    - 是否需要检查可发现性、反馈和失败恢复
+    - 是否需要在可演示版本上进行体验走查
+    - 是否需要用户价值交付结论
+    - 禁止因为这些任务不修改源码就将其从任务图中删除
+11. 再进入角色生成阶段
 
 > 禁止直接用 `.vue` → frontend-dev、`.java` → backend-dev 的映射替代任务分析。文件类型只能作为辅助证据。
 

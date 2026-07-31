@@ -18,9 +18,19 @@ team_design_readiness:
   risk_areas: 安全、迁移、性能、兼容性等风险
   probable_write_scopes: 预计修改的目录、模块和公共文件
   acceptance_criteria: 可验证的主要完成条件
+  user_value_risk: 产品不确定性、用户类型数量、交互复杂度、错误成本和返工风险
 ```
 
 缺失到无法判断任务边界时，继续探测或向用户提出必要问题，不能通过套用固定团队模板弥补信息不足。
+
+### 用户价值能力覆盖
+
+`delivery` 项目必须覆盖 `user-value` 能力。决定承担方式时考虑：
+
+- 改动范围小、用户目标明确、旅程短且稳定 → leader 兼任
+- 多用户、复杂权限、高错误成本、方向偏差返工大 → 独立 user-advocate
+
+详见 `references/user-value-gate.md` §1。
 
 ## 团队复用
 

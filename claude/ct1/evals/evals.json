@@ -108,6 +108,24 @@
         "当登录步骤失败时，交付结论为未通过（不因 AC 全通过而通过）",
         "Node A 的骨架+认证方向确认 与 用户旅程跑通 各司其职（前者确认方向，后者验证实现）"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "开发一个多租户运单管理系统（管理员、操作员、访客三类用户），项目是 E:/work/ynwl",
+      "expected_output": "delivery 模式。任务图识别多用户和权限体验风险，创建独立 user advocate 或 product owner。Requirement Brief 包含目标用户、用户问题、信息来源与置信度、用户成功标准（US-*）。三阶段用户价值门禁（Gate A/B/C）依次执行。",
+      "files": [],
+      "expectations": [
+        "识别为 delivery 模式",
+        "任务图识别多用户和权限体验风险",
+        "创建独立 user advocate 或 product owner（不按技术栈机械创建）",
+        "Requirement Brief 包含目标用户、用户问题、信息来源与置信度",
+        "用户成功标准（US-*）与功能验收标准（AC-*）分离",
+        "Gate A（requirement_ready）检查用户价值语义完整性",
+        "Gate B（demo_ready）检查可演示版本体验",
+        "Gate C（acceptance_ready）检查用户目标达成",
+        "user_value_decision 独立于测试和代码审查结论",
+        "小项目允许 leader 兼任，此复杂项目创建独立角色"
+      ]
     }
   ]
 }

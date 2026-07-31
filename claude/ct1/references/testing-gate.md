@@ -15,6 +15,8 @@ tester 从"编写用例"升级为**质量负责人**：审查 AC 可测性、制
 7. 给出是否允许交付的质量结论
 8. 执行冷启动走查：在干净环境中以 fresh user 身份逐步执行用户旅程，记录每步是否通过
 
+> **边界**：tester 验证规格、功能、回归、环境和系统行为，**不单独定义目标用户和产品方向**（那是 user advocate 的职责）。tester 通过不能自动替代 user value 通过。详见 `references/user-value-gate.md`。
+
 ## tester 启动阶段
 
 | 阶段 | 时机 | 动作 |

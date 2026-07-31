@@ -73,6 +73,20 @@
 | req.md | §5 验收标准 | 0.5KB | 审查功能完整性 |
 | 审查标准清单 | 安全/性能/中间件/可维护性检查项 | 1KB | 系统化审查依据 |
 
+### 🎯 用户价值代言人（user-advocate）
+**目标：~5KB**
+
+| 文档 | 切片范围 | 大小 | 用途 |
+|---|---|---|---|
+| req.md / Requirement Brief | 目标用户 + 用户问题 + 信息来源与置信度 | 1.5KB | 建立用户模型，区分事实与假设 |
+| req.md / Requirement Brief | 用户成功标准（US-*） | 1KB | 明确用户目标达成判定依据 |
+| req.md / Requirement Brief | 用户旅程 + 关键体验要求 | 1.5KB | 审查旅程完整性（入口/反馈/失败恢复） |
+| decisions.md | 产品/体验/用户相关决策 | 0.5KB | 了解已接受的产品方向 |
+| 用户价值协议 | user-value-gate.md 的角色边界与门禁摘要 | 0.5KB | 独立出具用户价值结论 |
+
+> user-advocate 的 write_scope 仅限 `USER_VALUE_REVIEW.md`，不承担主要业务代码实现。
+> 详见 `references/user-value-gate.md`。
+
 ## 按需引用（不嵌入，agent 自读）
 - req.md §6 异常流程详情 → 测试遇到边界问题时自读
 - architecture.md §7 部署拓扑 → devops 角色按需自读

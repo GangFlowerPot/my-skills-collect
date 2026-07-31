@@ -18,7 +18,23 @@ discovery
 任意非终态均可进入 blocked / cancelled。
 ```
 
-> `delivered` 是项目状态，不是任务状态。项目 delivered 必须经过项目级交付门禁（所有必需任务 accepted、所有必需 AC 通过、P0/P1 缺陷为零、严重审查问题为零、user-required 决策无未确认项、**用户旅程跑通（冷启动走查通过）**）。
+> `delivered` 是项目状态，不是任务状态。项目 delivered 必须经过项目级交付门禁（所有必需任务 accepted、所有必需 AC 通过、**必需 US 通过**、P0/P1 缺陷为零、严重审查问题为零、user-required 决策无未确认项、**用户旅程跑通（冷启动走查通过）**、**用户目标达成**、**user_value_decision=passed**）。
+
+**交付通过公式**：
+```
+必需任务 accepted
++ 必需 AC 通过
++ 必需 US 通过
++ P0/P1 缺陷为零
++ 严重审查问题为零
++ user-required 决策无未确认项
++ 用户旅程可达
++ 用户目标达成
++ user_value_decision = passed
+= delivered
+```
+
+`conditional` 仅允许用于非阻断限制，并必须披露：受影响用户、受影响场景、临时规避方式、风险、后续建议。
 
 ## 报告格式
 
@@ -50,11 +66,13 @@ discovery
 
 | 结论 | 条件 |
 |---|---|
-| `通过` | 所有门禁满足（**含用户旅程跑通**） |
-| `有条件通过` | 只剩非阻断风险，并已明确披露 |
-| `未通过` | 存在严重问题、测试失败、关键 AC 未完成，**或用户旅程未跑通** |
+| `通过` | 所有门禁满足（**含用户旅程跑通、用户目标达成、user_value_decision=passed**） |
+| `有条件通过` | 只剩非阻断风险，并已明确披露（披露受影响用户、场景、规避方式、风险、后续建议） |
+| `未通过` | 存在严重问题、测试失败、关键 AC 未完成、**关键 US 未完成**、**或用户旅程未跑通**、**或用户目标未达成**、**或 user_value_decision=blocked** |
 
-> 用户旅程跑通是硬门：即使所有 AC 通过、P0/P1=0，旅程跑不通 → 交付结论为未通过。
+> 用户价值是硬门：即使所有 AC 通过、P0/P1=0，只要用户目标未达成或 user_value_decision=blocked → 交付结论为未通过。
+>
+> 门禁不可互相替代：`test_passed != user_value_passed`，`all_ac_passed != all_user_success_criteria_passed`。
 
 ## 验收标准
 

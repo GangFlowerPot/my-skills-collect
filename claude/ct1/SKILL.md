@@ -368,7 +368,9 @@ leader 启动后会自动发介绍消息。主线程把它**原样转述**给用
 
 #### 项目级 DoD
 
-项目进入 `delivered` 前必须满足：所有必需任务为 `accepted`；所有必需 AC 通过；P0/P1 缺陷为零；构建和必需测试成功；数据迁移和回滚要求已处理；**用户旅程跑通（冷启动走查通过）**；已知限制已披露；交付报告已生成。
+项目进入 `delivered` 前必须满足：所有必需任务为 `accepted`；所有必需 AC 通过；**必需 US 通过**；P0/P1 缺陷为零；构建和必需测试成功；数据迁移和回滚要求已处理；**用户旅程跑通（冷启动走查通过）**；**用户目标达成**；**user_value_decision=passed**；已知限制已披露；交付报告已生成。
+
+> 用户价值三阶段门禁（Gate A/B/C）详见 `references/user-value-gate.md`。触发事件：`requirement_ready`（Gate A）、`demo_ready`（Gate B）、`acceptance_ready`（Gate C）。
 
 #### 测试门禁（来自 testing-gate）
 
