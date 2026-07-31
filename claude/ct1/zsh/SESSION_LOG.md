@@ -1,3 +1,45 @@
+### 20:30 ct1 用户价值机制整改 Iteration 2~4（接入动态团队/生命周期/评测回归）
+
+**任务**: 按 `improve/USER_PERSPECTIVE_REFACTOR_PLAN.md` 完成 Iteration 2~4。
+
+**完成的工作**:
+
+1. **Iteration 2**（接入动态团队和任务图，3 文件 +42/-2）：
+   - task-board-schema.md：Task schema 增加 task_type/user_success_criteria/required_capabilities 字段；任务图构建步骤增加第 10 步"非编码产品任务检查"
+   - context-contract.md：新增 user-advocate 切片（目标用户/用户问题/US/用户旅程/用户价值协议）
+   - team-selection.md：团队设计就绪信息增加 user_value_risk；增加用户价值能力覆盖章节
+
+2. **Iteration 3**（接入生命周期和交付，7 文件 +127/-11）：
+   - user-value-gate.md：完善 Gate A/B/C 完整检查项（各 10/11/7 项）；增加触发事件清单（requirement_ready/demo_ready/user_value_blocked/user_value_ready/acceptance_ready）
+   - 新建 USER_VALUE_REVIEW.template.md：用户价值审查产物模板（目标用户/事实假设/US结果/旅程结果/可发现性/空状态/阻断问题/结论）
+   - testing-gate.md：tester 职责增加边界说明（不单独定义目标用户和产品方向）
+   - delivery-report.md：交付公式加入必需 US 通过 + 用户目标达成 + user_value_decision=passed；交付判定表更新
+   - DELIVERY_REPORT.template.md：增加用户成功标准 + 独立用户价值结论章节
+   - SKILL.md：项目级 DoD 加入必需 US/用户目标达成/user_value_decision；增加三阶段门禁摘要
+   - check_delivery_gate.py：增加 d11 场景要求 + 用户价值证据字段检查
+
+3. **Iteration 4**（评测与回归，3 文件 +74/-2）：
+   - 新建 user-value-evals.json：UV-01~UV-12（入口不可发现/无可用凭证/空状态/技术文案/失败恢复/方向偏差/假设伪装/小任务不滥增/多用户复杂项目/旅程可达目标未达成/内部技术项目/范围扩张冲突）
+   - evals.json：增加 eval 8（多租户系统能力覆盖评测）
+   - delivery-evals.json：增加 d12（方向偏差）+ d13（假设伪装成事实）
+
+4. **P2 一致性清理验证通过**：
+   - SKILL.md 只含摘要+路由（1 处字段引用，在 DoD 公式中）
+   - tester 边界明确
+   - 模板示例覆盖 Web + CLI/API 两类
+   - 登录从固定步骤降为示例（2 处）
+   - 门禁不可互相替代声明存在
+
+**代码变更**:
+- 修改 15 文件 + 新建 2 文件（USER_VALUE_REVIEW.template.md / user-value-evals.json）
+- 总计 +243/-15
+
+**验证通过**:
+- JSON 合法（3 个 eval 文件）
+- UV 场景 12 个完整（uv-01~uv-12）
+- check_delivery_gate.py 通过
+- P2 一致性检查通过
+
 ### 17:40 ct1 用户价值机制整改 Iteration 1（建立用户价值语义）
 
 **任务**: 按 `improve/USER_PERSPECTIVE_REFACTOR_PLAN.md` 完成用户价值机制整改 Iteration 1，建立用户价值语义层。

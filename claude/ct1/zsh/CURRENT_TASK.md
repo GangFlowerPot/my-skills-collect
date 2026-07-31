@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-31 17:40 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-31 20:30 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。✅ **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）完成并推送**。✅ **ct1 用户价值机制整改 Iteration 1（建立用户价值语义）完成，待审阅**。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。✅ **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）完成并推送**。✅ **ct1 用户价值机制整改 Iteration 1~4 全部完成，待审阅推送**。
 
 ## 已完成
 
@@ -87,17 +87,16 @@
   - 兼容 Node A/B/C：Node A 确认方向，新门验证可运行实现
   - 命名避让：用「用户旅程/冷启动走查/跑通」，绕开已占用的"端到端/关键路径"
   - 范围遵守：无新角色、无角色扩责、无 StatusReport 改动
-- [x] **ct1 用户价值机制整改 Iteration 1（建立用户价值语义）**（待审阅）：
+- [x] **ct1 用户价值机制整改 Iteration 1~4**（待审阅推送）：
   - **来源**：`improve/USER_PERSPECTIVE_REFACTOR_PLAN.md`（用户价值机制整改方案）
   - **解决更深盲区**：路径可达 ≠ 目标正确；用户旅程由团队假设缺事实依据；tester 只验证规格不判断用户目标；入口/引导/空状态/错误恢复/权限反馈缺失；以"任务完成度"代替"用户目标达成度"
-  - **5 文件（+174/-9，新建 user-value-gate.md）**：
-    - 新建 `references/user-value-gate.md`（唯一真相源）：user-value 能力定义、user advocate 职责与独立性约束、AC/US 分离、信息来源与置信度（user-stated/project-evidence/domain-evidence/team-assumption/unknown）、三阶段门禁摘要（Gate A/B/C）、角色边界表、门禁不可互相替代声明、交付公式、产物清单、与其他门禁关系
-    - 扩展 `references/requirement-brief.md`：新增目标用户/用户问题/信息来源与置信度/用户成功标准（US-*）/关键体验要求；用户旅程列升级为"用户意图/用户动作/系统反馈/失败恢复/完成准则"；建立步骤扩展为 4.5-4.9；验收标准追加 4 条
-    - 同步 `assets/REQUIREMENT_BRIEF.template.md`：新增目标用户/用户问题/信息来源/US/关键体验要求章节；升级旅程列；**删除登录固定步骤示例，改为"必要前置步骤（如认证、授权、初始化）"**；新增 Web + CLI/API 两类示例覆盖
-    - 扩展 `references/dynamic-team-selection.md`：新增 user-advocate 角色定义（product-quality 类型、独立性约束）；团队生成算法增加第 7 步"user-value 能力覆盖检查"；新增独立角色拆分条件（满足 9 条件之一优先独立创建）；验收标准追加 3 条
-    - 更新 `SKILL.md`：角色分类表新增"产品价值角色"行；delivery 模式完成条件增加"user-value 为必需能力"；增加指向 user-value-gate.md 的路由引用
-  - **验证通过**：新术语一致；唯一真相源（SKILL.md 只含摘要+路由）；模板不过拟合（登录降为示例，新增 CLI/API 覆盖）；现有旅程+冷启动走查+交付硬门保留并升级
-  - **与上一轮兼容**：上一轮"用户旅程+冷启动走查+交付硬门"全部保留并升级，本轮在其基础上向需求阶段（US+Gate A）和 demo 阶段（Gate B）延伸
+  - **4 Iteration（17 文件，+417/-24）**：
+    - **Iteration 1**（建立用户价值语义，5 文件 +174/-9）：新建 user-value-gate.md（唯一真相源）；扩展 requirement-brief.md（目标用户/用户问题/信息来源/US/关键体验要求 + 升级旅程列）；同步 REQUIREMENT_BRIEF.template.md（删除登录固定步骤，新增 Web+CLI/API 示例）；扩展 dynamic-team-selection.md（user-advocate 角色定义 + 独立角色拆分条件）；更新 SKILL.md（产品价值角色行）
+    - **Iteration 2**（接入动态团队和任务图，3 文件 +42/-2）：task-board-schema.md（task_type/user_success_criteria/required_capabilities + 非编码产品任务检查）；context-contract.md（user-advocate 切片）；team-selection.md（user_value_risk + 能力覆盖）
+    - **Iteration 3**（接入生命周期和交付，7 文件 +127/-11）：完善 Gate A/B/C 完整检查项 + 触发事件清单；新建 USER_VALUE_REVIEW.template.md；testing-gate.md（tester 边界）；delivery-report.md（交付公式加入 US + user_value_decision）；DELIVERY_REPORT.template.md（独立用户价值结论）；SKILL.md（DoD + 门禁摘要）；check_delivery_gate.py（d11 + 证据字段）
+    - **Iteration 4**（评测与回归，3 文件 +74/-2）：新建 user-value-evals.json（UV-01~UV-12，12 个隐蔽场景）；evals.json（eval 8 多租户能力覆盖）；delivery-evals.json（d12 方向偏差 + d13 假设伪装）
+  - **P2 一致性清理通过**：SKILL.md 只含摘要+路由；tester 边界明确；模板示例覆盖 Web+CLI/API；登录降为示例；门禁不可互相替代声明存在
+  - **验证通过**：JSON 合法；UV 场景 12 个完整；check_delivery_gate.py 通过；P2 一致性通过
 
 ## 进行中
 
@@ -105,9 +104,6 @@
 
 ## 待开始
 
-- **ct1 用户价值机制整改 Iteration 2**（接入动态团队和任务图）：task-board-schema 扩展（task_type/user_success_criteria/required_capabilities）；dynamic-team-selection 角色拆分规则；context-contract 新增 user advocate 切片；team-selection 同步
-- **ct1 用户价值机制整改 Iteration 3**（接入生命周期和交付）：完善 Gate A/B/C 检查项；新建 USER_VALUE_REVIEW.template.md；testing-gate 边界同步；delivery-report 交付公式；DELIVERY_REPORT 模板；SKILL.md 触发事件；check_delivery_gate.py
-- **ct1 用户价值机制整改 Iteration 4**（评测与回归）：新建 user-value-evals.json（UV-01~12）；evals.json 能力覆盖评测；delivery-evals.json 隐蔽反例；P2 一致性清理；静态校验 + 回归测试
 - 在真实项目中实际 spawn 子 agent，验证上下文灌输机制的实际效果（首次输出质量、返工次数、token 消耗）
 - 根据真实使用反馈迭代合约 schema / 五要素模板 / 动态补充协议
 - 按用户后续目标选择：本地启动验证、模块级深挖、数据模型分析、安全整改或技术栈升级评估
