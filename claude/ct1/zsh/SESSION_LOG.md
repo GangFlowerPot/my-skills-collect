@@ -1,3 +1,39 @@
+### 15:20 ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）
+
+**任务**: 解决 P0 结构性缺陷——ct1 优化"任务完成度"而非"用户视角的产品可用性"。用户开发出的小程序宣告交付但无登录页，从第一步就不可用。
+
+**完成的工作**:
+
+1. **根因诊断（3 个并行 Explore agent）**：
+   - 工作流/DoD：DoD = "AC 清单全部通过"，AC 是功能清单而非用户旅程流；所有下游门禁回溯到 AC 清单，缺第一步时直到人类想用才暴露
+   - 角色/升级：无用户视角负责人（角色全按任务图派生）；Node A 只确认"方向"（骨架+认证），不验证实现；升级机制被动（漏做不是决策点）
+   - 评估/改进：0 个 eval 测产品可用性；"端到端/关键路径"语义被占用（=交付流程/项目调度）；上次改进（Step 3.75 + Node A/B/C）解决方向偏差，未解决"漏掉基础步骤"
+
+2. **方案设计与用户决策（AskUserQuestion）**：
+   - 粒度：最小改动（现有角色基础上加门禁，不加新角色）
+   - "完成"定义：核心用户旅程必须跑通（硬性门禁）
+   - 范围：仅门禁 + eval，不动角色体系
+
+3. **实现（4 部分，9 文件，+87/-4）**：
+   - **Part A** — requirement-brief.md + REQUIREMENT_BRIEF.template.md：强制章节「用户旅程」；建立步骤 4.5；验收标准追加
+   - **Part B** — testing-gate.md + TEST_REPORT.template.md：tester 职责第 8 项「冷启动走查」；门禁表跑通行；TEST_REPORT 走查章节
+   - **Part C** — delivery-report.md + SKILL.md + DELIVERY_REPORT.template.md：交付硬门加入「用户旅程跑通」；交付判定表更新
+   - **Part D** — delivery-evals.json +d11（缺登录页反例）；evals.json +eval 7（全链路验证）
+
+4. **验证**：
+   - JSON 合法；新术语一致；无 33/66/100% 百分比门禁残留；Node A 与新门各司其职（方向 vs 实现）
+
+**遇到的问题**:
+- Python 2.7 不支持 `open(encoding=)`，JSON 验证改用 `py -3`
+- 3 处"100%"残留经 grep 确认为"进度/完成度"通用表述，非旧门禁，无需改动
+
+**代码变更**:
+- 修改 9 文件：SKILL.md / references{requirement-brief,testing-gate,delivery-report}.md / assets{REQUIREMENT_BRIEF,TEST_REPORT,DELIVERY_REPORT}.template.md / evals{delivery-evals,evals}.json
+
+**遗留待处理**:
+- 推送待用户确认（回复 "1"）
+- 善后：`claude/zsh/` 模板残留 + zsh-backup（单独安排）
+
 ### 13:30 ct1 下一轮优化 Iteration A~E（协议收敛/Python 3 基线/结构化状态/真实门禁/评估回归）
 
 **任务**: 按 `improve/NEXT_ROUND_OPTIMIZATION_PLAN.md` 完成协议收敛、Markdown 去重、Python 3 运行基线、结构化状态、真实可执行门禁。

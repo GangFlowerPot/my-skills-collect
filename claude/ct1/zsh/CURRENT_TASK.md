@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-28 13:35 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-31 15:20 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。✅ **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）完成，待推送**。
 
 ## 已完成
 
@@ -76,6 +76,18 @@
   - 新建 `e2e-test-gates-v2.md` 对齐新门禁（旧 e2e 标注为历史版本）
   - Eval 6 专门测 CP-5 硬门行为
   - 约束遵守：无 33/66/100% 百分比门禁残留，里程碑为事件驱动
+- [x] **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）**（待推送）：
+  - **解决 P0**：ct1 优化"任务完成度"而非"用户视角的产品可用性"——团队宣告交付但产品无登录页，从第一步就不可用
+  - **根因**：DoD = "AC 清单全部通过"，AC 是功能清单而非用户旅程流；所有下游门禁回溯到 AC 清单，缺第一步时直到人类想用才暴露
+  - **4 部分改动（9 文件，+87/-4）**：
+    - **Part A** — requirement-brief.md + REQUIREMENT_BRIEF.template.md：新增强制章节「用户旅程」（从冷启动到核心价值的最小可演示路径，有序步骤 + 每步可验证完成准则）；建立步骤插入 4.5；验收标准追加一条
+    - **Part B** — testing-gate.md + TEST_REPORT.template.md：tester 职责追加第 8 项「冷启动走查」（干净环境 + fresh user 逐步执行用户旅程）；测试门禁表追加「用户旅程跑通」行；TEST_REPORT 插入「冷启动走查」章节
+    - **Part C** — delivery-report.md + SKILL.md + DELIVERY_REPORT.template.md：项目级交付门禁加入「用户旅程跑通（冷启动走查通过）」；交付判定表 `通过` 含跑通、`未通过` 加旅程未跑通；表下加注"旅程跑通是硬门：即使 AC 全通过、P0/P1=0，跑不通→未通过"；SKILL.md DoD bullet + 测试门禁表同步
+    - **Part D** — delivery-evals.json 新增 d11（缺登录页反例：AC 全通过但旅程失败→交付=未通过）；evals.json 新增 eval 7（全链路验证：Brief 含旅程→tester 走查→交付硬门→Node A 与旅程门各司其职）
+  - **兼容性**：Node A 确认"方向"（骨架+认证），新门验证"可运行实现"；前者需代码存在才触发，后者直接走查产品；各司其职
+  - **命名避让**：用「用户旅程/冷启动走查/跑通」，绕开已占用的"端到端/关键路径"
+  - **范围遵守**：无新角色、无角色扩责、无 StatusReport/context-contract 改动
+  - **验证通过**：JSON 合法、术语一致、无百分比残留、Node A 独立
 
 ## 进行中
 
@@ -108,6 +120,14 @@
 | `references/code-review-protocol.md` | ✅ | 代码审查协议（新增） |
 | `references/team-protocol.md` | ✅ | 6→8 字段模板 + reviewer + leader 聚合格式（扩展） |
 | `SKILL.md` | ✅ | Step 1.5 + Step 3 增强 + 问题升级 + reviewer（新增） |
+| `references/requirement-brief.md` | ✅ | +用户旅程章节 + 建立步骤 4.5 + 验收标准（产品可用性门禁） |
+| `references/testing-gate.md` | ✅ | +tester 职责第 8 项（冷启动走查）+ 门禁表跑通行（产品可用性门禁） |
+| `references/delivery-report.md` | ✅ | +用户旅程跑通硬门 + 交付判定表（产品可用性门禁） |
+| `assets/REQUIREMENT_BRIEF.template.md` | ✅ | +用户旅程章节（产品可用性门禁） |
+| `assets/TEST_REPORT.template.md` | ✅ | +冷启动走查章节（产品可用性门禁） |
+| `assets/DELIVERY_REPORT.template.md` | ✅ | +用户旅程跑通章节（产品可用性门禁） |
+| `evals/delivery-evals.json` | ✅ | +d11（缺登录页反例） |
+| `evals/evals.json` | ✅ | +eval 7（全链路验证） |
 
 ## 团队状态
 
@@ -126,23 +146,19 @@
 
 ## 待开始
 
-- **测试轮次设计**（用户关注点）：当前测试仅 1 个门禁（Step 7），用户认为测试轮次不足。需讨论：测试是否对齐 Node A/B/C 里程碑分轮、测试左移、多轮测试门禁。**下次会话首先讨论此问题**。
 - **善后**：清理 `claude/zsh/` 下 6 个模板残留文件（之前错误迁移的回滚失败产物，与 `claude/ct1/zsh/` 真实记忆内容不同）+ `claude/CLAUDE.md.zsh-backup` 备份文件
-- 在真实项目中实际 spawn 子 agent，验证 Step 3.75 硬门 + Node A/B/C 功能里程碑的实际效果（首次输出质量、返工次数、token 消耗）
+- 在真实项目中实际 spawn 子 agent，验证 Step 3.75 硬门 + Node A/B/C 功能里程碑 + **用户旅程跑通硬门**的实际效果（首次输出质量、返工次数、token 消耗）
 - 根据真实使用反馈迭代合约 schema / 五要素模板 / 动态补充协议
 
 ## 精确续接位置
 
 - 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/门禁问题.md` + `references/code-review-protocol.md` §6.1
-- 位置：ct1 交付模式门禁优化完成（commit 4c948db 已推送）；测试轮次待设计
-- 状态：Step 3.75 硬门 + Node A/B/C 功能里程碑就绪；测试仅 Step 7 一个门禁，用户认为不足
+- 位置：ct1 产品可用性门禁完成（9 文件 +87/-4，待推送）；测试轮次设计（原首要议题，现被产品可用性议题覆盖，仍待讨论）
+- 状态：Step 3.75 硬门 + Node A/B/C 功能里程碑 + 用户旅程跑通硬门就绪
 
 ## 下次会话建议
 
 1. 先读取 `AGENT_MEMORY.md` 与本文件。
-2. **首要讨论**：测试轮次设计——当前测试仅 1 个门禁（Step 7），审查有 3 轮（Node A/B/C），不对称。需确定：测试是否对齐功能里程碑分轮（Node A 冒烟/Node B 集成/Node C 回归）、是否测试左移（tester 不再延迟启动）。
-3. 善后：清理 `claude/zsh/` 模板残留 + zsh-backup。
-4. 若要验证门禁机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 Step 3.75 节点观察硬门拦截，在 Node A/B/C 观察功能里程碑驱动审查+测试。
-5. 团队已就绪，可直接对 leader 提出开发需求。
-3. 团队已就绪，可直接对 leader 提出开发需求。
-4. 根据用户目标选择一个子系统，验证其构建、配置来源和运行调用链。
+2. 善后：清理 `claude/zsh/` 模板残留 + zsh-backup。
+3. 若要验证门禁机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 Step 3.75 节点观察硬门拦截，在 Node A/B/C 观察功能里程碑驱动审查+测试，在交付前观察用户旅程跑通硬门拦截不可用产品。
+4. 团队已就绪，可直接对 leader 提出开发需求。
