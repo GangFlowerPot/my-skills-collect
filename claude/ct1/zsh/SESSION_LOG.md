@@ -1,3 +1,47 @@
+### 17:40 ct1 用户价值机制整改 Iteration 1（建立用户价值语义）
+
+**任务**: 按 `improve/USER_PERSPECTIVE_REFACTOR_PLAN.md` 完成用户价值机制整改 Iteration 1，建立用户价值语义层。
+
+**完成的工作**:
+
+1. **根因诊断**：
+   - 路径可达 ≠ 目标正确，也不等于体验可理解、可恢复或值得使用
+   - 用户旅程由开发团队自行假设，缺少事实依据
+   - tester 只能验证既定规格，无法独立判断规格是否符合用户目标
+   - 入口、引导、空状态、错误恢复和权限反馈缺失
+   - 团队以"任务完成度"代替"用户目标达成度"
+
+2. **用户决策（AskUserQuestion）**：
+   - 实施方式：分 4 个 Iteration
+   - 角色体系：接受扩展（user-value 必需能力，复杂项目独立 user-advocate）
+   - 现有旅程：升级并保留（加用户意图/系统反馈/失败恢复列）
+
+3. **实现（5 文件，+174/-9）**：
+   - 新建 `references/user-value-gate.md`（唯一真相源，80+ 行）：user-value 能力定义、user advocate 职责与独立性约束、AC/US 分离、信息来源与置信度（5 类来源）、三阶段门禁摘要（Gate A/B/C）、角色边界表、门禁不可互相替代声明、交付公式、产物清单、与其他门禁关系
+   - 扩展 `references/requirement-brief.md`：新增目标用户/用户问题/信息来源与置信度/用户成功标准（US-*）/关键体验要求；用户旅程列升级为"用户意图/用户动作/系统反馈/失败恢复/完成准则"；建立步骤扩展为 4.5-4.9；验收标准追加 4 条
+   - 同步 `assets/REQUIREMENT_BRIEF.template.md`：新增 5 个章节；升级旅程列；**删除登录固定步骤示例，改为"必要前置步骤（如认证、授权、初始化）"**；新增 Web + CLI/API 两类示例覆盖
+   - 扩展 `references/dynamic-team-selection.md`：新增 user-advocate 角色定义（product-quality 类型、独立性约束、activation/exit）；团队生成算法增加第 7 步"user-value 能力覆盖检查"；新增独立角色拆分条件（满足 9 条件之一优先独立创建）；验收标准追加 3 条
+   - 更新 `SKILL.md`：角色分类表新增"产品价值角色"行；delivery 模式完成条件增加"user-value 为必需能力"；增加指向 user-value-gate.md 的路由引用
+
+4. **验证**：
+   - 新术语一致：user-value / user-advocate / 用户成功标准全覆盖
+   - 唯一真相源：SKILL.md 只含摘要+路由（0 个完整协议字段）
+   - 模板不过拟合：登录从固定步骤降为示例（2 处），新增 CLI/API 覆盖
+   - 现有机制保留并升级：用户旅程列升级；冷启动走查（testing-gate 3 处 + TEST_REPORT 1 处）保留；交付硬门"用户旅程跑通"保留
+
+**遇到的问题**:
+- Python 2.7 不支持 `open(encoding=)`，JSON 验证改用 `py -3`
+- 模板示例需覆盖 Web + CLI/API 两类，避免只针对页面产品（P2 一致性）
+
+**代码变更**:
+- 新建 1 + 修改 4 = 5 文件，+174/-9
+- 新建 `references/user-value-gate.md`
+- 修改 `SKILL.md` / `references/requirement-brief.md` / `references/dynamic-team-selection.md` / `assets/REQUIREMENT_BRIEF.template.md`
+
+**遗留待处理**:
+- 审阅 Iteration 1，确认后推送
+- 继续 Iteration 2（接入动态团队和任务图）
+
 ### 15:20 ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）
 
 **任务**: 解决 P0 结构性缺陷——ct1 优化"任务完成度"而非"用户视角的产品可用性"。用户开发出的小程序宣告交付但无登录页，从第一步就不可用。

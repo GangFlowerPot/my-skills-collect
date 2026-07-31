@@ -39,6 +39,31 @@ role_candidates:
 - 读写范围；依赖；启动条件；结束条件
 - 合并或拆分理由
 
+### user-advocate 角色（产品价值）
+
+```yaml
+role_id: user-advocate
+role_type: product-quality
+required_capabilities:
+  - user-value
+responsibilities:
+  - maintain_user_model
+  - challenge_product_assumptions
+  - review_user_journey
+  - evaluate_demo_usability
+  - issue_user_value_decision
+write_scope:
+  - .claude/teams/<team-id>/USER_VALUE_REVIEW.md
+independence_constraints:
+  - no_primary_feature_implementation
+activation:
+  - requirement_brief_ready
+exit:
+  - user_value_gate_finalized
+```
+
+详见 `references/user-value-gate.md`。
+
 ## 角色生命周期
 
 ```
@@ -64,6 +89,28 @@ planned
 4. **拆分评分**：有独立交付物、写入范围不重叠、契约稳定、各部分有足够工作量、并行能缩短关键路径时拆分
 5. **冲突检查**：任意两个角色的 write_scope 明显重叠时，细化 ownership 或合并
 6. **并行价值判断**：两个任务是否能同时开始、是否有未冻结共享契约、是否频繁修改相同文件、能否缩短关键路径
+7. **user-value 能力覆盖检查**：`delivery` 项目必须覆盖 `user-value` 能力，由独立 user-advocate 或 leader 兼任
+
+## 独立角色拆分条件
+
+满足任一条件时，优先独立创建 `user-advocate`：
+
+- 存在两类及以上目标用户
+- 核心旅程包含多个页面、系统或渠道
+- 用户需求存在明显歧义或低置信度假设
+- 涉及复杂权限、支付、隐私、数据删除或高错误成本
+- 产品首次使用、引导或学习成本是关键风险
+- developer 与用户价值审查存在明显利益冲突
+- 方向错误会造成较大返工
+- 用户明确要求产品、体验或业务视角的独立检查
+
+以下情况可由 leader 兼任：
+
+- 改动范围小
+- 用户目标明确
+- 用户旅程短且稳定
+- 不存在高影响产品假设
+- leader 能输出独立的用户价值证据和结论
 
 ## 验收标准
 
@@ -73,3 +120,6 @@ planned
 - 高风险任务能增加专项角色
 - 每个角色都有 owned_tasks 和 write_scope
 - 每个团队方案都解释拆分和合并理由
+- 所有 `delivery` 项目覆盖 `user-value` 能力
+- 小项目允许 leader 兼任 user-value 职责
+- 复杂项目能动态创建独立 user-advocate

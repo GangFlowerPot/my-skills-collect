@@ -68,8 +68,11 @@ python3 scripts/ct1_validate.py
 适用于用户已经给出需求，或明确要求团队完成开发、测试和交付。完成条件：
 
 - 需求验收标准已经建立；任务板中的必需任务全部满足项目级 DoD；必需测试有真实执行结果；严重审查问题已经关闭；最终交付报告已经生成；未完成、未测试和已知风险已明确披露。
+- **用户价值是必需能力**：所有 `delivery` 项目必须覆盖 `user-value` 能力（小项目由 leader 兼任，复杂项目创建独立 `user-advocate`）；用户成功标准（US-*）与功能验收标准（AC-*）分离；交付前用户旅程可达且用户目标达成。
 
 触发：有明确需求；默认使用 `delivery`。
+
+> 用户价值机制详见 `references/user-value-gate.md`。
 
 ### 模式判断规则
 
@@ -109,6 +112,7 @@ python3 scripts/ct1_validate.py
 | **执行角色** | 前端、后端、全栈等（如 `frontend-dev`、`backend-dev`、`waybill-service-dev`） | 根据项目任务和边界动态生成 |
 | **质量角色** | `tester` | 有可验收交付物时启用 |
 | **审查角色** | `reviewer` | 有代码产出且进入审查阶段时延迟启动 |
+| **产品价值角色** | `user-advocate`（用户价值代言人） | 由任务复杂度动态决定：小项目由 leader 兼任，复杂项目独立创建 |
 | **专项角色** | DBA、DevOps、安全、UI 等（如 `migration-specialist`、`security-reviewer`） | 风险或任务需要时启用 |
 
 ### leader 职责

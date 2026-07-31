@@ -1,10 +1,10 @@
 # Current Task — ynwl
 
-**最后更新**: 2026-07-31 15:20 +08:00 by Claude (Opus 4.8)
+**最后更新**: 2026-07-31 17:40 +08:00 by Claude (Opus 4.8)
 
 ## 当前阶段
 
-✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。✅ **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）完成，待推送**。
+✅ 项目架构分析、zsh 记忆构建、团队组建、ct1 skill 创建与 eval、子 Agent 上下文灌输机制设计与实现、问题升级循环设计与实现、**Reviewer 角色 + 代码审查循环设计与实现**均已完成。✅ **zsh 记忆架构从旧布局整改到最新 `zsh/` 布局**已完成。✅ **ct1 skill 全生命周期重构 Iteration 1~5 全部完成**。✅ **ct1 下一轮优化（协议收敛/Python 3 基线/结构化状态/真实门禁）Iteration A~E 全部完成**。✅ **ct1 交付模式门禁优化（Step 3.75 硬门 + Node A/B/C 功能里程碑）完成并推送**。✅ **项目根 CLAUDE.md 路径示例修正 + docs/ 过时 v3 快照清理完成并推送**。✅ **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）完成并推送**。✅ **ct1 用户价值机制整改 Iteration 1（建立用户价值语义）完成，待审阅**。
 
 ## 已完成
 
@@ -45,7 +45,7 @@
   - 静态一致性检查通过：skill 运行文件不再有旧的固定团队描述和 6/8/9 字段模板残留
   - 新建 3 个 validation scripts（validate_protocol / validate_task_board / check_delivery_gate）并全部通过
 - [x] **ct1 下一轮优化（NEXT_ROUND_OPTIMIZATION_PLAN.md）Iteration A~E**：
-  - **Iteration A**（协议清理）：修正 StatusReport 字段数（11→12）、清除百分比流程（33/66/100%→事件驱动）、统一事件名为英文下划线、长示例移入 examples/、建立文档职责矩阵
+  - **Iteration A**（协议清理）：修正 StatusReport 字段数（11→12）、清除百分比流程（33/66/100%→事件驱动）、统一事件名为英文下划线、长示例移入 examples/、修正"11 字段"残留
   - **Iteration B**（Python 3 基线）：新建统一入口 ct1_validate.py、所有脚本增加版本检查、SKILL.md 增加运行依赖章节、明确 Python 3.10+ 和探测策略
   - **Iteration C**（结构化运行状态）：新建 6 个 JSON schemas（task-graph/role-roster/team-state/status-report/test-report/delivery-state）、删除 Skill 目录双写、分离任务状态与项目状态
   - **Iteration D**（真实门禁）：新建 validate_task_graph.py（依赖图/owner/AC/验证证据）和 validate_write_scopes.py（role roster/write scope 冲突）
@@ -76,18 +76,28 @@
   - 新建 `e2e-test-gates-v2.md` 对齐新门禁（旧 e2e 标注为历史版本）
   - Eval 6 专门测 CP-5 硬门行为
   - 约束遵守：无 33/66/100% 百分比门禁残留，里程碑为事件驱动
-- [x] **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）**（待推送）：
-  - **解决 P0**：ct1 优化"任务完成度"而非"用户视角的产品可用性"——团队宣告交付但产品无登录页，从第一步就不可用
-  - **根因**：DoD = "AC 清单全部通过"，AC 是功能清单而非用户旅程流；所有下游门禁回溯到 AC 清单，缺第一步时直到人类想用才暴露
-  - **4 部分改动（9 文件，+87/-4）**：
-    - **Part A** — requirement-brief.md + REQUIREMENT_BRIEF.template.md：新增强制章节「用户旅程」（从冷启动到核心价值的最小可演示路径，有序步骤 + 每步可验证完成准则）；建立步骤插入 4.5；验收标准追加一条
-    - **Part B** — testing-gate.md + TEST_REPORT.template.md：tester 职责追加第 8 项「冷启动走查」（干净环境 + fresh user 逐步执行用户旅程）；测试门禁表追加「用户旅程跑通」行；TEST_REPORT 插入「冷启动走查」章节
-    - **Part C** — delivery-report.md + SKILL.md + DELIVERY_REPORT.template.md：项目级交付门禁加入「用户旅程跑通（冷启动走查通过）」；交付判定表 `通过` 含跑通、`未通过` 加旅程未跑通；表下加注"旅程跑通是硬门：即使 AC 全通过、P0/P1=0，跑不通→未通过"；SKILL.md DoD bullet + 测试门禁表同步
-    - **Part D** — delivery-evals.json 新增 d11（缺登录页反例：AC 全通过但旅程失败→交付=未通过）；evals.json 新增 eval 7（全链路验证：Brief 含旅程→tester 走查→交付硬门→Node A 与旅程门各司其职）
-  - **兼容性**：Node A 确认"方向"（骨架+认证），新门验证"可运行实现"；前者需代码存在才触发，后者直接走查产品；各司其职
-  - **命名避让**：用「用户旅程/冷启动走查/跑通」，绕开已占用的"端到端/关键路径"
-  - **范围遵守**：无新角色、无角色扩责、无 StatusReport/context-contract 改动
-  - **验证通过**：JSON 合法、术语一致、无百分比残留、Node A 独立
+- [x] **ct1 产品可用性门禁（用户旅程 + 冷启动走查 + 交付硬门）**（commit 52a63e2 已推送）：
+  - **解决 P0**：ct1 优化"任务完成度"而非"用户视角的产品可用性"——团队宣告交付但产品无登录页
+  - **根因**：DoD = "AC 清单全部通过"，AC 是功能清单而非用户旅程流
+  - **4 部分（9 文件，+87/-4）**：
+    - Part A: requirement-brief 强制定义「用户旅程」（冷启动→核心价值）
+    - Part B: tester 冷启动走查（干净环境 + fresh user 逐步验证）
+    - Part C: 交付硬门加入「用户旅程跑通」（跑不通→未通过，即使 AC 全过）
+    - Part D: eval d11（缺登录页反例）+ eval 7（全链路验证）
+  - 兼容 Node A/B/C：Node A 确认方向，新门验证可运行实现
+  - 命名避让：用「用户旅程/冷启动走查/跑通」，绕开已占用的"端到端/关键路径"
+  - 范围遵守：无新角色、无角色扩责、无 StatusReport 改动
+- [x] **ct1 用户价值机制整改 Iteration 1（建立用户价值语义）**（待审阅）：
+  - **来源**：`improve/USER_PERSPECTIVE_REFACTOR_PLAN.md`（用户价值机制整改方案）
+  - **解决更深盲区**：路径可达 ≠ 目标正确；用户旅程由团队假设缺事实依据；tester 只验证规格不判断用户目标；入口/引导/空状态/错误恢复/权限反馈缺失；以"任务完成度"代替"用户目标达成度"
+  - **5 文件（+174/-9，新建 user-value-gate.md）**：
+    - 新建 `references/user-value-gate.md`（唯一真相源）：user-value 能力定义、user advocate 职责与独立性约束、AC/US 分离、信息来源与置信度（user-stated/project-evidence/domain-evidence/team-assumption/unknown）、三阶段门禁摘要（Gate A/B/C）、角色边界表、门禁不可互相替代声明、交付公式、产物清单、与其他门禁关系
+    - 扩展 `references/requirement-brief.md`：新增目标用户/用户问题/信息来源与置信度/用户成功标准（US-*）/关键体验要求；用户旅程列升级为"用户意图/用户动作/系统反馈/失败恢复/完成准则"；建立步骤扩展为 4.5-4.9；验收标准追加 4 条
+    - 同步 `assets/REQUIREMENT_BRIEF.template.md`：新增目标用户/用户问题/信息来源/US/关键体验要求章节；升级旅程列；**删除登录固定步骤示例，改为"必要前置步骤（如认证、授权、初始化）"**；新增 Web + CLI/API 两类示例覆盖
+    - 扩展 `references/dynamic-team-selection.md`：新增 user-advocate 角色定义（product-quality 类型、独立性约束）；团队生成算法增加第 7 步"user-value 能力覆盖检查"；新增独立角色拆分条件（满足 9 条件之一优先独立创建）；验收标准追加 3 条
+    - 更新 `SKILL.md`：角色分类表新增"产品价值角色"行；delivery 模式完成条件增加"user-value 为必需能力"；增加指向 user-value-gate.md 的路由引用
+  - **验证通过**：新术语一致；唯一真相源（SKILL.md 只含摘要+路由）；模板不过拟合（登录降为示例，新增 CLI/API 覆盖）；现有旅程+冷启动走查+交付硬门保留并升级
+  - **与上一轮兼容**：上一轮"用户旅程+冷启动走查+交付硬门"全部保留并升级，本轮在其基础上向需求阶段（US+Gate A）和 demo 阶段（Gate B）延伸
 
 ## 进行中
 
@@ -95,6 +105,9 @@
 
 ## 待开始
 
+- **ct1 用户价值机制整改 Iteration 2**（接入动态团队和任务图）：task-board-schema 扩展（task_type/user_success_criteria/required_capabilities）；dynamic-team-selection 角色拆分规则；context-contract 新增 user advocate 切片；team-selection 同步
+- **ct1 用户价值机制整改 Iteration 3**（接入生命周期和交付）：完善 Gate A/B/C 检查项；新建 USER_VALUE_REVIEW.template.md；testing-gate 边界同步；delivery-report 交付公式；DELIVERY_REPORT 模板；SKILL.md 触发事件；check_delivery_gate.py
+- **ct1 用户价值机制整改 Iteration 4**（评测与回归）：新建 user-value-evals.json（UV-01~12）；evals.json 能力覆盖评测；delivery-evals.json 隐蔽反例；P2 一致性清理；静态校验 + 回归测试
 - 在真实项目中实际 spawn 子 agent，验证上下文灌输机制的实际效果（首次输出质量、返工次数、token 消耗）
 - 根据真实使用反馈迭代合约 schema / 五要素模板 / 动态补充协议
 - 按用户后续目标选择：本地启动验证、模块级深挖、数据模型分析、安全整改或技术栈升级评估
@@ -119,11 +132,13 @@
 | `references/question-escalation-protocol.md` | ✅ | 问题升级循环协议（新增） |
 | `references/code-review-protocol.md` | ✅ | 代码审查协议（新增） |
 | `references/team-protocol.md` | ✅ | 6→8 字段模板 + reviewer + leader 聚合格式（扩展） |
-| `SKILL.md` | ✅ | Step 1.5 + Step 3 增强 + 问题升级 + reviewer（新增） |
-| `references/requirement-brief.md` | ✅ | +用户旅程章节 + 建立步骤 4.5 + 验收标准（产品可用性门禁） |
+| `SKILL.md` | ✅ | +产品价值角色 + user-value 必需能力 + user-value-gate 路由（用户价值 Iteration 1） |
+| `references/user-value-gate.md` | ✅ | 新建：用户价值协议唯一真相源（能力定义、user advocate 职责、AC/US 分离、信息来源置信度、Gate A/B/C 摘要、角色边界、交付公式） |
+| `references/requirement-brief.md` | ✅ | +目标用户/用户问题/信息来源/US/关键体验要求 + 升级旅程列 + 建立步骤 4.5-4.9（用户价值 Iteration 1） |
 | `references/testing-gate.md` | ✅ | +tester 职责第 8 项（冷启动走查）+ 门禁表跑通行（产品可用性门禁） |
 | `references/delivery-report.md` | ✅ | +用户旅程跑通硬门 + 交付判定表（产品可用性门禁） |
-| `assets/REQUIREMENT_BRIEF.template.md` | ✅ | +用户旅程章节（产品可用性门禁） |
+| `references/dynamic-team-selection.md` | ✅ | +user-advocate 角色定义 + user-value 能力覆盖检查 + 独立角色拆分条件（用户价值 Iteration 1） |
+| `assets/REQUIREMENT_BRIEF.template.md` | ✅ | +目标用户/用户问题/信息来源/US/关键体验要求 + 升级旅程列 + Web+CLI/API 示例（用户价值 Iteration 1） |
 | `assets/TEST_REPORT.template.md` | ✅ | +冷启动走查章节（产品可用性门禁） |
 | `assets/DELIVERY_REPORT.template.md` | ✅ | +用户旅程跑通章节（产品可用性门禁） |
 | `evals/delivery-evals.json` | ✅ | +d11（缺登录页反例） |
@@ -147,18 +162,19 @@
 ## 待开始
 
 - **善后**：清理 `claude/zsh/` 下 6 个模板残留文件（之前错误迁移的回滚失败产物，与 `claude/ct1/zsh/` 真实记忆内容不同）+ `claude/CLAUDE.md.zsh-backup` 备份文件
-- 在真实项目中实际 spawn 子 agent，验证 Step 3.75 硬门 + Node A/B/C 功能里程碑 + **用户旅程跑通硬门**的实际效果（首次输出质量、返工次数、token 消耗）
+- 在真实项目中实际 spawn 子 agent，验证 Step 3.75 硬门 + Node A/B/C 功能里程碑 + **用户旅程跑通硬门 + 用户价值三阶段门禁**的实际效果
 - 根据真实使用反馈迭代合约 schema / 五要素模板 / 动态补充协议
 
 ## 精确续接位置
 
-- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/门禁问题.md` + `references/code-review-protocol.md` §6.1
-- 位置：ct1 产品可用性门禁完成（9 文件 +87/-4，待推送）；测试轮次设计（原首要议题，现被产品可用性议题覆盖，仍待讨论）
-- 状态：Step 3.75 硬门 + Node A/B/C 功能里程碑 + 用户旅程跑通硬门就绪
+- 文件：本文件 + `zsh/AGENT_MEMORY.md` + `SKILL.md` + `improve/USER_PERSPECTIVE_REFACTOR_PLAN.md` + `references/user-value-gate.md`
+- 位置：ct1 用户价值机制整改 Iteration 1 完成（5 文件 +174/-9，待审阅）；Iteration 2 待开始
+- 状态：user-value 语义层就绪（能力定义、user advocate 职责、AC/US 分离、信息来源置信度、Gate A/B/C 摘要）；任务图层（Iteration 2）和生命周期层（Iteration 3）待接入
 
 ## 下次会话建议
 
 1. 先读取 `AGENT_MEMORY.md` 与本文件。
-2. 善后：清理 `claude/zsh/` 模板残留 + zsh-backup。
-3. 若要验证门禁机制：选一个真实项目，准备结构化文档，建立合约后 spawn 子 agent，在 Step 3.75 节点观察硬门拦截，在 Node A/B/C 观察功能里程碑驱动审查+测试，在交付前观察用户旅程跑通硬门拦截不可用产品。
-4. 团队已就绪，可直接对 leader 提出开发需求。
+2. **审阅 Iteration 1**：重点审阅 `references/user-value-gate.md`（唯一真相源）和 `assets/REQUIREMENT_BRIEF.template.md`（Web+CLI/API 示例覆盖）
+3. 继续 Iteration 2：接入动态团队和任务图（task-board-schema + context-contract + team-selection）
+4. 善后：清理 `claude/zsh/` 模板残留 + zsh-backup。
+5. 团队已就绪，可直接对 leader 提出开发需求。
